@@ -1,0 +1,25 @@
+# Point `schema` at whatever schema your loader lands the Shopify tables in.
+# One source block per store. The staging models label rows with shopify_store and
+# core carries that through every join, so adding a storefront is: add a block here,
+# UNION ALL it in the staging models with a different label, done.
+
+version: 2
+
+sources:
+  - name: shopify
+    schema: raw_shopify
+    tables:
+      - name: order
+      - name: order_agreement
+      - name: order_agreement_sale
+      - name: order_line
+      - name: order_refund
+      - name: order_line_refund
+      - name: shop
+      - name: location
+      - name: fulfillment
+      - name: product
+      - name: inventory_item
+      # Weld history table - enable it on the inventory_item stream for
+      # point-in-time COGS. Without it, costs fall back to the current value.
+      - name: inventory_item__history

@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: core_shopify__sales_over_time
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - shopify_store
+            - order_id
+            - location_id
+            - source_name
+            - report_row_type
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: shopify_store
+        tests: [not_null]
+      - name: net_sales
+        tests: [not_null]
+      - name: discounts
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"        # sign convention enforced
+      - name: returns
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"
