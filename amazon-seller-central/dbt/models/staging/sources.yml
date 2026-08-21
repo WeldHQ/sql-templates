@@ -1,0 +1,54 @@
+# Point `schema` at whatever schema your loader lands the Amazon Seller Central
+# tables in. One source block per seller account or region: the staging models label
+# rows with amazon_seller and core carries that through every join, so adding an
+# account is: add a block here, UNION ALL it in the staging models with a different
+# label, done.
+
+version: 2
+
+sources:
+  - name: amazon_seller_central
+    schema: raw_amazon_seller_central
+    tables:
+      # The line-grain order report. Keyed on last_updated_date, so it syncs
+      # incrementally and restates lines that changed.
+      - name: orders_by_last_updated_date_report
+
+      # Business Reports. Amazon re-generates these and restates the trailing ~72
+      # hours; the staging models de-duplicate to the latest generation per key.
+      - name: sales_and_traffic_report_by_date
+      # Three ASIN granularities of the SAME report. Only the SKU one is used here -
+      # see stg_amazon_seller__sales_and_traffic_by_asin for why unioning them
+      # double-counts.
+      - name: sales_and_traffic_report_by_asin_sku
+      # - name: sales_and_traffic_report_by_asin        # parent-ASIN grain
+      # - name: sales_and_traffic_report_by_asin_child  # child-ASIN grain
+
+      # The money. 89-day retention at Amazon: a full refresh of this stream
+      # permanently destroys older settlements. Materialise downstream of it as
+      # tables, and never reset it.
+      - name: settlement_report
+      - name: settlement_description
+
+      # Returns. Two reports, two channels, two different grains - MFN carries the
+      # refunded amount, FBA carries only units and condition.
+      - name: returns_by_return_date_report
+      - name: fba_returns_report
+
+      - name: fba_reimbursements_report
+
+      # Snapshot, no history. Enable Weld history tables on this stream to trend
+      # stock cover; it cannot be reconstructed afterwards.
+      - name: fba_inventory_summary
+      # - name: fba_inventory_summary__history
+
+      # The SKU dimension: the only table that maps SKU to ASIN.
+      - name: merchant_listings_report
+
+  # Your COGS. Not an Amazon table - Amazon does not know what your goods cost.
+  # A Google Sheet is the usual answer; point this at whatever you actually have and
+  # keep the column contract in stg_amazon_seller__sku_cost.
+  - name: google_sheets
+    schema: raw_google_sheets
+    tables:
+      - name: sku_cost
