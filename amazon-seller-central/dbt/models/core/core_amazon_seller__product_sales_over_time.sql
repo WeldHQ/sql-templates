@@ -128,14 +128,33 @@ avg_price AS (
     GROUP BY 1, 2, 3
 ),
 
+-- The FBA returns report carries no marketplace column, so it has to be resolved
+-- from the listing. Collapsed to exactly one row per SKU FIRST, because joining
+-- listings directly would fan a return row out once per marketplace the SKU is
+-- listed in - silently multiplying FBA returns for any account selling the same SKU
+-- in more than one marketplace.
+--
+-- Where a SKU IS listed in several marketplaces the answer is genuinely unknown, so
+-- this returns NULL rather than picking one. A NULL marketplace on a RETURN row is
+-- visible and auditable; a wrong one is neither.
+sku_marketplace AS (
+    SELECT
+        amazon_seller,
+        sku,
+        CASE WHEN COUNT(DISTINCT marketplace) = 1
+             THEN ANY_VALUE(marketplace) END AS marketplace
+    FROM {{ ref('stg_amazon_seller__listings') }}
+    WHERE marketplace IS NOT NULL
+    GROUP BY 1, 2
+),
+
 fba_returns AS (
     SELECT
         f.return_date                       AS date,
         f.amazon_seller,
-        -- The FBA returns report carries no marketplace column. Resolve it from the
-        -- listing rather than defaulting, so single-marketplace accounts are exact
-        -- and multi-marketplace ones are visibly NULL instead of quietly wrong.
-        l.marketplace,
+        -- Resolved from sku_marketplace above: exact for single-marketplace SKUs,
+        -- NULL where the SKU is listed in several and the answer is unknowable.
+        m.marketplace,
         f.asin,
         f.sku,
         'RETURN'                            AS report_row_type,
@@ -171,11 +190,12 @@ fba_returns AS (
         CAST(NULL AS DATE)                  AS original_order_date,
         FALSE                               AS is_cancelled
     FROM {{ ref('stg_amazon_seller__fba_returns') }} f
-    LEFT JOIN {{ ref('stg_amazon_seller__listings') }} l
-           ON l.amazon_seller = f.amazon_seller AND l.sku = f.sku
+    -- One row per SKU, so this cannot fan out.
+    LEFT JOIN sku_marketplace m
+           ON m.amazon_seller = f.amazon_seller AND m.sku = f.sku
     LEFT JOIN avg_price p
            ON p.amazon_seller = f.amazon_seller
-          AND p.marketplace   = l.marketplace
+          AND p.marketplace   = m.marketplace
           AND p.sku           = f.sku
 ),
 
