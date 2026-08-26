@@ -4,7 +4,7 @@ Drop-in model files. Not a runnable project — no `dbt_project.yml`, not run in
 
 ```
 models/staging/sources.yml                                  one source, one seller account
-models/staging/stg_amazon_seller__*.sql                     11 thin wrappers over the raw reports
+models/staging/stg_amazon_seller__*.sql                     12 thin wrappers over the raw reports
 models/core/core_amazon_seller__sales_over_time.sql          Amazon's own Business Report numbers
 models/core/core_amazon_seller__product_sales_over_time.sql  the sales equation at line grain
 models/core/core_amazon_seller__settlement_ledger.sql        the deposit, itemised into a P&L
@@ -17,6 +17,7 @@ tests/assert_sales_equation_holds.sql                        net = gross + disco
 tests/assert_settlement_ties_to_deposits.sql                 the ledger sums to Amazon's own deposit figure
 tests/assert_product_sales_track_business_report.sql         line grain tracks Amazon's headline, month by month
 tests/assert_no_duplicate_report_generations.sql             one row per date, after de-duplication
+tests/assert_marketplace_keys_are_consistent.sql             every model keys the marketplace the same way
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

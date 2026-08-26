@@ -42,7 +42,15 @@ WITH normalised AS (
 
         LOWER(NULLIF(TRIM(CAST(transaction_type AS STRING)), ''))   AS transaction_type,
         LOWER(NULLIF(TRIM(CAST(amount_type AS STRING)), ''))        AS amount_type,
-        LOWER(NULLIF(TRIM(CAST(amount_description AS STRING)), '')) AS amount_description
+        LOWER(NULLIF(TRIM(CAST(amount_description AS STRING)), '')) AS amount_description,
+
+        -- This report names the marketplace by domain; everything downstream keys on
+        -- marketplace_id. Resolved below so the fee ledger actually joins to the
+        -- sales models: core_amazon_seller__asin_profitability joins on
+        -- (date, seller, marketplace, sku), so an unresolved key silently yields
+        -- sales rows with no fees and fee rows with no sales - and a margin that
+        -- looks wonderful.
+        LOWER(NULLIF(TRIM(CAST(marketplace_name AS STRING)), ''))   AS marketplace_domain
     FROM {{ source('amazon_seller_central', 'settlement_report') }}
 )
 
@@ -54,7 +62,8 @@ SELECT
     CAST(shipment_id AS STRING)                                     AS shipment_id,
     CAST(adjustment_id AS STRING)                                   AS adjustment_id,
     CAST(sku AS STRING)                                             AS sku,
-    UPPER(NULLIF(TRIM(CAST(marketplace_name AS STRING)), ''))       AS marketplace,
+    COALESCE(m.marketplace_id, UPPER(n.marketplace_domain))         AS marketplace,
+    n.marketplace_domain,
 
     -- posted_date is when the money moved, which is the only date that makes the
     -- ledger tie to a deposit. It is NOT the order date: a January order refunded
@@ -102,4 +111,6 @@ SELECT
     -- is also negative. Getting this backwards is how refunds end up counted as
     -- fees and the fee ratio looks great while margin collapses.
     transaction_type IN ('refund', 'chargeback', 'guaranteeclaim')   AS is_refund
-FROM normalised
+FROM normalised n
+LEFT JOIN {{ ref('stg_amazon_seller__marketplace') }} m
+       ON m.marketplace_domain = n.marketplace_domain

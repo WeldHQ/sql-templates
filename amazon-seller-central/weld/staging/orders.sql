@@ -15,7 +15,25 @@
 
 SELECT
     'seller_1'                                              AS amazon_seller,
-    UPPER(NULLIF(TRIM(CAST(sales_channel AS STRING)), ''))  AS marketplace,
+
+    -- MARKETPLACE IS RESOLVED TO marketplace_id, NOT TAKEN FROM sales_channel. This
+    -- report names the marketplace by domain ('Amazon.com'); the Business Reports,
+    -- listings, returns and inventory reports all use the ID ('ATVPDKIKX0DER').
+    -- Emitting the domain here compares it against the ID in every downstream join
+    -- and matches nothing - and because those are LEFT JOINs it fails silently:
+    -- product names vanish, and SALE rows land under a different marketplace key
+    -- than their own RETURN rows, splitting the sales equation across two rows that
+    -- never add back up.
+    --
+    -- COALESCE rather than a bare join result: an unmapped marketplace keeps a
+    -- stable key instead of going NULL and collapsing the grain.
+    -- tests/assert_marketplace_keys_are_consistent.sql flags it.
+    COALESCE(m.marketplace_id,
+             UPPER(NULLIF(TRIM(CAST(o.sales_channel AS STRING)), ''))) AS marketplace,
+
+    -- Kept in its own right: it distinguishes an Amazon marketplace sale from a
+    -- non-Amazon sales channel, which the marketplace ID cannot express.
+    LOWER(NULLIF(TRIM(CAST(o.sales_channel AS STRING)), ''))           AS sales_channel,
 
     CAST(amazon_order_id AS STRING)                         AS amazon_order_id,
     CAST(merchant_order_id AS STRING)                       AS merchant_order_id,
@@ -70,4 +88,6 @@ SELECT
     -- date, so a model that drops the rows cannot reproduce that behaviour, and a
     -- model that keeps them without a flag cannot exclude them either.
     LOWER(CAST(item_status AS STRING)) = 'cancelled'        AS is_cancelled
-FROM {{raw.amazon_seller_central.orders_by_last_updated_date_report}}
+FROM {{raw.amazon_seller_central.orders_by_last_updated_date_report}} o
+LEFT JOIN {{staging.amazon_seller.marketplace}} m
+       ON m.marketplace_domain = LOWER(NULLIF(TRIM(CAST(o.sales_channel AS STRING)), ''))

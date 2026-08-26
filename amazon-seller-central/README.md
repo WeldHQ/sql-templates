@@ -45,7 +45,7 @@ every sales report Amazon publishes. That gap is what `settlement_ledger` and
 ```
 raw.amazon_seller_central.*   ELT output, untouched
   ↓
-weld/staging/*.sql            11 thin wrappers: cast, rename, de-duplicate, fix signs
+weld/staging/*.sql            12 thin wrappers: cast, rename, de-duplicate, fix signs
   ↓
 weld/core/*.sql               the reports - all the business logic lives here
   ↓
@@ -83,6 +83,12 @@ adjust the refs.
 | asin profitability | the above, plus `fba_reimbursements_report` and your own COGS |
 | traffic and conversion | `sales_and_traffic_report_by_asin_sku`, `merchant_listings_report` |
 | inventory health | `fba_inventory_summary`, `merchant_listings_report` |
+
+Plus `weld/staging/marketplace.sql` — a static domain-to-`marketplace_id` map with no raw
+source. Amazon names the marketplace three different ways across these reports
+(`marketplace_id`, `sales_channel`, `marketplace_name`) and the values do not overlap;
+everything here keys on the ID, and the two name-based reports are resolved through
+that map in staging.
 
 ## Four things that will bite you
 
