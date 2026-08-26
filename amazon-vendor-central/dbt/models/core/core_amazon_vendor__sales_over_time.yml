@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: core_amazon_vendor__sales_over_time
+    description: >
+      Vendor sales by day, with shipped_cogs (your revenue) and shipped_revenue
+      (Amazon's) kept separate. Grain includes distributor_view and selling_program
+      because Amazon's four report variants overlap.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - amazon_vendor
+            - marketplace
+            - distributor_view
+            - selling_program
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: distributor_view
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['MANUFACTURING', 'SOURCING']
+      - name: selling_program
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['RETAIL', 'BUSINESS']
+      - name: customer_returns
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"    # sign convention enforced
+      # Amazon selling below its own wholesale cost happens - promotional pricing,
+      # price matching - but it should be rare. A persistent negative markup across
+      # many days usually means shipped_cogs and shipped_revenue were swapped.
+      - name: amazon_gross_markup_rate
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= -0.5"
+              config:
+                severity: warn
+
+  - name: core_amazon_vendor__sales_by_asin
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - amazon_vendor
+            - marketplace
+            - distributor_view
+            - selling_program
+            - asin
+    columns:
+      - name: asin
+        tests: [not_null]
+      - name: conversion_rate
+        tests:
+          # Ordered units per glance view. Above 1 means more units than page views,
+          # which happens on multi-unit orders but not often; above 3 means traffic
+          # has been divided across report variants.
+          - dbt_utils.expression_is_true:
+              expression: "<= 3"
+              config:
+                severity: warn
+
+  - name: core_amazon_vendor__forecast_vs_actuals
+    columns:
+      - name: forecast_status
+        tests:
+          - accepted_values:
+              values: ['FORECAST', 'IN_PROGRESS', 'REALISED']
+      # p90 must be at least p80 must be at least p70 must be at least the mean. If
+      # this fails, the percentile columns were mapped to the wrong source fields.
+      - name: p90_forecast_units
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= p80_forecast_units"
+      - name: p80_forecast_units
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= p70_forecast_units"
+      - name: p70_forecast_units
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= mean_forecast_units"

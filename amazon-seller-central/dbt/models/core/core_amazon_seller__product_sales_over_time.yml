@@ -1,0 +1,90 @@
+version: 2
+
+models:
+  - name: core_amazon_seller__product_sales_over_time
+    description: >
+      Sales equation at line grain, event based. One row per day x seller x
+      marketplace x ASIN x SKU x row type, so a SKU that sells and refunds on the
+      same day produces two rows.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - amazon_seller
+            - marketplace
+            - asin
+            - sku
+            - report_row_type
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: amazon_seller
+        tests: [not_null]
+      - name: sku
+        tests: [not_null]
+      - name: report_row_type
+        tests:
+          - accepted_values:
+              values: ['SALE', 'RETURN']
+      - name: net_sales
+        tests: [not_null]
+      # Sign conventions, enforced. If these fail, a source column changed its sign
+      # and every net figure downstream is wrong by twice the amount.
+      - name: discounts
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"
+      - name: returns
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"
+
+  - name: core_amazon_seller__settlement_ledger
+    description: >
+      Settlement report pivoted into a P&L, one row per settlement date x order x
+      SKU. Signed as Amazon signs it, so a plain sum of every line is the deposit.
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: settlement_id
+        tests: [not_null]
+      # Every fee bucket must be negative. A positive fee means the classifier put a
+      # revenue line in a fee bucket, which inflates both fees and margin.
+      - name: selling_fees
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"
+      - name: fba_fees
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "<= 0"
+      # Nothing should land here. A non-zero total means Amazon has introduced an
+      # amount_type since stg_amazon_seller__settlement was written: the money is
+      # still in net_proceeds, but it is in no named column.
+      - name: unclassified_amounts
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "= 0"
+              config:
+                severity: warn
+
+  - name: core_amazon_seller__traffic_and_conversion
+    description: >
+      Traffic at the grain Amazon measures it - child ASIN, not SKU. See the model
+      header for why summing sessions across SKUs double-counts.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date
+            - amazon_seller
+            - marketplace
+            - child_asin
+    columns:
+      - name: unit_session_rate
+        tests:
+          # A conversion rate above 1 is possible (one session, several units) but
+          # above 5 means the traffic denominator has been double-counted somewhere.
+          - dbt_utils.expression_is_true:
+              expression: "<= 5"
+              config:
+                severity: warn

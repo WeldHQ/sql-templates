@@ -1,0 +1,43 @@
+# Point `schema` at whatever schema your loader lands the Amazon Vendor Central
+# tables in. One source block per vendor group: the staging models label rows with
+# amazon_vendor and core carries that through every join, so adding a vendor group
+# is: add a block here, UNION ALL it in the staging models with a different label,
+# done.
+
+version: 2
+
+sources:
+  - name: amazon_vendor_central
+    schema: raw_amazon_vendor_central
+    tables:
+      # Sales, inventory, traffic and margin, all at date x ASIN grain and all
+      # re-generated with the trailing ~72 hours restated. The staging models
+      # de-duplicate to the latest generation per key.
+      #
+      # sales and inventory arrive FOUR TIMES over - once per distributorView x
+      # sellingProgram combination - in the same table, distinguished by the
+      # distributor_view and selling_program columns. The variants overlap, so
+      # summing across them double-counts. Every model keeps both columns in the
+      # grain to force the choice.
+      - name: vendor_sales_report
+      - name: vendor_inventory_report
+      - name: vendor_traffic_report
+      - name: vendor_net_pure_product_margin_report
+
+      # Amazon's demand forecast. Current generation only - Amazon retains no
+      # history, so enable Weld history tables here before you need to measure
+      # forecast accuracy. It cannot be backfilled.
+      - name: vendor_forecasting_report
+      # - name: vendor_forecasting_report__history
+
+      # Real-time variants: 29-day retention, hourly grain, deliberately not
+      # reconciled to the daily reports. Only vendor_real_time_sales_report is
+      # modelled here; uncomment the others if you need them.
+      - name: vendor_real_time_sales_report
+      # - name: vendor_real_time_inventory_report
+      # - name: vendor_real_time_traffic_report
+
+      # Purchase orders. Synced by Weld but NOT modelled in this template set -
+      # see the README.
+      # - name: vendor_purchase_order
+      # - name: vendor_purchase_order_item
