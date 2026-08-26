@@ -22,14 +22,60 @@
 -- will not do for you: an ASIN with 400 units of unhealthy inventory is either two
 -- weeks of cover or two years of it, and the report alone cannot tell you which.
 
-WITH velocity AS (
+-- VELOCITY IS PER DATE, NOT A SINGLE TRAILING WINDOW. This model's grain includes
+-- `date`, because the vendor inventory report is a daily time series. A velocity
+-- computed once against CURRENT_DATE() would be joined onto every historical row, so
+-- last February's cover would be measured against this week's demand - every ratio
+-- below silently wrong on every row except the most recent.
+--
+-- So the window is trailing-30-days AS AT EACH DATE, evaluated over a spine of every
+-- date either report has for that ASIN. Sales dates alone would not do: an ASIN with
+-- stock but no shipment on a given day has no sales row, and would drop out of the
+-- join and lose its velocity.
+WITH daily_sales AS (
     SELECT
-        amazon_vendor, marketplace, distributor_view, selling_program, asin,
-        SUM(shipped_units)                     AS shipped_units_30d,
-        SAFE_DIVIDE(SUM(shipped_units), 30.0)  AS shipped_units_per_day
+        amazon_vendor, marketplace, distributor_view, selling_program, asin, date,
+        SUM(shipped_units) AS shipped_units
     FROM {{staging.amazon_vendor.sales}}
-    WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
-    GROUP BY 1, 2, 3, 4, 5
+    GROUP BY 1, 2, 3, 4, 5, 6
+),
+
+spine AS (
+    SELECT amazon_vendor, marketplace, distributor_view, selling_program, asin, date
+    FROM {{staging.amazon_vendor.inventory}}
+    UNION DISTINCT
+    SELECT amazon_vendor, marketplace, distributor_view, selling_program, asin, date
+    FROM daily_sales
+),
+
+velocity AS (
+    SELECT
+        sp.amazon_vendor, sp.marketplace, sp.distributor_view, sp.selling_program,
+        sp.asin, sp.date,
+        -- RANGE over UNIX_DATE is value-based, so it is a true trailing 30 CALENDAR
+        -- days regardless of gaps in the series. Dividing by a fixed 30 understates
+        -- per-day velocity in the first 30 days of history, where the window is
+        -- shorter than the divisor - expected, and it corrects itself.
+        SUM(COALESCE(d.shipped_units, 0)) OVER (
+            PARTITION BY sp.amazon_vendor, sp.marketplace, sp.distributor_view,
+                         sp.selling_program, sp.asin
+            ORDER BY UNIX_DATE(sp.date)
+            RANGE BETWEEN 29 PRECEDING AND CURRENT ROW
+        )                                       AS shipped_units_30d,
+        SAFE_DIVIDE(SUM(COALESCE(d.shipped_units, 0)) OVER (
+            PARTITION BY sp.amazon_vendor, sp.marketplace, sp.distributor_view,
+                         sp.selling_program, sp.asin
+            ORDER BY UNIX_DATE(sp.date)
+            RANGE BETWEEN 29 PRECEDING AND CURRENT ROW
+        ), 30.0)                                AS shipped_units_per_day
+    FROM spine sp
+    LEFT JOIN daily_sales d
+           ON  d.amazon_vendor    = sp.amazon_vendor
+           AND d.marketplace      = sp.marketplace
+           AND d.distributor_view = sp.distributor_view
+           AND d.selling_program  = sp.selling_program
+           AND d.asin             = sp.asin
+           AND d.date             = sp.date
 )
 
 SELECT
@@ -103,3 +149,4 @@ LEFT JOIN velocity v
        AND v.distributor_view = i.distributor_view
        AND v.selling_program  = i.selling_program
        AND v.asin             = i.asin
+       AND v.date             = i.date

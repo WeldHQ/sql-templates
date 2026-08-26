@@ -17,7 +17,34 @@
 -- Amazon also generates these reports on its own schedule, so there will be days
 -- with no new rows. That is normal, not a broken sync.
 
+-- Normalise the three enum columns ONCE, here, and classify off the normalised
+-- values below. Amazon pads these fields inconsistently and sometimes sends an empty
+-- string rather than NULL, so a classifier that re-derives `LOWER(CAST(x AS STRING))`
+-- inline would compare ' itemfees ' against 'itemfees' and silently bucket a real fee
+-- as 'other' - while the output column, trimmed, looked correct. Empty strings become
+-- NULL for the same reason, so they land in 'unclassified' where they are visible
+-- rather than in 'other' where they are not.
+
 {{ config(materialized='table') }}
+WITH normalised AS (
+    SELECT
+        settlement_id,
+        order_id,
+        merchant_order_id,
+        shipment_id,
+        adjustment_id,
+        sku,
+        marketplace_name,
+        posted_date,
+        posted_date_time,
+        amount,
+        quantity_purchased,
+
+        LOWER(NULLIF(TRIM(CAST(transaction_type AS STRING)), ''))   AS transaction_type,
+        LOWER(NULLIF(TRIM(CAST(amount_type AS STRING)), ''))        AS amount_type,
+        LOWER(NULLIF(TRIM(CAST(amount_description AS STRING)), '')) AS amount_description
+    FROM {{ source('amazon_seller_central', 'settlement_report') }}
+)
 
 SELECT
     'seller_1'                                                      AS amazon_seller,
@@ -35,9 +62,9 @@ SELECT
     CAST(posted_date AS DATE)                                       AS posted_date,
     CAST(posted_date_time AS TIMESTAMP)                             AS posted_at,
 
-    LOWER(NULLIF(TRIM(CAST(transaction_type AS STRING)), ''))       AS transaction_type,
-    LOWER(NULLIF(TRIM(CAST(amount_type AS STRING)), ''))            AS amount_type,
-    LOWER(NULLIF(TRIM(CAST(amount_description AS STRING)), ''))     AS amount_description,
+    transaction_type,
+    amount_type,
+    amount_description,
 
     -- Already signed by Amazon: revenue positive, fees and refunds negative. Do not
     -- ABS() or flip anything - the report only ties to the deposit total if every
@@ -50,32 +77,29 @@ SELECT
     -- buckets key off amount_type - a short, stable enum - and only reach into
     -- amount_description where amount_type is genuinely ambiguous.
     CASE
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'itemprice'
-             AND LOWER(CAST(amount_description AS STRING)) IN ('principal', 'shipping', 'giftwrap', 'shippingcharge')
+        WHEN amount_type = 'itemprice'
+             AND amount_description IN ('principal', 'shipping', 'giftwrap', 'shippingcharge')
             THEN 'revenue'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'itemprice'
-             AND LOWER(CAST(amount_description AS STRING)) LIKE '%tax%'
+        WHEN amount_type = 'itemprice' AND amount_description LIKE '%tax%'
             THEN 'tax_collected'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'itemprice'
-             AND LOWER(CAST(amount_description AS STRING)) LIKE '%discount%'
+        WHEN amount_type = 'itemprice' AND amount_description LIKE '%discount%'
             THEN 'promotion'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'promotion'      THEN 'promotion'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'itemfees'       THEN 'selling_fee'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'orderfee'       THEN 'selling_fee'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'itemwithheldtax' THEN 'tax_withheld'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'orderwithheldtax' THEN 'tax_withheld'
-        WHEN LOWER(CAST(amount_type AS STRING)) LIKE 'fba%'        THEN 'fba_fee'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'servicefee'     THEN 'service_fee'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'costofadvertising' THEN 'advertising'
-        WHEN LOWER(CAST(amount_type AS STRING)) LIKE '%reimbursement%' THEN 'reimbursement'
-        WHEN LOWER(CAST(amount_type AS STRING)) = 'other-transaction' THEN 'other'
-        WHEN CAST(amount_type AS STRING) IS NULL                   THEN 'unclassified'
+        WHEN amount_type = 'promotion'         THEN 'promotion'
+        WHEN amount_type = 'itemfees'          THEN 'selling_fee'
+        WHEN amount_type = 'orderfee'          THEN 'selling_fee'
+        WHEN amount_type = 'itemwithheldtax'   THEN 'tax_withheld'
+        WHEN amount_type = 'orderwithheldtax'  THEN 'tax_withheld'
+        WHEN amount_type LIKE 'fba%'           THEN 'fba_fee'
+        WHEN amount_type = 'servicefee'        THEN 'service_fee'
+        WHEN amount_type = 'costofadvertising' THEN 'advertising'
+        WHEN amount_type LIKE '%reimbursement%' THEN 'reimbursement'
+        WHEN amount_type = 'other-transaction' THEN 'other'
+        WHEN amount_type IS NULL               THEN 'unclassified'
         ELSE 'other'
     END                                                             AS ledger_category,
 
     -- A refund is identified by transaction_type, not by a negative amount: a fee
     -- is also negative. Getting this backwards is how refunds end up counted as
     -- fees and the fee ratio looks great while margin collapses.
-    LOWER(CAST(transaction_type AS STRING)) IN ('refund', 'chargeback', 'guaranteeclaim')
-                                                                    AS is_refund
-FROM {{ source('amazon_seller_central', 'settlement_report') }}
+    transaction_type IN ('refund', 'chargeback', 'guaranteeclaim')   AS is_refund
+FROM normalised
