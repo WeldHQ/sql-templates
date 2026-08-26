@@ -14,6 +14,12 @@ Weld connector: **Amazon Vendor Central**
 | [`weld/core/inventory_health.sql`](weld/core/inventory_health.sql) · [dbt](dbt/models/core/core_amazon_vendor__inventory_health.sql) | Vendor Inventory + velocity | + ASIN |
 | [`weld/core/forecast_vs_actuals.sql`](weld/core/forecast_vs_actuals.sql) · [dbt](dbt/models/core/core_amazon_vendor__forecast_vs_actuals.sql) | — (forecast scored against shipments) | forecast window × ASIN |
 
+> **No prior art to borrow from.** The two dbt packages that cover Amazon Seller Central —
+> [fivetran/dbt_amazon_selling_partner](https://github.com/fivetran/dbt_amazon_selling_partner)
+> and [Saras-Daton/AmazonSellerCentral](https://github.com/Saras-Daton/AmazonSellerCentral) —
+> both stop at Seller Central; Fivetran's states outright that it is not compatible with
+> Vendor Central modules. Nothing here is a port of an existing model.
+
 ## Vendor Central is not Seller Central with different table names
 
 If you have modelled Seller Central, unlearn most of it before starting here. As a
