@@ -14,6 +14,7 @@ Each integration ships both dialects:
 | [`shopify/`](shopify/) | sales over time, product sales over time, SKU cost per day, sales by product |
 | [`amazon-seller-central/`](amazon-seller-central/) | sales over time, product sales over time, settlement ledger, ASIN profitability, traffic and conversion, inventory health |
 | [`amazon-vendor-central/`](amazon-vendor-central/) | sales over time, sales by ASIN, inventory health, forecast vs actuals |
+| [`zoho-crm/`](zoho-crm/) | deal pipeline, deal flow by month, rep activity, account 360 |
 
 The rest of the library is at [weld.app/templates](https://weld.app/templates).
 
