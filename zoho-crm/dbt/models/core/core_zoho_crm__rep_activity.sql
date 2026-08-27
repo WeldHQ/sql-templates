@@ -12,8 +12,8 @@
 -- activity did we put into the deals we won". Any dashboard promising
 -- activity-to-outcome attribution from this connector alone is inventing the link.
 -- Until the connector syncs the parent ids, the join has to come from somewhere
--- else - a calendar or dialer source keyed on email, or Zoho's Notes module, whose
--- parent_id_id IS synced.
+-- else - a calendar or dialer source keyed on email, or Zoho's Notes module,
+-- whose parent id IS synced (parent_id_id in raw, parent_id after staging).
 --
 -- WHY THERE IS NO tasks_completed COLUMN: the connector syncs is_completed but no
 -- completion timestamp. Completions can be counted as a current-state total, never

@@ -114,9 +114,15 @@ SELECT
 
     -- An account with open pipeline and nothing written on it in a quarter is the
     -- report this model exists to produce.
-    COALESCE(d.deals_open, 0) > 0
-      AND COALESCE(n.last_note_at, a.created_time)
-            < TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 90 DAY) AS is_stale_with_open_pipeline
+    -- Wrapped for the same reason as is_overdue above: if there is no note and no
+    -- account created_time, the comparison is NULL rather than FALSE, and the flag
+    -- stops being a clean boolean. Nothing to go on means not stale.
+    COALESCE(
+        COALESCE(d.deals_open, 0) > 0
+          AND COALESCE(n.last_note_at, a.created_time)
+                < TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 90 DAY),
+        FALSE
+    ) AS is_stale_with_open_pipeline
 FROM {{ ref('stg_zoho_crm__account') }} a
 LEFT JOIN contacts c ON c.zoho_org = a.zoho_org AND c.account_id = a.account_id
 LEFT JOIN deals    d ON d.zoho_org = a.zoho_org AND d.account_id = a.account_id

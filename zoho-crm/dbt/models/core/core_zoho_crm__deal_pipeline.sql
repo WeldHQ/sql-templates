@@ -69,7 +69,13 @@ SELECT
     -- Open deals whose expected close date has already passed: the cheapest
     -- pipeline-hygiene number there is, and usually the first thing a sales lead
     -- asks for.
-    d.stage_status = 'Open' AND d.closing_date < CURRENT_DATE() AS is_overdue,
+    --
+    -- COALESCE, because closing_date can be NULL and NULL < CURRENT_DATE() is
+    -- NULL, not FALSE. Without it the flag is tri-valued and a downstream
+    -- WHERE NOT is_overdue quietly drops every deal with no expected close date.
+    -- No close date means not overdue.
+    COALESCE(d.stage_status = 'Open' AND d.closing_date < CURRENT_DATE(), FALSE)
+        AS is_overdue,
     CASE
         WHEN d.stage_status = 'Open'
         THEN DATE_DIFF(d.closing_date, CURRENT_DATE(), DAY)
