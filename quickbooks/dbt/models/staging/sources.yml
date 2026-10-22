@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: quickbooks
+    schema: raw_quickbooks
+    tables:
+      - name: account
+      - name: bill
+      - name: company
+      - name: invoice
+      - name: journal_report
+      - name: journal_report_line
