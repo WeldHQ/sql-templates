@@ -1,0 +1,16 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: sendgrid
+    schema: raw_sendgrid
+    tables:
+      - name: block
+      - name: bounce
+      - name: global_unsubscribe
+      - name: invalid_email
+      - name: legacy_category_stat
+      - name: mailbox_provider_stat
+      - name: spam_report
+      - name: stat
