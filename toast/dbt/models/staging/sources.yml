@@ -1,0 +1,19 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: toast
+    schema: raw_toast
+    tables:
+      - name: order_check
+      - name: dining_option
+      - name: job
+      - name: order
+      - name: order_check_payment
+      - name: restaurant
+      - name: revenue_center
+      - name: sales_category
+      - name: order_check_selection
+      - name: order_check_applied_service_charge
+      - name: time_entry
