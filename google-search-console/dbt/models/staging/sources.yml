@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: google_search_console
+    schema: raw_google_search_console
+    tables:
+      - name: page_analytics_web
+      - name: keyword_site_analytics_web
+      - name: keyword_page_analytics_web
+      - name: site_analytics_web
