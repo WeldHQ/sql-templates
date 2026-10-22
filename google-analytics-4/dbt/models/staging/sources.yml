@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: google_analytics_4
+    schema: raw_google_analytics_4
+    tables:
+      - name: audience_overview
+      - name: campaign_performance
+      - name: events_overview
+      - name: channel_traffic
+      - name: page_path

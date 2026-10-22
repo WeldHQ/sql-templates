@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: google_ads
+    schema: raw_google_ads
+    tables:
+      - name: ad_stats
+      - name: account
+      - name: campaign
+      - name: ad_group
+      - name: ad
+      - name: ad_group_country_stats

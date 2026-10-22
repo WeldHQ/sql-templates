@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: clickup
+    schema: raw_clickup
+    tables:
+      - name: task
+      - name: time
+      - name: team
+      - name: task_dependencies
+      - name: task_assignees
+      - name: user
+      - name: task_checklists

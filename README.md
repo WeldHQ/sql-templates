@@ -15,7 +15,33 @@ Each integration ships both dialects:
 | [`amazon-seller-central/`](amazon-seller-central/) | sales over time, product sales over time, settlement ledger, ASIN profitability, traffic and conversion, inventory health |
 | [`amazon-vendor-central/`](amazon-vendor-central/) | sales over time, sales by ASIN, inventory health, forecast vs actuals |
 
-The rest of the library is at [weld.app/templates](https://weld.app/templates).
+### From the weld.app template library
+
+Single-query reports, moved here from weld.app/templates. Simpler than the model sets
+above and not reconciled against the source systems; each directory's README says
+where every query sits and lists known issues.
+
+| | Models |
+|---|---|
+| [`hubspot/`](hubspot/) | new companies, contacts and deals by month, deals by stage, won/lost deals, activity by owner, contact-to-deal conversion |
+| [`salesforce/`](salesforce/) | aggregated daily sales report |
+| [`google-ads/`](google-ads/) | ad report, URL report, ad stats by country, cross-channel marketing report |
+| [`facebook-ads/`](facebook-ads/) | ad report, conversion insights, cross-channel marketing report |
+| [`linkedin-ads/`](linkedin-ads/) | creative report |
+| [`tiktok-ads/`](tiktok-ads/) | ad report |
+| [`snapchat-ads/`](snapchat-ads/) | ad report |
+| [`pinterest-ads/`](pinterest-ads/) | ad report |
+| [`microsoft-ads/`](microsoft-ads/) | account, campaign, ad group and ad reports |
+| [`amazon-ads/`](amazon-ads/) | campaign, ad group, keyword and ad reports |
+| [`google-analytics-4/`](google-analytics-4/) | account, campaign, channel, event, page path and user activity reports |
+| [`instagram-business/`](instagram-business/) | profile overview, engagement, media performance, growth |
+| [`klaviyo/`](klaviyo/) | email events, campaign engagement, campaign status by list, flow events |
+| [`stripe/`](stripe/) | MRR chain: subscriptions to monthly normalised MRR to new/expansion/contraction/churn |
+| [`economic/`](economic/) | invoice line items, order items |
+| [`xero/`](xero/) | journal entries, invoice entries, monthly invoice summary, monthly sales, tracking details |
+| [`intercom/`](intercom/) | monthly conversations, tickets, resolution time, tags, ratings, tickets by state |
+| [`clickup/`](clickup/) | team overview, task dependencies, user activity, time tracking, checklist progress |
+| [`amazon-mws/`](amazon-mws/) | monthly sales, inventory, financial, shipping, returns and order-update reports |
 
 ## Notes
 

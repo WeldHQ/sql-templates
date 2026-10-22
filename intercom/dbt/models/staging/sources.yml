@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: intercom
+    schema: raw_intercom
+    tables:
+      - name: conversation
+      - name: team
+      - name: ticket
+      - name: conversation_tag
+      - name: tag

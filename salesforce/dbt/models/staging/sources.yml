@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: salesforce
+    schema: raw_salesforce
+    tables:
+      - name: task
+      - name: event
+      - name: lead
+      - name: opportunity

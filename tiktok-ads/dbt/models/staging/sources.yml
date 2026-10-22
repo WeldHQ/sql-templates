@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: tiktok_ads
+    schema: raw_tiktok_ads
+    tables:
+      - name: ad_daily_report
+      - name: ad
+      - name: ad_group
+      - name: advertiser
+      - name: campaign

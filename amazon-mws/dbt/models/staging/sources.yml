@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: amazon_selling_api_oauth
+    schema: raw_amazon_selling_api_oauth
+    tables:
+      - name: orders
+      - name: fba_inventory_summary
+      - name: settlement_report
+      - name: orders_by_last_updated_date_report
+      - name: returns_by_return_date_report
