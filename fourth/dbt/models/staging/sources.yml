@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: fourth
+    schema: raw_fourth
+    tables:
+      - name: budget
+      - name: labour_daily_summary
+      - name: payroll
+      - name: sales
+      - name: shift
