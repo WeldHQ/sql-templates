@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: qualtrics
+    schema: raw_qualtrics
+    tables:
+      - name: distribution
+      - name: question
+      - name: question_response
+      - name: sub_question
+      - name: survey
+      - name: survey_response
