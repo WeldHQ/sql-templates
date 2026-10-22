@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: medallia
+    schema: raw_medallia
+    tables:
+      - name: feedback
+      - name: feedback_answer
+      - name: feedback_topic
+      - name: field_meta_data
+      - name: field_option
+      - name: unit
