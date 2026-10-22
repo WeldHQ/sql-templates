@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: woocommerce
+    schema: raw_woocommerce
+    tables:
+      - name: wp_wc_customer_lookup
+      - name: wp_woocommerce_order_items
+      - name: wp_wc_order_product_lookup
+      - name: wp_wc_order_stats
+      - name: wp_posts
+      - name: wp_postmeta
+      - name: wp_options
