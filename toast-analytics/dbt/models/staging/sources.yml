@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: toast_analytics
+    schema: raw_toast_analytics
+    tables:
+      - name: analytics_aggregated_sales
+      - name: analytics_labor
+      - name: analytics_labor_by_job
+      - name: analytics_menu_by_menu_item
+      - name: analytics_payout_by_settled_date
