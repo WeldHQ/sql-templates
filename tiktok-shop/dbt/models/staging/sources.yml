@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: tiktok_shop
+    schema: raw_tiktok_shop
+    tables:
+      - name: order
+      - name: order_line_items
+      - name: return_order
+      - name: return_order_line_items
+      - name: shop_performance
+      - name: statement
+      - name: statement_transaction_report
