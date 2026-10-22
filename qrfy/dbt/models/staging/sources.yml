@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: qrfy
+    schema: raw_qrfy
+    tables:
+      - name: analytics
+      - name: qr
