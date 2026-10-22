@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: business_central
+    schema: raw_business_central
+    tables:
+      - name: account
+      - name: company_information
+      - name: general_ledger_entry
+      - name: sales_invoice
