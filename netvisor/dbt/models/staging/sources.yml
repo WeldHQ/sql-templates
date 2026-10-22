@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: netvisor
+    schema: raw_netvisor
+    tables:
+      - name: purchase_invoice
+      - name: accounting_ledger
