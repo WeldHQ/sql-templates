@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: gorgias
+    schema: raw_gorgias
+    tables:
+      - name: satisfaction_survey
+      - name: ticket
+      - name: ticket_message
+      - name: voice_call
