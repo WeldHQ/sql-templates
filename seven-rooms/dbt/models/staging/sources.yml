@@ -1,0 +1,11 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: seven_rooms
+    schema: raw_seven_rooms
+    tables:
+      - name: reservation
+      - name: reservation_feedback
+      - name: venue
