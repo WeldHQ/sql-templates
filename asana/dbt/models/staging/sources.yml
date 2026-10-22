@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: asana
+    schema: raw_asana
+    tables:
+      - name: project
+      - name: project_task
+      - name: story
+      - name: task
+      - name: team
+      - name: user
