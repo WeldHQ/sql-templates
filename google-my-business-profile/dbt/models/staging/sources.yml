@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: google_my_business_profile
+    schema: raw_google_my_business_profile
+    tables:
+      - name: account_location
+      - name: location_performance_daily
+      - name: review
+      - name: location_search_keywords_impressions_monthly
