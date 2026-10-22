@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: mixpanel_source
+    schema: raw_mixpanel_source
+    tables:
+      - name: events
+      - name: funnels
