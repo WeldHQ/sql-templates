@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: adyen
+    schema: raw_adyen
+    tables:
+      - name: payments_accounting_report
+      - name: settlement_detail_report
