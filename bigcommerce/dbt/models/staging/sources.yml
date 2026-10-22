@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: bigcommerce
+    schema: raw_bigcommerce
+    tables:
+      - name: channel
+      - name: order
+      - name: order_line_item
+      - name: order_line_item_discount
+      - name: refund
+      - name: refund_line_item
+      - name: refund_payment
