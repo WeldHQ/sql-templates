@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: freshdesk
+    schema: raw_freshdesk
+    tables:
+      - name: agent
+      - name: group
+      - name: satisfaction_rating
+      - name: satisfaction_rating_value
+      - name: ticket
+      - name: ticket_conversation
