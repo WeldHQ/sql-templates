@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: amazon_attribution
+    schema: raw_amazon_attribution
+    tables:
+      - name: advertiser
+      - name: performance_report_by_campaign
+      - name: performance_report_by_creative
+      - name: product_report
+      - name: profile
