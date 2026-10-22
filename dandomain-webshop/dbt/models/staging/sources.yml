@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: dandomain_webshop
+    schema: raw_dandomain_webshop
+    tables:
+      - name: order
+      - name: order_discount_code
+      - name: order_line
+      - name: order_status_code
+      - name: order_transaction
