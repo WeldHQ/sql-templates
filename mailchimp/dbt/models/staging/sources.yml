@@ -1,0 +1,17 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: mailchimp
+    schema: raw_mailchimp
+    tables:
+      - name: campaign
+      - name: campaign_member_recipient
+      - name: campaign_recipient
+      - name: campaign_report_summary
+      - name: campaign_setting
+      - name: list
+      - name: list_activity
+      - name: member
+      - name: member_activity
