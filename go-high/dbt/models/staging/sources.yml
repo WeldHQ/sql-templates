@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: go_high
+    schema: raw_go_high
+    tables:
+      - name: opportunity
+      - name: pipeline
+      - name: pipeline_stage
+      - name: transaction
