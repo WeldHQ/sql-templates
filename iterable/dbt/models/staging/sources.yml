@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: iterable
+    schema: raw_iterable
+    tables:
+      - name: campaigns
+      - name: email_bounce
+      - name: email_click
+      - name: email_complaint
+      - name: email_open
+      - name: email_send
+      - name: email_unsubscribe
