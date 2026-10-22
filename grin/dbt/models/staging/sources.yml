@@ -1,0 +1,19 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: grin
+    schema: raw_grin
+    tables:
+      - name: campaign
+      - name: campaign_conversion
+      - name: campaign_payable
+      - name: contact
+      - name: contact_order
+      - name: content
+      - name: content_stat
+      - name: product
+      - name: product_selection_item
+      - name: product_variant
+      - name: proposal
