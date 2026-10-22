@@ -1,0 +1,9 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: salesforce_commerce_cloud
+    schema: raw_salesforce_commerce_cloud
+    tables:
+      - name: order
