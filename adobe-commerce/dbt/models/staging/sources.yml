@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: adobe_commerce
+    schema: raw_adobe_commerce
+    tables:
+      - name: catalog_product_entity
+      - name: sales_order
+      - name: sales_order_item
+      - name: cataloginventory_stock_item
