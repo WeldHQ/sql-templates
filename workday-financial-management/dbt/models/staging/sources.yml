@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: workday_financial_management
+    schema: raw_workday_financial_management
+    tables:
+      - name: account_set
+      - name: company
+      - name: customer_invoice
+      - name: journal_entry
+      - name: journal_entry_line
+      - name: ledger_account
