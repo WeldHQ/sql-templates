@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: apple_ads
+    schema: raw_apple_ads
+    tables:
+      - name: campaigns
+      - name: campaign_reports
