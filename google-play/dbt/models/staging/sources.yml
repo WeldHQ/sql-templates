@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: google_play
+    schema: raw_google_play
+    tables:
+      - name: stats_crashes_app_version
+      - name: earnings
+      - name: stats_installs_app_version
+      - name: stats_installs_country
+      - name: stats_store_performance_traffic_source
