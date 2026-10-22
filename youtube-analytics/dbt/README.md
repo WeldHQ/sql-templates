@@ -1,0 +1,28 @@
+# YouTube Analytics dbt models
+
+Drop-in model files. Not a runnable project: no `dbt_project.yml`, not run in CI.
+
+```
+models/staging/sources.yml                                     one source, all channels
+models/staging/stg_youtube_analytics__*.sql                    3 thin wrappers over the raw reports
+models/core/core_youtube_analytics__channel_performance_daily.sql  channel totals by day
+models/core/core_youtube_analytics__video_performance_daily.sql    per video by day
+models/core/core_youtube_analytics__traffic_sources_daily.sql      views by traffic source
+models/analytics/analytics__youtube_analytics_*.sql            thin BI-facing contracts
+tests/assert_video_performance_daily_is_unique.sql             one row per day, channel and video
+tests/assert_traffic_sources_reconcile_to_channel_views.sql    two reports agree on monthly views
+tests/assert_no_negative_activity.sql                          no negative views or watch time
+```
+
+These are the same models as [`../weld/`](../weld/), differing only in ref syntax.
+
+## You supply
+
+**Your schema.** Change `schema:` in `sources.yml` to wherever the YouTube tables
+land. No vars to set.
+
+## Notes
+
+- Re-aggregate averages from the weighted sums, never by averaging the averages.
+- Not run end to end. Reconcile a closed month against YouTube Studio before relying
+  on the output.
