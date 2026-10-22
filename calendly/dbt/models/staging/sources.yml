@@ -1,0 +1,11 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: calendly
+    schema: raw_calendly
+    tables:
+      - name: list_event_invitees
+      - name: list_organization_memberships
+      - name: list_events
