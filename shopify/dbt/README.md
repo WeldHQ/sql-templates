@@ -11,8 +11,8 @@ models/core/core_shopify__product_sales_over_time.sql the same equation at line 
 models/core/core_shopify__sku_cost_per_day.sql        point-in-time cost per SKU
 models/core/core_shopify__sales_by_product.sql        cheap product ranking
 models/analytics/analytics__shopify_*.sql             thin BI-facing contracts
-tests/assert_sales_equation_holds.sql                 net = gross + discounts + returns
-tests/assert_product_reconciles_to_sales.sql          product level sums to order level
+tests/assert_shopify__sales_equation_holds.sql                 net = gross + discounts + returns
+tests/assert_shopify__product_reconciles_to_sales.sql          product level sums to order level
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

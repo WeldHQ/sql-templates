@@ -13,7 +13,7 @@
 -- order_line_item_discount. Whatever part of the order's discount is not attached
 -- to a line (a manual order discount, for instance) is spread across the order's
 -- lines in proportion to their gross value, so net_sales here sums to net_sales in
--- sales_over_time for every order. tests/assert_product_reconciles_to_sales.sql
+-- sales_over_time for every order. tests/assert_bigcommerce__product_reconciles_to_sales.sql
 -- checks it.
 --
 -- RETURN ROWS ARE AN ESTIMATE, AND DO NOT RECONCILE. BigCommerce refunds products

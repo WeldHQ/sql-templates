@@ -9,8 +9,8 @@ models/core/core_walmart__sales_over_time.sql        sales equation per order da
 models/core/core_walmart__product_sales_over_time.sql  the same by SKU
 models/core/core_walmart__settlement_ledger.sql      the reconciliation file as a ledger
 models/analytics/analytics__walmart_*.sql            thin BI-facing contracts
-tests/assert_product_reconciles_to_sales.sql         SKU level sums to day level
-tests/assert_settlement_ties_to_deposits.sql         ledger sums to each deposit
+tests/assert_walmart__product_reconciles_to_sales.sql         SKU level sums to day level
+tests/assert_walmart__settlement_ties_to_deposits.sql         ledger sums to each deposit
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

@@ -29,7 +29,7 @@ SELECT
     --
     -- COALESCE rather than a bare join result: an unmapped marketplace keeps a
     -- stable key instead of going NULL and collapsing the grain.
-    -- tests/assert_marketplace_keys_are_consistent.sql flags it.
+    -- tests/assert_amazon_seller__marketplace_keys_are_consistent.sql flags it.
     COALESCE(m.marketplace_id,
              UPPER(NULLIF(TRIM(CAST(o.sales_channel AS STRING)), ''))) AS marketplace,
 

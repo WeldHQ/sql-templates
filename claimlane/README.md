@@ -132,7 +132,7 @@ claims end in exchanges, store credit, partial refunds or rejection.
   `declined` is `declined`; `notHandled` is `open`; anything else is `other`.
   `acceptance_rate` divides accepted lines by decided lines (accepted + declined), so
   open lines in recent months do not look like rejections.
-  [`assert_b2b_statuses_are_classified`](dbt/tests/assert_b2b_statuses_are_classified.sql)
+  [`assert_claimlane__b2b_statuses_are_classified`](dbt/tests/assert_claimlane__b2b_statuses_are_classified.sql)
   lists any status Claimlane adds later.
 - **Rates are ratios of sums**, so a large order weighs what it is worth. Never
   average the rate columns across rows.

@@ -9,9 +9,9 @@ models/core/core_woocommerce__sales_over_time.sql       the Revenue report: the 
 models/core/core_woocommerce__product_sales_over_time.sql  the same equation at product line grain
 models/core/core_woocommerce__customers.sql             the Customers report
 models/analytics/analytics__woocommerce_*.sql           thin BI-facing contracts
-tests/assert_sales_equation_holds.sql                   net = gross + discounts + returns
-tests/assert_product_discounts_tie_to_orders.sql        line coupons sum to order coupons
-tests/assert_no_duplicate_lines.sql                     one row per product line
+tests/assert_woocommerce__sales_equation_holds.sql                   net = gross + discounts + returns
+tests/assert_woocommerce__product_discounts_tie_to_orders.sql        line coupons sum to order coupons
+tests/assert_woocommerce__no_duplicate_lines.sql                     one row per product line
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

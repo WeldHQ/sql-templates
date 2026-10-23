@@ -80,7 +80,7 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 Sync both streams over the same window. The connector reads transactions payout by
 payout, so a transaction stream that reaches further back than the payout stream
 produces orphans that
-[`assert_transactions_belong_to_a_payout`](dbt/tests/assert_transactions_belong_to_a_payout.sql)
+[`assert_klarna__transactions_belong_to_a_payout`](dbt/tests/assert_klarna__transactions_belong_to_a_payout.sql)
 will list.
 
 ## What payout_reconciliation returns

@@ -19,7 +19,7 @@
 --
 -- Bundles with dynamic pricing: Magento may carry the price on the component rows
 -- rather than the bundle row, and those rows are excluded here. If you sell such
--- bundles, assert_product_sales_tie_to_orders will show it.
+-- bundles, assert_adobe_commerce__product_sales_tie_to_orders will show it.
 --
 -- Depends on: staging.adobe_commerce.sales_order_item, .sales_order,
 --             .store_timezone

@@ -17,7 +17,7 @@
 --
 -- Product columns follow exactly the same rules as
 -- core.walmart.product_sales_over_time and reconcile with it
--- (dbt/tests/assert_product_reconciles_to_sales.sql). Keep the two in step.
+-- (dbt/tests/assert_walmart__product_reconciles_to_sales.sql). Keep the two in step.
 -- Shipping, other charges and tax are reduced by the cancelled share of their
 -- line and by their own refunded amounts.
 --

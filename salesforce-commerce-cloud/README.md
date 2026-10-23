@@ -32,7 +32,7 @@ text, so `product_items`, `shipments`, `payment_instruments`,
 `product_items` into one row per line, once. It reads each field under both its
 camelCase and snake_case key, because the two Commerce Cloud APIs spell them
 differently. The parse is the least certain part of this package:
-[`assert_product_lines_parse`](dbt/tests/assert_product_lines_parse.sql) checks that
+[`assert_salesforce_commerce_cloud__product_lines_parse`](dbt/tests/assert_salesforce_commerce_cloud__product_lines_parse.sql) checks that
 the parsed lines add back up to Commerce Cloud's own `product_sub_total` on every
 order, and `sales_over_time.unparsed_line_amount` shows the gap per order.
 

@@ -12,7 +12,7 @@
 -- Order-level discounts are already allocated to lines by Commerce Cloud itself
 -- (price_after_order_discount), so net_sales here sums to net_sales in
 -- sales_over_time without any allocation of our own.
--- tests/assert_product_reconciles_to_sales.sql checks it.
+-- tests/assert_salesforce_commerce_cloud__product_reconciles_to_sales.sql checks it.
 
 WITH settings AS (
     SELECT sfcc_instance, report_timezone

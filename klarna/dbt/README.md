@@ -10,9 +10,9 @@ models/core/core_klarna__payout_reconciliation.sql   each payout, its breakdown,
 models/core/core_klarna__daily_settlement_activity.sql  sales, returns, fees per day
 models/core/core_klarna__fees_by_type.sql            fees by detailed type per month
 models/analytics/analytics__klarna_*.sql             thin BI-facing contracts
-tests/assert_no_duplicate_payouts.sql                one row per payout
-tests/assert_transactions_belong_to_a_payout.sql     transactions whose payout was not synced
-tests/assert_daily_activity_reconciles_to_ledger.sql daily report sums back to the ledger
+tests/assert_klarna__no_duplicate_payouts.sql                one row per payout
+tests/assert_klarna__transactions_belong_to_a_payout.sql     transactions whose payout was not synced
+tests/assert_klarna__daily_activity_reconciles_to_ledger.sql daily report sums back to the ledger
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

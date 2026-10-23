@@ -8,9 +8,9 @@ models/staging/stg_dandomain_webshop__*.sql                     5 thin wrappers,
 models/core/core_dandomain_webshop__sales_over_time.sql         the sales equation per order, credit notes as returns
 models/core/core_dandomain_webshop__product_sales_over_time.sql the same per order line
 models/analytics/analytics__dandomain_webshop_*.sql             thin BI-facing contracts
-tests/assert_sales_equation_holds.sql                           net = gross + discounts + returns
-tests/assert_product_reconciles_to_sales.sql                    product level sums to order level
-tests/assert_no_duplicate_order_lines.sql                       one row per order line
+tests/assert_dandomain_webshop__sales_equation_holds.sql                           net = gross + discounts + returns
+tests/assert_dandomain_webshop__product_reconciles_to_sales.sql                    product level sums to order level
+tests/assert_dandomain_webshop__no_duplicate_order_lines.sql                       one row per order line
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

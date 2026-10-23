@@ -145,7 +145,7 @@ admin report does. Canceled orders stay in with their canceled amounts subtracte
   the configurable parent (which carries the price and the selected simple SKU) or
   the bundle itself. Bundles with dynamic pricing can carry their money on the
   component rows instead;
-  [`assert_product_sales_tie_to_orders`](dbt/tests/assert_product_sales_tie_to_orders.sql)
+  [`assert_adobe_commerce__product_sales_tie_to_orders`](dbt/tests/assert_adobe_commerce__product_sales_tie_to_orders.sql)
   lists any order where item gross sales do not add up to the order's.
 - **Cost of goods** uses `base_cost`, the product cost copied onto the order item
   when the order was placed. It is NULL, not zero, when no cost was set, and so is

@@ -10,8 +10,8 @@ models/core/core_tiktok_shop__product_sales_over_time.sql  the same by product a
 models/core/core_tiktok_shop__settlement_ledger.sql     what TikTok paid out, per transaction
 models/core/core_tiktok_shop__shop_performance.sql      TikTok's own daily shop analytics
 models/analytics/analytics__tiktok_shop_*.sql           thin BI-facing contracts
-tests/assert_product_reconciles_to_sales.sql            product level sums to day level
-tests/assert_settlement_ties_to_statements.sql          transactions sum to each statement payout
+tests/assert_tiktok_shop__product_reconciles_to_sales.sql            product level sums to day level
+tests/assert_tiktok_shop__settlement_ties_to_statements.sql          transactions sum to each statement payout
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

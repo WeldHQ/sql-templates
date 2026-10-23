@@ -10,7 +10,7 @@
 --
 -- Product columns use exactly the same rules as
 -- core.tiktok_shop.product_sales_over_time, and the two reconcile on net_sales
--- and units (dbt/tests/assert_product_reconciles_to_sales.sql). Keep the two in
+-- and units (dbt/tests/assert_tiktok_shop__product_reconciles_to_sales.sql). Keep the two in
 -- step when changing either.
 --
 --   net_sales   = gross_sales + seller_discounts + platform_discounts

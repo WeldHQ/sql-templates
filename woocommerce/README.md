@@ -150,7 +150,7 @@ does.
 - **`product_sales_over_time` does not sum to `sales_over_time`.** It holds product
   lines only: fees, shipping lines and lump-sum refunds that are not tied to a
   product are in the order totals and not in the lines. Discounts do tie, and
-  [`assert_product_discounts_tie_to_orders`](dbt/tests/assert_product_discounts_tie_to_orders.sql)
+  [`assert_woocommerce__product_discounts_tie_to_orders`](dbt/tests/assert_woocommerce__product_discounts_tie_to_orders.sql)
   checks it.
 - **Deleted orders.** WooCommerce deletes an order's Analytics row when the order is
   deleted. Unless the connection uses change data capture, a deleted row stays in

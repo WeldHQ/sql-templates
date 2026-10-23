@@ -8,9 +8,9 @@ models/staging/stg_bigcommerce__*.sql                     8 thin wrappers, inclu
 models/core/core_bigcommerce__sales_over_time.sql         the sales equation per order, refunds on the refund date
 models/core/core_bigcommerce__product_sales_over_time.sql the same equation per order line
 models/analytics/analytics__bigcommerce_*.sql             thin BI-facing contracts
-tests/assert_sale_rows_match_bigcommerce_total.sql        total_sales = BigCommerce's total_inc_tax
-tests/assert_product_reconciles_to_sales.sql              product level sums to order level on SALE rows
-tests/assert_no_duplicate_rows_at_grain.sql               one row per day x store x order x row type
+tests/assert_bigcommerce__sale_rows_match_bigcommerce_total.sql        total_sales = BigCommerce's total_inc_tax
+tests/assert_bigcommerce__product_reconciles_to_sales.sql              product level sums to order level on SALE rows
+tests/assert_bigcommerce__no_duplicate_rows_at_grain.sql               one row per day x store x order x row type
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

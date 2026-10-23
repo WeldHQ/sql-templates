@@ -10,9 +10,9 @@ models/core/core_traede__product_sales.sql              units, revenue, cost and
 models/core/core_traede__order_book.sql                 every order line with open quantity and value
 models/core/core_traede__production_order_status.sql    inbound production, outstanding and slippage
 models/analytics/analytics__traede_*.sql                thin BI-facing contracts
-tests/assert_no_duplicate_order_lines.sql               one row per order line
-tests/assert_product_sales_grain.sql                    no fan-out in product_sales
-tests/assert_line_units_match_invoice_units.sql         line units sum to invoice header units
+tests/assert_traede__no_duplicate_order_lines.sql               one row per order line
+tests/assert_traede__product_sales_grain.sql                    no fan-out in product_sales
+tests/assert_traede__line_units_match_invoice_units.sql         line units sum to invoice header units
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

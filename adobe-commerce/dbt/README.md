@@ -10,9 +10,9 @@ models/core/core_adobe_commerce__sales_over_time.sql       the Orders report and
 models/core/core_adobe_commerce__product_sales_over_time.sql  the same equation per item, with cost
 models/core/core_adobe_commerce__inventory_cover.sql       stock against 30-day rate of sale
 models/analytics/analytics__adobe_commerce_*.sql           thin BI-facing contracts
-tests/assert_sales_equation_holds.sql                      net = gross + discounts + returns
-tests/assert_product_sales_tie_to_orders.sql               item gross sales add up to the order
-tests/assert_no_duplicate_orders.sql                       one row per order
+tests/assert_adobe_commerce__sales_equation_holds.sql                      net = gross + discounts + returns
+tests/assert_adobe_commerce__product_sales_tie_to_orders.sql               item gross sales add up to the order
+tests/assert_adobe_commerce__no_duplicate_orders.sql                       one row per order
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

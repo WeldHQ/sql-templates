@@ -10,9 +10,9 @@ models/staging/stg_salesforce_commerce_cloud__settings.sql              static: 
 models/core/core_salesforce_commerce_cloud__sales_over_time.sql         the sales equation per order
 models/core/core_salesforce_commerce_cloud__product_sales_over_time.sql the same per product line
 models/analytics/analytics__salesforce_commerce_cloud_*.sql             thin BI-facing contracts
-tests/assert_product_lines_parse.sql                                    parsed lines add up to product_sub_total
-tests/assert_product_reconciles_to_sales.sql                            product level sums to order level
-tests/assert_no_duplicate_orders.sql                                    one row per order
+tests/assert_salesforce_commerce_cloud__product_lines_parse.sql                                    parsed lines add up to product_sub_total
+tests/assert_salesforce_commerce_cloud__product_reconciles_to_sales.sql                            product level sums to order level
+tests/assert_salesforce_commerce_cloud__no_duplicate_orders.sql                                    one row per order
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref
@@ -28,7 +28,7 @@ tables.
 
 ## Notes
 
-- **Run `assert_product_lines_parse` first.** It is the check that the JSON key
+- **Run `assert_salesforce_commerce_cloud__product_lines_parse` first.** It is the check that the JSON key
   paths match your payload. If it fails on every order, fix the paths in
   `stg_salesforce_commerce_cloud__order_product_item.sql` before reading any
   product numbers.

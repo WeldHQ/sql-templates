@@ -99,7 +99,7 @@ numbers. Sum the raw table and recent days are inflated by however many times th
 have been re-fetched — and the multiple grows the more often you sync. Every staging
 model over a report keeps only the latest generation per key. This is the most common
 cause of "our Amazon revenue is 3× too high", and
-[`tests/assert_no_duplicate_report_generations.sql`](dbt/tests/assert_no_duplicate_report_generations.sql)
+[`tests/assert_amazon_seller__no_duplicate_report_generations.sql`](dbt/tests/assert_amazon_seller__no_duplicate_report_generations.sql)
 guards it.
 
 **2. The three ASIN reports are the same report.** `sales_and_traffic_report_by_asin`,
@@ -164,7 +164,7 @@ than zero.
 - **Amazon signs the settlement report; leave it alone.** Revenue positive, fees and
   refunds negative. `net_proceeds` is a plain `SUM(amount)`, and that is the only
   reason it ties to the deposit. An `ABS()` anywhere in the chain breaks the identity
-  that [`assert_settlement_ties_to_deposits.sql`](dbt/tests/assert_settlement_ties_to_deposits.sql)
+  that [`assert_amazon_seller__settlement_ties_to_deposits.sql`](dbt/tests/assert_amazon_seller__settlement_ties_to_deposits.sql)
   checks — and that test is worth more than the rest combined, because it validates
   against a number Amazon computed independently and put on your bank statement.
 - **A refund is identified by `transaction_type`, not by a negative amount.** Fees are

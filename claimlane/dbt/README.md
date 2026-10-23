@@ -12,9 +12,9 @@ models/core/core_claimlane__b2c_claims_by_product.sql   products and reasons
 models/core/core_claimlane__b2b_claim_lines.sql         retailer claim lines with decision
 models/core/core_claimlane__b2b_claims_by_month.sql     acceptance per brand per month
 models/analytics/analytics__claimlane_*.sql             thin BI-facing contracts
-tests/assert_no_duplicate_b2c_claim_lines.sql           one row per claimed product
-tests/assert_b2c_monthly_reconciles.sql                 monthly tickets and refunds sum back
-tests/assert_b2b_statuses_are_classified.sql            unknown statuses hiding in 'other'
+tests/assert_claimlane__no_duplicate_b2c_claim_lines.sql           one row per claimed product
+tests/assert_claimlane__b2c_monthly_reconciles.sql                 monthly tickets and refunds sum back
+tests/assert_claimlane__b2b_statuses_are_classified.sql            unknown statuses hiding in 'other'
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

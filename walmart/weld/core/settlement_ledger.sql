@@ -16,7 +16,7 @@
 -- SIGNS ARE WALMART'S. Sales positive, commission, fees and refunds negative.
 -- net_payable is a plain SUM(amount), and summed over a settlement date it should
 -- equal the file's total_payable, the amount deposited
--- (dbt/tests/assert_settlement_ties_to_deposits.sql).
+-- (dbt/tests/assert_walmart__settlement_ties_to_deposits.sql).
 --
 -- A refund is identified by transaction_type, not by a negative amount: fees are
 -- negative too. Refund lines also reverse commission (Walmart returns its

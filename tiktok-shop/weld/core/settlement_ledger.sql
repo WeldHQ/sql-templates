@@ -14,7 +14,7 @@
 -- SIGNS ARE TIKTOK'S. Nothing is flipped or ABS()'d: revenue comes in positive and
 -- deductions negative, and settlement_amount is TikTok's own per-transaction
 -- payout. Summed over a statement it should equal the statement's
--- settlement_amount, which dbt/tests/assert_settlement_ties_to_statements.sql
+-- settlement_amount, which dbt/tests/assert_tiktok_shop__settlement_ties_to_statements.sql
 -- checks. unexplained_amount shows anything the four headline components do not
 -- account for; it should be zero or very close to it.
 --

@@ -99,7 +99,7 @@ Only invoices with status `booked` count as revenue. The invoice date is Traede'
 - **`product_sales` sums line revenue**, which excludes shipping and handling and
   any discount set on the invoice header. It sits below `invoiced_sales_over_time`
   by exactly those amounts. Units match exactly; the
-  [`assert_line_units_match_invoice_units`](dbt/tests/assert_line_units_match_invoice_units.sql)
+  [`assert_traede__line_units_match_invoice_units`](dbt/tests/assert_traede__line_units_match_invoice_units.sql)
   test checks that.
 - **Margin percentage is not stored per row.** Compute it in BI as
   `SUM(gross_margin) / SUM(net_sales_with_cost)`. Averaging row percentages weights

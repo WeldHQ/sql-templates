@@ -10,9 +10,9 @@ models/core/core_cargoson__shipments.sql                one row per shipment, cl
 models/core/core_cargoson__carrier_costs_by_month.sql   spend and performance per carrier per month
 models/core/core_cargoson__lane_costs.sql               cost per lane and carrier
 models/analytics/analytics__cargoson_*.sql              thin BI-facing contracts
-tests/assert_no_duplicate_shipments.sql                 one row per booking
-tests/assert_statuses_are_classified.sql                statuses falling through to 'open'
-tests/assert_monthly_costs_reconcile_to_shipments.sql   monthly spend sums back to shipments
+tests/assert_cargoson__no_duplicate_shipments.sql                 one row per booking
+tests/assert_cargoson__statuses_are_classified.sql                statuses falling through to 'open'
+tests/assert_cargoson__monthly_costs_reconcile_to_shipments.sql   monthly spend sums back to shipments
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

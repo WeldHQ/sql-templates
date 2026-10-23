@@ -10,9 +10,9 @@ models/core/core_shiphero__fulfillment_by_day.sql         throughput, label cost
 models/core/core_shiphero__product_returns_by_month.sql   units shipped and returned per SKU per month
 models/core/core_shiphero__warehouse_productivity.sql     picks and packs per user per day
 models/analytics/analytics__shiphero_*.sql                thin BI-facing contracts
-tests/assert_one_row_per_order.sql                        no fan-out in order_fulfillment
-tests/assert_daily_sla_counts_every_shipped_order.sql     daily SLA counts tie to the order model
-tests/assert_label_cost_not_negative.sql                  label cost strings parsed sensibly
+tests/assert_shiphero__one_row_per_order.sql                        no fan-out in order_fulfillment
+tests/assert_shiphero__daily_sla_counts_every_shipped_order.sql     daily SLA counts tie to the order model
+tests/assert_shiphero__label_cost_not_negative.sql                  label cost strings parsed sensibly
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

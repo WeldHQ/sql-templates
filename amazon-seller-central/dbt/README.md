@@ -13,11 +13,11 @@ models/core/core_amazon_seller__traffic_and_conversion.sql   traffic at ASIN gra
 models/core/core_amazon_seller__inventory_health.sql         FBA stock and days of cover
 models/core/core_amazon_seller__product_sales_over_time.yml  schema tests for the three core models
 models/analytics/analytics__amazon_seller_*.sql              thin BI-facing contracts
-tests/assert_sales_equation_holds.sql                        net = gross + discounts + returns
-tests/assert_settlement_ties_to_deposits.sql                 the ledger sums to Amazon's own deposit figure
-tests/assert_product_sales_track_business_report.sql         line grain tracks Amazon's headline, month by month
-tests/assert_no_duplicate_report_generations.sql             one row per date, after de-duplication
-tests/assert_marketplace_keys_are_consistent.sql             every model keys the marketplace the same way
+tests/assert_amazon_seller__sales_equation_holds.sql                        net = gross + discounts + returns
+tests/assert_amazon_seller__settlement_ties_to_deposits.sql                 the ledger sums to Amazon's own deposit figure
+tests/assert_amazon_seller__product_sales_track_business_report.sql         line grain tracks Amazon's headline, month by month
+tests/assert_amazon_seller__no_duplicate_report_generations.sql             one row per date, after de-duplication
+tests/assert_amazon_seller__marketplace_keys_are_consistent.sql             every model keys the marketplace the same way
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics
@@ -65,11 +65,11 @@ drop-in:
   after 89 days, so your warehouse holds the only copy of your fee history that
   exists. `dbt run --full-refresh` over the staging model is safe — it re-reads raw —
   but resetting the *Weld stream* is not, and it is unrecoverable.
-- **Run `assert_settlement_ties_to_deposits` first.** It checks the ledger against a
+- **Run `assert_amazon_seller__settlement_ties_to_deposits` first.** It checks the ledger against a
   number Amazon computed independently and put on your bank statement, which makes it
   worth more than the rest of the suite combined. If it passes, the fee
   classification is complete.
-- **`assert_product_sales_track_business_report` is a drift test, not an equality
+- **`assert_amazon_seller__product_sales_track_business_report` is a drift test, not an equality
   test.** Amazon does not document the cancellation logic behind
   `ordered_product_sales`, so a model built from order lines lands close but never
   exactly. Measure your own steady-state gap over a few closed months and tighten the

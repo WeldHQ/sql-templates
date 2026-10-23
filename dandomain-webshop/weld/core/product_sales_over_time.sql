@@ -9,7 +9,7 @@
 -- Same order filter as sales_over_time. Discount codes apply to the whole order,
 -- so they are spread across its lines in proportion to each line's value after
 -- line discounts; with that, net_sales here sums to net_sales in sales_over_time.
--- tests/assert_product_reconciles_to_sales.sql checks it. Shipping and payment
+-- tests/assert_dandomain_webshop__product_reconciles_to_sales.sql checks it. Shipping and payment
 -- fees have no product and stay in sales_over_time only.
 
 WITH orders AS (

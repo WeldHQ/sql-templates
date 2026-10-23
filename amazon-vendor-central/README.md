@@ -65,7 +65,7 @@ plausible enough to believe.
 So `distributor_view` and `selling_program` are part of the grain in every core model,
 which forces the choice to be explicit, and the analytics models pin
 `MANUFACTURING + RETAIL` — "how is my brand selling on Amazon", the right default.
-[`assert_distributor_views_are_not_summed.sql`](dbt/tests/assert_distributor_views_are_not_summed.sql)
+[`assert_amazon_vendor__distributor_views_are_not_summed.sql`](dbt/tests/assert_amazon_vendor__distributor_views_are_not_summed.sql)
 measures how much overlap your catalogue actually has, so you know the size of the
 error you would be making.
 
@@ -73,7 +73,7 @@ error you would be making.
 Margin are reported per ASIN per day, full stop. Joined onto four-way-split sales they
 repeat on up to four rows, which multiplies traffic and divides every conversion rate
 by the same factor. `sales_by_asin` documents it;
-[`assert_traffic_is_not_multiplied_by_views.sql`](dbt/tests/assert_traffic_is_not_multiplied_by_views.sql)
+[`assert_amazon_vendor__traffic_is_not_multiplied_by_views.sql`](dbt/tests/assert_amazon_vendor__traffic_is_not_multiplied_by_views.sql)
 catches it.
 
 ## Layers
@@ -147,7 +147,7 @@ KPI.
   and restates the trailing ~72 hours. Weld appends each generation, so a date
   legitimately appears several times with different numbers. Every staging model keeps
   only the latest generation per key, and
-  [`assert_no_duplicate_report_generations.sql`](dbt/tests/assert_no_duplicate_report_generations.sql)
+  [`assert_amazon_vendor__no_duplicate_report_generations.sql`](dbt/tests/assert_amazon_vendor__no_duplicate_report_generations.sql)
   guards it — the failure is silent, since `shipped_cogs` stays plausible and is
   simply a multiple of the truth.
 - **`net_pure_product_margin` is Amazon's margin, not yours.** It is
