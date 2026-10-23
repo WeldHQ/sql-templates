@@ -1,62 +1,31 @@
 -- core_amazon_mws__monthly_order_update_tracking_report
 -- Monthly Order Update Tracking Report. Extracts a monthly order update tracking
 -- report for Amazon integration. It retrieves data from the
--- "orders_by_last_updated_date_report" table and calculates various metrics such as
--- total orders updated, total updates, average price updated, status breakdown, and
--- channel breakdown. The results are sorted by month, status count, and channel
--- count in descending order.
+-- "orders_by_last_updated_date_report" table and counts the orders updated in
+-- each month, broken down by order status and sales channel.
 --
--- From the weld.app template library. Not reconciled against Amazon Seller Central;
--- check the output against the source before relying on it.
+-- Grain: month x order status x order channel, by last-updated date. Each row
+-- counts the distinct orders updated in that month with that status and
+-- channel, the report rows behind them, and their average item price. An order
+-- that changed status within a month appears under each status it had, so
+-- add up orders_updated across statuses with care.
+--
+-- From the weld.app template library, corrected. Not reconciled against Amazon
+-- Seller Central; check the output against the source before relying on it.
 
-with
-    MonthlyOrderUpdates as (
-        select
-            date_trunc(cast(last_updated_date as date), month) as month
-          , count(distinct amazon_order_id) as TotalOrdersUpdated
-          , count(amazon_order_id) as TotalUpdates
-          , avg(item_price) as AveragePriceUpdated
-        from
-            {{ source('amazon_selling_api_oauth', 'orders_by_last_updated_date_report') }}
-        group by
-            month
-    )
-  , StatusBreakdown as (
-        select
-            date_trunc(cast(last_updated_date as date), month) as month
-          , order_status
-          , count(distinct amazon_order_id) as StatusCount
-        from
-           {{ source('amazon_selling_api_oauth', 'orders_by_last_updated_date_report') }}
-        group by
-            month
-          , order_status
-    )
-  , ChannelBreakdown as (
-        select
-            date_trunc(cast(last_updated_date as date), month) as month
-          , order_channel
-          , count(distinct amazon_order_id) as ChannelCount
-        from
-             {{ source('amazon_selling_api_oauth', 'orders_by_last_updated_date_report') }}
-        group by
-            month
-          , order_channel
-    )
 select
-    m.Month
-  , m.TotalOrdersUpdated
-  , m.TotalUpdates
-  , m.AveragePriceUpdated
-  , s.order_status
-  , s.StatusCount
-  , c.order_channel
-  , c.ChannelCount
+    date_trunc(cast(last_updated_date as date), month) as month
+  , order_status
+  , order_channel
+  , count(distinct amazon_order_id) as orders_updated
+  , count(*) as updates
+  , avg(item_price) as average_item_price
 from
-    MonthlyOrderUpdates m
-    left join StatusBreakdown s on m.Month = s.Month
-    left join ChannelBreakdown c on m.Month = c.Month
+    {{ source('amazon_selling_api_oauth', 'orders_by_last_updated_date_report') }}
+group by
+    month
+  , order_status
+  , order_channel
 order by
-    m.Month desc
-  , s.StatusCount desc
-  , c.ChannelCount desc
+    month desc
+  , orders_updated desc
