@@ -8,9 +8,9 @@ models/staging/stg_apple_ads__*.sql                         2 thin wrappers over
 models/core/core_apple_ads__campaign_performance_daily.sql  day x organization x campaign, cross-channel columns first
 models/core/core_apple_ads__app_performance_daily.sql       day x organization x app
 models/analytics/analytics__apple_ads_*.sql                 thin BI-facing contracts
-tests/assert_campaign_performance_daily_is_unique.sql       one row per day and campaign
-tests/assert_app_spend_reconciles_to_campaigns.sql          app spend ties to campaign spend
-tests/assert_no_negative_delivery.sql                       no negative spend, impressions, taps or installs
+tests/assert_apple_ads__campaign_performance_daily_is_unique.sql       one row per day and campaign
+tests/assert_apple_ads__app_spend_reconciles_to_campaigns.sql          app spend ties to campaign spend
+tests/assert_apple_ads__no_negative_delivery.sql                       no negative spend, impressions, taps or installs
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

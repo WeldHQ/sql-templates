@@ -10,10 +10,10 @@ models/core/core_youtube_analytics__video_performance_daily.sql    per video by 
 models/core/core_youtube_analytics__traffic_sources_daily.sql      views by traffic source
 models/core/core_youtube_analytics__viewer_demographics_daily.sql  views by age group and gender
 models/analytics/analytics__youtube_analytics_*.sql            thin BI-facing contracts
-tests/assert_video_performance_daily_is_unique.sql             one row per day, channel and video
-tests/assert_traffic_sources_reconcile_to_channel_views.sql    two reports agree on monthly views
-tests/assert_no_negative_activity.sql                          no negative views or watch time
-tests/assert_viewer_demographic_shares_sum_to_one.sql          age and gender shares add up per day
+tests/assert_youtube_analytics__video_performance_daily_is_unique.sql             one row per day, channel and video
+tests/assert_youtube_analytics__traffic_sources_reconcile_to_channel_views.sql    two reports agree on monthly views
+tests/assert_youtube_analytics__no_negative_activity.sql                          no negative views or watch time
+tests/assert_youtube_analytics__viewer_demographic_shares_sum_to_one.sql          age and gender shares add up per day
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

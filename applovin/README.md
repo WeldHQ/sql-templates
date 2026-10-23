@@ -63,7 +63,7 @@ the refs.
 | campaign performance daily | `advertiser_campaign_report` |
 
 The two reports are synced as separate streams.
-`assert_creative_set_spend_reconciles_to_campaigns` checks that they agree.
+`assert_applovin__creative_set_spend_reconciles_to_campaigns` checks that they agree.
 
 ## Notes
 

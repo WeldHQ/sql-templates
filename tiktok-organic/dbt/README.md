@@ -8,8 +8,8 @@ models/staging/stg_tiktok_organic__*.sql                        3 thin wrappers 
 models/core/core_tiktok_organic__profile_performance_daily.sql  followers, views and engagement per day
 models/core/core_tiktok_organic__video_performance.sql          lifetime metrics and engagement rate per video
 models/analytics/analytics__tiktok_organic_*.sql                thin BI-facing contracts
-tests/assert_profile_performance_daily_is_unique.sql            one row per day and account
-tests/assert_video_performance_is_unique.sql                    one row per video
+tests/assert_tiktok_organic__profile_performance_daily_is_unique.sql            one row per day and account
+tests/assert_tiktok_organic__video_performance_is_unique.sql                    one row per video
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

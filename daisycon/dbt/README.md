@@ -10,9 +10,9 @@ models/core/core_daisycon__media_performance.sql        advertiser x media, tota
 models/core/core_daisycon__invoices.sql                 one row per invoice, with line totals
 models/core/core_daisycon__invoice_costs_monthly.sql    month x advertiser x currency x line code
 models/analytics/analytics__daisycon_*.sql              thin BI-facing contracts
-tests/assert_publisher_performance_is_unique.sql        one row per advertiser and publisher
-tests/assert_invoice_lines_reconcile.sql                invoice lines add up to the invoice
-tests/assert_no_negative_activity.sql                   no negative clicks, transactions or commission
+tests/assert_daisycon__publisher_performance_is_unique.sql        one row per advertiser and publisher
+tests/assert_daisycon__invoice_lines_reconcile.sql                invoice lines add up to the invoice
+tests/assert_daisycon__no_negative_activity.sql                   no negative clicks, transactions or commission
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

@@ -8,8 +8,8 @@ models/staging/stg_facebook_pages__*.sql                      4 thin wrappers ov
 models/core/core_facebook_pages__page_performance_daily.sql   followers, views and engagement per day
 models/core/core_facebook_pages__post_performance.sql         lifetime metrics and engagement rate per post
 models/analytics/analytics__facebook_pages_*.sql              thin BI-facing contracts
-tests/assert_page_performance_daily_is_unique.sql             one row per day and Page
-tests/assert_post_performance_is_unique.sql                   one row per post
+tests/assert_facebook_pages__page_performance_daily_is_unique.sql             one row per day and Page
+tests/assert_facebook_pages__post_performance_is_unique.sql                   one row per post
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

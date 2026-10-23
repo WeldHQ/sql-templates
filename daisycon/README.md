@@ -80,7 +80,7 @@ in full mode.** See the first note.
   parts.
 - **Currency** is per row. The connector keys statistics on advertiser and
   publisher (or media) only, so an advertiser that runs one programme in several
-  currencies can lose rows; `assert_publisher_performance_is_unique` and a
+  currencies can lose rows; `assert_daisycon__publisher_performance_is_unique` and a
   comparison with the dashboard will show it.
 - **Invoices are fetched by invoice date** from the previous sync onwards. Payment
   status on older invoices is not refreshed by an incremental sync, so `is_paid`

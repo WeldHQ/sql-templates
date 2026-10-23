@@ -9,9 +9,9 @@ models/core/core_amazon_attribution__creative_performance_daily.sql day x advert
 models/core/core_amazon_attribution__campaign_performance_daily.sql day x advertiser x campaign, with rates and bonus
 models/core/core_amazon_attribution__product_performance_daily.sql  day x campaign x ad group x ASIN
 models/analytics/analytics__amazon_attribution_*.sql                thin BI-facing contracts
-tests/assert_creative_performance_daily_is_unique.sql               one row per day and creative
-tests/assert_campaign_performance_daily_is_unique.sql               one row per day and campaign
-tests/assert_total_covers_promoted.sql                              total metrics never below promoted ones
+tests/assert_amazon_attribution__creative_performance_daily_is_unique.sql               one row per day and creative
+tests/assert_amazon_attribution__campaign_performance_daily_is_unique.sql               one row per day and campaign
+tests/assert_amazon_attribution__total_covers_promoted.sql                              total metrics never below promoted ones
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

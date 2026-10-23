@@ -8,9 +8,9 @@ models/staging/stg_reddit_ads__*.sql                       5 thin wrappers over 
 models/core/core_reddit_ads__ad_performance_daily.sql       day x account x ad, cross-channel columns first
 models/core/core_reddit_ads__campaign_performance_daily.sql day x account x campaign, with rates
 models/analytics/analytics__reddit_ads_*.sql               thin BI-facing contracts
-tests/assert_ad_performance_daily_is_unique.sql            one row per day, account and ad
-tests/assert_campaign_spend_reconciles_to_ads.sql          campaign spend ties to ad spend
-tests/assert_no_negative_delivery.sql                      no negative spend, impressions or clicks
+tests/assert_reddit_ads__ad_performance_daily_is_unique.sql            one row per day, account and ad
+tests/assert_reddit_ads__campaign_spend_reconciles_to_ads.sql          campaign spend ties to ad spend
+tests/assert_reddit_ads__no_negative_delivery.sql                      no negative spend, impressions or clicks
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

@@ -9,9 +9,9 @@ models/core/core_google_my_business_profile__location_performance_daily.sql  dai
 models/core/core_google_my_business_profile__search_keywords_monthly.sql     search terms per location and month
 models/core/core_google_my_business_profile__reviews_monthly.sql             reviews, rating and replies per month
 models/analytics/analytics__google_my_business_profile_*.sql            thin BI-facing contracts
-tests/assert_location_performance_daily_is_unique.sql                   one row per day and location
-tests/assert_review_totals_reconcile.sql                                running count ties to the review table
-tests/assert_ratings_in_range.sql                                       ratings stay between 1 and 5
+tests/assert_google_my_business_profile__location_performance_daily_is_unique.sql                   one row per day and location
+tests/assert_google_my_business_profile__review_totals_reconcile.sql                                running count ties to the review table
+tests/assert_google_my_business_profile__ratings_in_range.sql                                       ratings stay between 1 and 5
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

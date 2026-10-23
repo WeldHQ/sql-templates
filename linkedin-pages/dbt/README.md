@@ -9,9 +9,9 @@ models/core/core_linkedin_pages__page_performance_daily.sql  organic impressions
 models/core/core_linkedin_pages__follower_growth_daily.sql   new followers and estimated total per day
 models/core/core_linkedin_pages__follower_demographics.sql   follower breakdowns, current snapshot
 models/analytics/analytics__linkedin_pages_*.sql             thin BI-facing contracts
-tests/assert_page_performance_daily_is_unique.sql            one row per day and Page
-tests/assert_follower_growth_daily_is_unique.sql             one row per day and Page
-tests/assert_demographic_shares_sum_to_one.sql               segment shares of a facet add to 1
+tests/assert_linkedin_pages__page_performance_daily_is_unique.sql            one row per day and Page
+tests/assert_linkedin_pages__follower_growth_daily_is_unique.sql             one row per day and Page
+tests/assert_linkedin_pages__demographic_shares_sum_to_one.sql               segment shares of a facet add to 1
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

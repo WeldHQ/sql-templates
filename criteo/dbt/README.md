@@ -8,9 +8,9 @@ models/staging/stg_criteo__*.sql                        5 thin wrappers over the
 models/core/core_criteo__ad_performance_daily.sql       day x campaign x ad set x ad, cross-channel columns first
 models/core/core_criteo__campaign_performance_daily.sql day x advertiser x campaign, with rates
 models/analytics/analytics__criteo_*.sql                thin BI-facing contracts
-tests/assert_ad_performance_daily_is_unique.sql         one row per day, campaign, ad set and ad
-tests/assert_campaign_spend_reconciles_to_ads.sql       campaign spend ties to ad spend
-tests/assert_no_negative_delivery.sql                   no negative spend, displays, clicks or sales
+tests/assert_criteo__ad_performance_daily_is_unique.sql         one row per day, campaign, ad set and ad
+tests/assert_criteo__campaign_spend_reconciles_to_ads.sql       campaign spend ties to ad spend
+tests/assert_criteo__no_negative_delivery.sql                   no negative spend, displays, clicks or sales
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.
