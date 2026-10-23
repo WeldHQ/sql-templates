@@ -10,8 +10,8 @@ models/core/core_qrfy__scans_daily.sql                    scans and unique scans
 models/core/core_qrfy__scans_by_location_and_device.sql   country, city and OS per code per month
 models/core/core_qrfy__qr_codes.sql                       every code with QRFY's lifetime counter
 models/analytics/analytics__qrfy_*.sql                    thin BI-facing contracts
-tests/assert_breakdown_reconciles_to_daily.sql            breakdown sums to the daily totals
-tests/assert_unique_scans_within_scans.sql                unique scans never exceed scans
+tests/assert_qrfy__breakdown_reconciles_to_daily.sql            breakdown sums to the daily totals
+tests/assert_qrfy__unique_scans_within_scans.sql                unique scans never exceed scans
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models

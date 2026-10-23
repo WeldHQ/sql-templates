@@ -11,8 +11,8 @@ models/core/core_twilio__messaging_daily.sql      volume, delivery and spend per
 models/core/core_twilio__message_errors_daily.sql failed and undelivered messages by error code
 models/core/core_twilio__calls_daily.sql          call outcomes, minutes and spend per day
 models/analytics/analytics__twilio_*.sql          thin BI-facing contracts
-tests/assert_one_row_per_message_and_call.sql     the de-duplication in staging holds
-tests/assert_costs_are_not_negative.sql           the price sign flip holds
+tests/assert_twilio__one_row_per_message_and_call.sql     the de-duplication in staging holds
+tests/assert_twilio__costs_are_not_negative.sql           the price sign flip holds
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models

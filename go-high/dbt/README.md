@@ -9,8 +9,8 @@ models/core/core_go_high__pipeline_snapshot.sql              deals and value per
 models/core/core_go_high__opportunity_outcomes_monthly.sql   win rate and won value by created month
 models/core/core_go_high__payments_daily.sql                 payments, refunds and net per day
 models/analytics/analytics__go_high_*.sql                    thin BI-facing contracts
-tests/assert_opportunity_counts_reconcile.sql                both opportunity models account for every deal once
-tests/assert_refunds_within_amount.sql                       no refund exceeds its payment
+tests/assert_go_high__opportunity_counts_reconcile.sql                both opportunity models account for every deal once
+tests/assert_go_high__refunds_within_amount.sql                       no refund exceeds its payment
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models

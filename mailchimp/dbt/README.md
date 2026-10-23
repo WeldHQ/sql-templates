@@ -9,8 +9,8 @@ models/core/core_mailchimp__campaign_performance.sql    one row per sent campaig
 models/core/core_mailchimp__audience_growth_daily.sql   subscribes, unsubscribes and sends per audience per day
 models/core/core_mailchimp__audience_summary.sql        contact counts per audience, Mailchimp's and rebuilt
 models/analytics/analytics__mailchimp_*.sql             thin BI-facing contracts
-tests/assert_one_row_per_campaign_and_audience_day.sql  the stated grains hold
-tests/assert_campaign_outcomes_within_recipients.sql    bounces, opens and clicks stay within recipients
+tests/assert_mailchimp__one_row_per_campaign_and_audience_day.sql  the stated grains hold
+tests/assert_mailchimp__campaign_outcomes_within_recipients.sql    bounces, opens and clicks stay within recipients
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models

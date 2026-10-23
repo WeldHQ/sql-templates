@@ -10,8 +10,8 @@ models/core/core_sendgrid__category_stats_daily.sql       the same, per category
 models/core/core_sendgrid__mailbox_provider_stats_daily.sql  deliverability per receiving provider
 models/core/core_sendgrid__suppressions_daily.sql         new bounces, blocks, spam reports, unsubscribes
 models/analytics/analytics__sendgrid_*.sql                thin BI-facing contracts
-tests/assert_one_row_per_day_and_category.sql             the de-duplication in staging holds
-tests/assert_funnel_never_exceeds_requests.sql            delivered and processed stay within requests
+tests/assert_sendgrid__one_row_per_day_and_category.sql             the de-duplication in staging holds
+tests/assert_sendgrid__funnel_never_exceeds_requests.sql            delivered and processed stay within requests
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models

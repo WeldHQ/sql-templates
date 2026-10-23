@@ -11,9 +11,9 @@ models/core/core_mixpanel_source__active_users_daily.sql          DAU, WAU, MAU 
 models/core/core_mixpanel_source__funnel_conversion_daily.sql     saved funnels step by step per day
 models/core/core_mixpanel_source__sessions.sql                    one row per session, 30-minute timeout
 models/analytics/analytics__mixpanel_source_*.sql                 thin BI-facing contracts
-tests/assert_one_row_per_day_and_event.sql                        stated grains hold; DAU <= WAU <= MAU
-tests/assert_sessions_unique_and_events_reconcile.sql             one row per session; session events match staging
-tests/assert_funnels_only_narrow.sql                              no funnel step gains users
+tests/assert_mixpanel_source__one_row_per_day_and_event.sql                        stated grains hold; DAU <= WAU <= MAU
+tests/assert_mixpanel_source__sessions_unique_and_events_reconcile.sql             one row per session; session events match staging
+tests/assert_mixpanel_source__funnels_only_narrow.sql                              no funnel step gains users
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models

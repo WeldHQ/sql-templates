@@ -8,8 +8,8 @@ models/staging/stg_iterable__*.sql                           7 thin wrappers ove
 models/core/core_iterable__email_performance_daily.sql       email events per campaign per day
 models/core/core_iterable__email_campaign_performance.sql    whole-life numbers and rates per campaign
 models/analytics/analytics__iterable_*.sql                   thin BI-facing contracts
-tests/assert_daily_reconciles_to_campaigns.sql               both models count the same events
-tests/assert_one_row_per_campaign.sql                        campaign grain holds; event times parse
+tests/assert_iterable__daily_reconciles_to_campaigns.sql               both models count the same events
+tests/assert_iterable__one_row_per_campaign.sql                        campaign grain holds; event times parse
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The analytics models
