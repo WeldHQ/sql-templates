@@ -17,7 +17,7 @@
 -- Purchase value is an integer field too and is converted the same way; check one
 -- day against Ads Manager before relying on it.
 --
--- Weld requests one UTC day per call. With a non-UTC report timezone one window
+-- Each report window is one UTC day. With a non-UTC report timezone one window
 -- can return two local dates, and one local date arrives from two windows, so
 -- core SUMs across windows rather than picking one.
 

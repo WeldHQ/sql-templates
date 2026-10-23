@@ -79,7 +79,7 @@ an ad (see below), so it sums to the campaign totals.
   then `ad`). If the entity streams are not synced, `account_id` is NULL.
 - **Re-synced days are de-duplicated.** If a day is synced more than once, staging
   keeps the latest row per day, campaign, ad set and ad.
-- **History goes back two years at most,** the limit the connector requests.
+- **History goes back two years at most.**
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a week of spend, displays and clicks per campaign
   against the Criteo UI (same currency, same timezone, same attribution) before
@@ -87,8 +87,8 @@ an ad (see below), so it sums to the campaign totals.
 
 ## Schema notes
 
-No mismatches: every column used is in the public ERD and in the connector's
-stream definitions. The report's metric columns are the snake_cased Criteo metric
+No mismatches: every column used is in the public ERD and in the schema Weld
+syncs. The report's metric columns are the snake_cased Criteo metric
 names, so `SalesPc30d` lands as `sales_pc_30_d` and `AdvertiserCost` as
 `advertiser_cost`.
 

@@ -60,12 +60,9 @@ refs.
 
 ## Notes
 
-- **Check that the install columns are filled.** The connector stores installs
-  under Apple's older field names (`installs`, `new_downloads`, `redownloads`).
-  Apple's current reporting API, which the connector calls, returns them as
-  `tapInstalls`, `tapNewDownloads` and `tapRedownloads`, so these columns may be
-  empty in your warehouse. Run `SELECT COUNT(installs) FROM campaign_reports`
-  first. If it is 0, `conversions`, cost per install and install rate will be NULL
+- **Check that the install columns are filled.** In some accounts the install
+  columns (`installs`, `new_downloads`, `redownloads`) are empty. Run
+  `SELECT COUNT(installs) FROM campaign_reports` first. If it is 0, `conversions`, cost per install and install rate will be NULL
   while spend, impressions and taps are still correct. View-through and total
   installs are not synced.
 - **Dates follow the organization's reporting time zone,** Apple's default for
@@ -88,16 +85,15 @@ refs.
 ## Schema notes
 
 The public ERD calls the report table `campaign_reports` and its columns match the
-connector's stream definition. The mismatch is with Apple's API, not the ERD: the
-install and rate columns (`installs`, `new_downloads`, `redownloads`,
-`lat_on_installs`, `lat_off_installs`, `avg_cpa`, `conversion_rate`) carry the
-pre-v5 names, which Apple's v5 reporting API no longer returns. The rate columns
-are not used here; the template recomputes rates from the base counts.
+schema Weld syncs. The install and rate columns (`installs`, `new_downloads`,
+`redownloads`, `lat_on_installs`, `lat_off_installs`, `avg_cpa`,
+`conversion_rate`) can be empty in some accounts; see the install check above. The
+rate columns are not used here; the template recomputes rates from the base counts.
 
 What cannot be built from this connector: ad group, ad, keyword and search term
 performance (only campaign level reports are synced), organization names (no
 organizations stream), and view-through or total installs (only the tap-through
-columns exist, under their old names).
+install columns exist).
 
 ## Vendor docs
 

@@ -65,12 +65,11 @@ refs.
 - **Sent from Sprout** means a Sprout user sent the message from inside Sprout, so
   it carries the user. Posts published natively on the network are sent, but not
   sent from Sprout.
-- **Days are UTC.** The connector requests every timestamp in UTC. Sprout's own
+- **Days are UTC.** Every timestamp is stored in UTC. Sprout's own
   reports use the timezone set on your account, so day boundaries can differ.
-- **Messages are read once.** The connector fetches messages by creation time from
-  the previous sync onwards, so a message's case link or tags that change later are
-  not updated. Cases are re-read whenever they change, so their status and close
-  time stay current.
+- **Messages are read once.** New messages are picked up by creation time, so a
+  message's case link or tags that change later are not updated. Cases are picked
+  up again whenever they change, so their status and close time stay current.
 - **Time to close** runs from creation to the last close. A reopened case counts
   its full span. Sprout's own reports may measure differently (for example
   excluding time on hold); compare a week before using the numbers for targets.
@@ -84,12 +83,11 @@ refs.
 ## Schema notes
 
 There is no public ERD for this connector; every column used here comes from the
-connector's stream definitions. Nested fields are flattened with underscores
+schema Weld syncs. Nested fields are flattened with underscores
 (`from.guid` becomes `from_guid`, `internal.sent_by.id` becomes
 `internal_sent_by_id`), and list fields (`assigned_to`, `internal_tags`, `hashtags`)
-arrive as JSON strings. The `sent` column exists on `message` but is always empty:
-the connector does not request it, because Sprout only documents it on its posts
-endpoint. Messages carry no customer or group id; the customer comes from `profile`
+arrive as JSON strings. The `sent` column exists on `message` but is always empty,
+so sent versus received is derived instead (see Notes). Messages carry no customer or group id; the customer comes from `profile`
 and the group of a case from `group`.
 
 ## Vendor docs

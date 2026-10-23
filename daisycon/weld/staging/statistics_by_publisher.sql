@@ -5,11 +5,11 @@
 --
 -- Grain: advertiser x publisher, totalled over the sync window (see below).
 --
--- THE ROWS ARE TOTALS, NOT DAYS. Daisycon returns one row per publisher for a date range,
--- and the connector asks for "from the start date to now". On a full sync that is
--- the connector's start date (12 months back by default); on an incremental sync it
--- is only since the previous sync, and the new totals overwrite the old ones. Sync
--- this stream in full mode, or the rows mix windows of different lengths.
+-- THE ROWS ARE TOTALS, NOT DAYS. Daisycon returns one row per publisher for a date range.
+-- After a full sync the range runs from the connection's start date (12 months back
+-- by default) to now; after an incremental sync, rows for publisher active since the
+-- previous sync cover only that shorter period. Sync this table in full mode, or
+-- the rows mix windows of different lengths.
 --
 -- Transactions are counted on the transaction date, Daisycon's default. Amounts are
 -- in currency_code. Daisycon's field names are kept close to the API:

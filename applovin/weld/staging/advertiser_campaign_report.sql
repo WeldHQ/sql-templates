@@ -4,14 +4,14 @@
 --
 -- Grain: day x campaign x creative set x country x platform x device type x
 -- placement type x ad size x traffic source x custom product page x campaign type,
--- the key the connector writes with.
+-- the key of the raw table.
 --
 -- Days are UTC, as the AppLovin reporting API returns them. Delivery metrics are
 -- dated on the day they happened. The _0d, _1d and _7d columns are install-cohort
--- metrics: revenue from users who installed on that day, within N days. The
--- connector only requests a window once it has fully elapsed, so _7d is NULL for
--- the last seven days. The connector re-reads the last seven days once a day,
--- and the latest synced row per key wins.
+-- metrics: revenue from users who installed on that day, within N days. A
+-- cohort window is only filled once it has fully elapsed, so _7d is NULL for the
+-- last seven days. The last seven days are re-read once a day, and the latest
+-- synced row per key wins.
 
 SELECT * EXCEPT (row_rank)
 FROM (

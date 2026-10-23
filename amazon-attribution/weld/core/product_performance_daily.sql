@@ -6,7 +6,7 @@
 -- product_conversion_type. Currency: the profile's.
 -- Depends on: staging.amazon_attribution.product_performance, .profile
 --
--- The connector keys the products report on product category, subcategory and name,
+-- The raw products report is keyed on product category, subcategory and name,
 -- not on ASIN. This model groups on ASIN and sums, so two rows that share an ASIN
 -- collapse into one. Amazon keeps 90 days of this report.
 

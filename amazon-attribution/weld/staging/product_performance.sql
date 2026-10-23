@@ -2,8 +2,8 @@
 -- Thin wrapper over raw `product_report`, the Amazon Attribution products report.
 -- Casts, renames, de-duplicates.
 --
--- Grain: profile x advertiser name x campaign x ad group x product x date, keyed the
--- way the connector keys it (product category, subcategory and name).
+-- Grain: profile x advertiser name x campaign x ad group x product x date, keyed as
+-- the raw table is (product category, subcategory and name).
 --
 -- Promoted metrics are for the products on the campaign; brand halo metrics are for
 -- other products of the same brand. New-to-brand counts customers who had not bought

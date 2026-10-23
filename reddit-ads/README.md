@@ -82,10 +82,10 @@ Extra fields are harmless; missing ones make the staging model fail.
   which captures most, but not all, late conversions. For a lead or sign-up
   account, swap the purchase fields for `CONVERSION_LEAD_*` or `CONVERSION_SIGN_UP_*`
   in the report and in staging.
-- **Report windows are UTC days.** The connector requests one UTC day per call. With
-  a non-UTC report timezone a local date spans two calls, so core sums across
-  windows. Do not filter staging to one window per date.
-- **Report history starts at 1 June 2024,** the earliest date the connector requests.
+- **Report windows are UTC days.** Each report row covers one UTC day. With a
+  non-UTC report timezone a local date spans two windows, so core sums across
+  them. Do not filter staging to one window per date.
+- **Report history starts at 1 June 2024,** the earliest date that is synced.
 - **Deleted ads keep their spend.** Entity tables are joined with `LEFT JOIN`, so an
   ad missing from `ad` still counts, with NULL names and a NULL campaign.
 - **Names are the current ones.** The ad, ad group and campaign streams are
@@ -104,7 +104,7 @@ Extra fields are harmless; missing ones make the staging model fail.
 The public ERD for this connector lists the entity tables only. The performance
 table is a custom report whose name and columns depend on your setup, so it is not
 in the ERD; its columns are the snake_cased Reddit API field names plus
-`account_id`, `starts_at` and `ends_at`, as the connector defines them.
+`account_id`, `starts_at` and `ends_at`, which Weld adds.
 
 ## Vendor docs
 

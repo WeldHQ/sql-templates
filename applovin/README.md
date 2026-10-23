@@ -77,9 +77,8 @@ The two reports are synced as separate streams.
   `_d7` revenue columns are install cohorts: revenue from users who installed on
   that day, within 0 or 7 days. ROAS here is cohort revenue over that day's spend,
   the way AppLovin reports it.
-- **Day-7 revenue fills in after seven days.** The connector only asks for a
-  cohort window once it has fully elapsed, and re-reads the last seven days once a
-  day, so `total_revenue_d7` and `roas_d7` are NULL for the most recent week.
+- **Day-7 revenue fills in after seven days.** A cohort window is only filled
+  once it has fully elapsed, and the last seven days are re-read once a day, so `total_revenue_d7` and `roas_d7` are NULL for the most recent week.
   Day-30 columns are only filled for days that were older than 30 days when first
   synced, so they are left out.
 - **History is limited to 45 days back** from the first sync, the window the
@@ -93,8 +92,8 @@ The two reports are synced as separate streams.
 
 ## Schema notes
 
-No mismatches: every column used is in the public ERD and in the connector's
-stream definitions. Revenue and ROAS columns with a time span suffix (`_0d`,
+No mismatches: every column used is in the public ERD and in the schema Weld
+syncs. Revenue and ROAS columns with a time span suffix (`_0d`,
 `_7d`) are cohort metrics; the ROAS ones arrive as strings and are not used here,
 the template recomputes ROAS from revenue and spend.
 

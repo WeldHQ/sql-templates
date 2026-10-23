@@ -4,17 +4,15 @@
 --
 -- Grain: one row per campaign per day.
 --
--- Dates are days in the organization's reporting time zone (Apple's default,
--- which the connector does not override), so they line up with the Apple Ads UI.
+-- Dates are days in the organization's reporting time zone (Apple's default),
+-- so they line up with the Apple Ads UI.
 -- Spend is in the organization's currency, in whole units.
 --
--- The install columns use Apple's pre-v5 field names (installs, new_downloads,
--- redownloads). Apple's v5 reporting API renamed them to tapInstalls,
--- tapNewDownloads and tapRedownloads, so in your warehouse they may be empty.
--- Check before relying on them; see the README.
+-- In some accounts the install columns (installs, new_downloads, redownloads)
+-- are empty. Check before relying on them; see the README.
 --
--- The connector re-reads the full lookback window on every sync, so the latest
--- synced row per campaign and day wins.
+-- Every sync re-reads the full lookback window, so the latest synced row per
+-- campaign and day wins.
 
 SELECT * EXCEPT (row_rank)
 FROM (

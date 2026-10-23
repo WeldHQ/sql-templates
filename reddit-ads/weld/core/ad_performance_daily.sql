@@ -17,7 +17,7 @@
 
 WITH daily AS (
     -- SUM, not pick-one: with a non-UTC report timezone a local date is spread
-    -- over two UTC request windows.
+    -- over two UTC report windows.
     SELECT
         date_day,
         account_id,

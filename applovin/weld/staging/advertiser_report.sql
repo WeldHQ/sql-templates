@@ -3,8 +3,8 @@
 -- creative set and ad columns. Casts, renames, de-duplicates. No other logic.
 --
 -- Grain: the campaign report's key (see staging.applovin.advertiser_campaign_report)
--- plus ad type, creative set id and external placement, the key the connector
--- writes with. The ad name is not part of that key.
+-- plus ad type, creative set id and external placement, the key of the raw
+-- table. The ad name is not part of that key.
 --
 -- Days are UTC. Cohort columns (_0d, _7d) follow the same rules as in the
 -- campaign report: _7d is NULL for the last seven days.

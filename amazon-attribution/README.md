@@ -101,8 +101,8 @@ report except the Brand Referral Bonus, which the campaign report also has.
 
 ## Schema notes
 
-The public ERD and the connector's stream definitions agree for every table and
-column used here.
+The public ERD and the schema Weld syncs agree for every table and column used
+here.
 
 ## Vendor docs
 

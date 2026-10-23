@@ -20,7 +20,7 @@ covered.
 The paid ads templates in this repo share a daily column set (`date_day, account_id,
 ..., spend, impressions, clicks, conversions, conversion_value`). Daisycon does not
 fit it honestly: there are no impressions, affiliate cost is commission that is only
-final once a transaction is approved, and the connector's statistics carry no date
+final once a transaction is approved, and the statistics tables carry no date
 (see below). The models here use affiliate terms instead. For a blended view, take
 monthly cost from `invoice_costs_monthly`.
 
@@ -57,13 +57,12 @@ in full mode.** See the first note.
 
 ## Notes
 
-- **The statistics are totals for a window, not a time series.** Daisycon returns
-  one row per publisher (or media) summed over a date range, and the connector asks
-  for "from the start date to now". On a full sync that is 12 months back, or the
-  start date set on the connection, so every row covers the same trailing window.
-  On an incremental sync the range starts at the previous sync and the new, shorter
-  totals overwrite the old rows for any publisher active since then, while inactive
-  publishers keep their older, longer totals. Full mode avoids that mix.
+- **The statistics are totals for a window, not a time series.** Each row is one
+  publisher (or media) summed over a date range. After a full sync every row covers
+  the same trailing window: 12 months back, or the start date set on the
+  connection, to now. After an incremental sync, publishers active since the
+  previous sync show totals for that shorter period only, while inactive publishers
+  keep their older, longer totals. Full mode keeps every row on the same window.
 - **To compare periods, snapshot.** Because each full sync replaces the window, a
   month-over-month view needs you to store a copy of these models on a schedule.
 - **Transactions are counted on the transaction date** (Daisycon's default), not
@@ -78,9 +77,9 @@ in full mode.** See the first note.
 - **Transactions versus parts.** With product-level tracking one order becomes
   several transaction parts. `transactions` counts orders, `transaction_parts` the
   parts.
-- **Currency** is per row. The connector keys statistics on advertiser and
-  publisher (or media) only, so an advertiser that runs one programme in several
-  currencies can lose rows; `assert_daisycon__publisher_performance_is_unique` and a
+- **Currency** is per row. Statistics are stored one row per advertiser and
+  publisher (or media), so an advertiser that runs one programme in several
+  currencies can show fewer rows than the dashboard; `assert_daisycon__publisher_performance_is_unique` and a
   comparison with the dashboard will show it.
 - **Invoices are fetched by invoice date** from the previous sync onwards. Payment
   status on older invoices is not refreshed by an incremental sync, so `is_paid`
@@ -94,14 +93,12 @@ in full mode.** See the first note.
 
 ## Schema notes
 
-The public ERD and the connector's stream definitions agree for every table and
-column used here.
+The public ERD and the schema Weld syncs agree for every table and column used
+here.
 
-`advertiser_statistics_per_day` is not used. Its `day` column is, per Daisycon's API
-reference, the day of the month (1 to 31) rather than a date: the API has separate
-endpoints for hour, day, weekday, month and year buckets, and a different one for
-statistics by date. Combined with the overwrite behaviour above, it cannot produce a
-daily series. `advertiser_statistics_by_ad` has the same window behaviour as the
+`advertiser_statistics_per_day` is not used. Its `day` column holds the day of the
+month (1 to 31), not a date, and the rows follow the same window behaviour as
+above, so it cannot produce a daily series. `advertiser_statistics_by_ad` has the same window behaviour as the
 publisher and media tables; it is left out to keep the set small, and a model for it
 would follow `media_performance` line for line.
 
