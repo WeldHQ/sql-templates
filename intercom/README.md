@@ -13,9 +13,10 @@ SQL reports over Weld's Intercom connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -25,6 +26,12 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- Reviewed. The one suspected issue, the uncast `team_assignee_id` join in `core/monthly_tickets_by_team`, is not a bug: on tickets that column is already a string, like the team ID. The cast in the sibling queries is needed only because conversations store it as an integer. No SQL changed.
 
 ## Required tables
 
@@ -95,10 +102,3 @@ information.
 The SQL template "Get Monthly Tickets By Team" is designed to retrieve monthly
 ticket data from the Intercom integration. This SQL query allows you to analyze
 ticket distribution and activity within different teams over time.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/monthly_tickets_by_team`: `team_assignee_id = te.id` has no cast, while both sibling queries cast it to string (likely).
