@@ -75,9 +75,6 @@ refs.
 - **Campaigns with no delivery on a day have no row** for that day.
 - **Campaign names are the current ones.** The campaigns stream holds one
   version per campaign, so a renamed campaign shows its new name on every day.
-- **Metric definitions were cross-checked** against Fivetran's open-source
-  `dbt_apple_search_ads` package; the SQL here is written independently for
-  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a week of spend, impressions and taps per campaign
   against the Apple Ads UI before relying on the output.

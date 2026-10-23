@@ -91,9 +91,6 @@ Extra fields are harmless; missing ones make the staging model fail.
 - **Names are the current ones.** The ad, ad group and campaign streams are
   re-read in full and keep one version per id, so a renamed campaign shows its
   new name on every past day.
-- **Metric definitions were cross-checked** against Fivetran's open-source
-  `dbt_reddit_ads` package; the SQL here is written independently for Weld's
-  schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a week of spend, impressions and clicks per campaign
   against Ads Manager (same timezone, same attribution windows) before relying on the

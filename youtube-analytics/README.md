@@ -78,9 +78,6 @@ staging models at those tables to use them.
 - **Numbers will not match Studio to the view.** Studio applies its own freshness
   and privacy thresholds, and the bulk reports are finalised later. Expect small
   differences on recent days.
-- **Metric definitions were cross-checked** against Fivetran's open-source
-  `dbt_youtube_analytics` package; the SQL here is written independently for
-  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a closed month of views, watch time and subscribers per
   channel against YouTube Studio before relying on the output.

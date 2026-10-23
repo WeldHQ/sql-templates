@@ -76,9 +76,6 @@ less than the follower total; `share_of_followers` shows that gap.
 - **Snapshots are replaced.** `total_follower_count` and the demographic tables
   are rewritten on every sync, so they describe the Page now. Schedule a
   snapshot of `follower_demographics` if you want to see it change.
-- **Metric definitions were cross-checked** against Fivetran's open-source
-  `dbt_linkedin_pages` package; the SQL here is written independently for
-  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a month of impressions and new followers per Page
   with LinkedIn Page analytics before relying on the output.

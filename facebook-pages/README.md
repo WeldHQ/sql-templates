@@ -82,9 +82,6 @@ post seen by 50 people like one seen by 50,000.
 - **Follower change needs consecutive days.** `follower_change` compares with the
   previous calendar day and is NULL when that day has no row, so a gap in the
   sync never shows up as a one-day jump.
-- **Metric definitions were cross-checked** against Fivetran's open-source
-  `dbt_facebook_pages` package; the SQL here is written independently for
-  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a month of followers and views per Page, and a few
   posts, with Page Insights or Meta Business Suite before relying on the output.
