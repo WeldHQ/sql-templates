@@ -28,15 +28,13 @@ an invoice line names the income account, and the receivable side is implied.
 Rebuilding double entry from those streams means re-implementing QuickBooks'
 posting rules.
 
-The connector's `journal_report` stream reads QuickBooks' own Journal report
-instead: every transaction, already in debit and credit form, one row per account
+The `journal_report` stream holds QuickBooks' own Journal report instead: every transaction, already in debit and credit form, one row per account
 hit. The first line of each transaction (with its date and type) lands in
 `journal_report`, the remaining lines in `journal_report_line`.
 `general_ledger` stitches them back together, and everything else is built on it.
 
-The connector also has a `general_ledger_report` stream. It is not used: it is
-loaded append-only in monthly windows whose first and last days overlap, so the
-same posting can appear more than once, and its amounts come signed per account
+Weld also syncs a `general_ledger_report` stream. It is not used: the same
+posting can appear in it more than once, and its amounts come signed per account
 rather than as debit and credit.
 
 ## Layers
@@ -148,19 +146,19 @@ from the company settings.
 3. Run **Reports → Trial Balance** as of a month end and compare with
    `trial_balance_debit` and `trial_balance_credit` for that month, remembering
    the retained earnings row above.
-4. The connector's `trial_balance_report` and `profit_and_loss_report` streams
-   load those reports directly and can be used for the same comparison in SQL.
-   Both are fetched in windows whose boundary dates overlap, so compare
-   balance-sheet balances at a single date rather than summing P&L periods.
+4. The `trial_balance_report` and `profit_and_loss_report` streams hold those
+   reports directly and can be used for the same comparison in SQL. Their windows
+   can share boundary dates, so compare balance-sheet balances at a single date
+   rather than summing P&L periods.
 
 ## Schema notes
 
 - The public ERD shows `bill.txn_date` and `bill.due_date` as strings, which
-  matches the connector (they arrive as `YYYY-MM-DD` text on the bill stream,
+  matches the warehouse (they arrive as `YYYY-MM-DD` text on the bill stream,
   unlike the invoice stream). Staging parses them.
-- `journal_report.transaction_id` is the column QuickBooks labels "Transaction
-  Type" id; the connector renames it. Lines join to it on transaction id and
-  document number, which is also how the connector keys them.
+- `journal_report.transaction_id` holds the id QuickBooks labels "Transaction
+  Type". Lines join to it on transaction id and document number, which is also
+  how the rows are keyed.
 
 Vendor docs: the "Run the Profit and Loss report" and "Trial Balance" articles
 in QuickBooks Learn & Support (quickbooks.intuit.com), and the Account, Invoice,
