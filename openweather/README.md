@@ -50,8 +50,7 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 
 ## Schema notes
 
-- **Metric units.** The connector requests metric units from OpenWeather:
-  °C, mm, m/s, hPa, %.
+- **Metric units.** All values are in metric units: °C, mm, m/s, hPa, %.
 - **History builds over time.** The daily summary stream starts two years back
   and works forward within OpenWeather's daily call quota, so a first sync of many
   locations can take several days to fill.

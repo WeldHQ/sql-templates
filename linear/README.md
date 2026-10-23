@@ -52,7 +52,7 @@ refs, generated from the Weld versions; see [dbt/README.md](dbt/README.md). With
 - **Timestamps arrive as ISO strings** and are cast to `TIMESTAMP` in staging. All
   dates in the reports are UTC days; Linear shows days in your own time zone.
 - **Archived issues are kept, trashed issues are dropped.** Linear auto-archives
-  completed issues after a period, and the connector requests archived issues, so
+  completed issues after a period, and archived issues are synced too, so
   history stays intact. `open_backlog` excludes archived issues.
 - The `comments`, `teams` and `users` tables are available but not needed here.
 

@@ -2,7 +2,7 @@
 -- Thin wrapper over raw `daily_aggregation`: OpenWeather's daily summary (One Call
 -- 3.0 day_summary) per configured location. One row per location x day.
 --
--- The connector requests metric units: temperatures in °C, precipitation in mm,
+-- Values are in metric units: temperatures in °C, precipitation in mm,
 -- wind speed in m/s, pressure in hPa, humidity and cloud cover in %. `date` is the
 -- local date at the location; `tz` is its UTC offset (for example +01:00).
 
