@@ -1,6 +1,6 @@
 -- One row per message sid and per call sid after staging.
 --
--- The connector re-reads recent days on every sync, so raw holds repeats by design. If
+-- Recent days are read again on every sync, so raw holds repeats by design. If
 -- the de-duplication in staging stops working, every count and every cost in the daily
 -- models inflates by however often a message was re-read.
 

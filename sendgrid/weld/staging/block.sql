@@ -3,7 +3,7 @@
 -- receiving server blocked a message (not a hard bounce).
 -- Casts, lower-cases the address, de-duplicates. No other logic.
 --
--- Grain: email x created (the connector's own key for this stream).
+-- Grain: email x created (the key of the raw table).
 -- SendGrid removes an entry from the list when you delete the suppression. Rows already
 -- synced stay in the warehouse, so this is a history of suppressions added, not the
 -- list as it stands today.

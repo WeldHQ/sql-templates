@@ -15,8 +15,8 @@
 -- `is_full_window` is false on those rows.
 --
 -- `new_users` are users whose first event in the synced history falls on the row's day,
--- and `returning_users` are the rest of that day's DAU. Before the connector has a full
--- history, a long-standing user's first synced day counts as new, so read `new_users`
+-- and `returning_users` are the rest of that day's DAU. Before the synced history is
+-- complete, a long-standing user's first synced day counts as new, so read `new_users`
 -- from rows where `is_full_window` is true and treat early rows with care.
 --
 -- Every event counts as activity, including automatic ones like `$mp_web_page_view`.

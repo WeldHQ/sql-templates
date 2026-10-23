@@ -8,7 +8,7 @@
 --
 -- A rising spam-report or block count is an early warning of a sending-reputation problem,
 -- well before delivery rates move. Unsubscribes from individual unsubscribe groups are not
--- in this model: the connector syncs group membership (`group_suppression`) without a date.
+-- in this model: group membership (`group_suppression`) is synced without a date.
 --
 -- `addresses` counts distinct addresses within the row. The same address can appear on
 -- several lists (a hard bounce that was also reported as spam), so summing `addresses`

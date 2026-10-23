@@ -3,8 +3,8 @@
 -- Casts and de-duplicates. No other logic.
 --
 -- Grain: one row per date.
--- SendGrid restates recent days as late opens and clicks arrive, and the connector syncs
--- this stream incrementally, so a date can be delivered more than once. Only the most
+-- SendGrid restates recent days as late opens and clicks arrive, and this table is
+-- synced incrementally, so a date can be delivered more than once. Only the most
 -- recently synced copy of each date is kept.
 
 SELECT

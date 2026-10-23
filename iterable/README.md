@@ -11,7 +11,7 @@ Weld connector: **Iterable** ([docs](https://weld.app/docs/applications/iterable
 | [`weld/core/email_campaign_performance.sql`](weld/core/email_campaign_performance.sql) · [dbt](dbt/models/core/core_iterable__email_campaign_performance.sql) | Campaign Analytics: email metrics per campaign | campaign |
 | [`weld/core/email_performance_daily.sql`](weld/core/email_performance_daily.sql) · [dbt](dbt/models/core/core_iterable__email_performance_daily.sql) | Campaign Analytics over time | day × campaign |
 
-Email only. Push, SMS, in-app and web push have their own event tables in the connector
+Email only. Push, SMS, in-app and web push have their own event tables
 (`push_send`, `sms_send`, `in_app_open` and so on) and can be added the same way.
 
 ## Layers
@@ -53,8 +53,8 @@ to folder paths, so `{{staging.iterable.email_send}}` expects the model in a
 
 ## Schema notes
 
-- **The column names come from Iterable's export, not a fixed schema.** The connector
-  writes each event's fields snake_cased (`campaignId` becomes `campaign_id`), with types
+- **The column names come from Iterable's export, not a fixed schema.** Each event's
+  fields arrive snake_cased (`campaignId` becomes `campaign_id`), with types
   inferred from your data, and there is no published ERD for this connector. These
   models read only fields Iterable includes on every email event: `campaign_id`,
   `template_id`, `message_id`, `email` and `created_at`. Run the staging models once and
@@ -62,19 +62,20 @@ to folder paths, so `{{staging.iterable.email_send}}` expects the model in a
 - **Timestamps are parsed defensively.** `created_at` can land as a timestamp, as
   Iterable's `2026-01-31 12:00:00 +00:00` text or as epoch milliseconds; staging handles
   all three. Times are UTC.
-- **Event tables are re-read in full.** The connector exports each event type's whole
-  history on every sync and replaces the table, so rows do not repeat. On a large project
-  that makes syncs slow; that is a connector property, not something these models change.
-- **Use `email_unsubscribe`, not `email_subscribe`.** In the current connector both tables
-  are filled from Iterable's unsubscribe export, so `email_subscribe` holds unsubscribes.
-- **`campaign_analytics_stream` holds user profiles, not campaign metrics.** The
-  connector fills it from Iterable's user export, which is why the metrics here are rebuilt
-  from the event tables instead.
+- **Event tables are re-read in full.** Each event type's whole history is synced
+  again on every sync and the table is replaced, so rows do not repeat. On a large
+  project syncs can take a while.
+- **Use `email_unsubscribe`, not `email_subscribe`.** `email_subscribe` can contain
+  unsubscribe events rather than subscribes. Compare a few of its rows with
+  `email_unsubscribe` before using it; these models count unsubscribes from
+  `email_unsubscribe` only.
+- **`campaign_analytics_stream` holds user profiles, not campaign metrics,** so the
+  metrics here are rebuilt from the event tables instead.
 - **Recurring campaigns and journeys are not rolled up.** Each run of a recurring blast is
   its own campaign id in Iterable, and journey sends carry their own campaign ids. The
   parent recurring campaign and the journey (workflow) id are only in the raw campaigns
   table when Iterable returns them, so these models report each campaign id on its own.
-- **No user or list history.** The connector syncs the current user profiles, not a
+- **No user or list history.** Only the current user profiles are synced, not a
   history of profile or list membership changes, so list growth over time and a user's
   state at the time of a send cannot be rebuilt.
 - **Bot opens are not filtered.** Iterable's "filtered" open and click metrics drop

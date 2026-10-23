@@ -64,21 +64,21 @@ Why the event counts can differ slightly from Mixpanel's UI:
 
 ## Schema notes
 
-- **The events table is as wide as your tracking plan.** The connector writes one column
-  per event property, snake_cased, so no two projects have the same table. These models
-  read the columns the connector always writes (`event_hash`, `event_name`,
-  `distinct_id`, `time`) plus `insert_id`. Add your own properties in staging to report
+- **The events table is as wide as your tracking plan.** There is one column per event
+  property, snake_cased, so no two projects have the same table. These models read the
+  columns that are always present (`event_hash`, `event_name`, `distinct_id`, `time`)
+  plus `insert_id`. Add your own properties in staging to report
   on them.
-- **ERD versus connector.** The published ERD for this connector lists only `event_hash`
+- **ERD versus warehouse.** The published ERD for this connector lists only `event_hash`
   and `event_name` on `events`, because the rest of the table is project-specific. The
-  connector's stream definition always adds `distinct_id` and `time` (event time in
-  seconds), and these models rely on both. `insert_id` is Mixpanel's `$insert_id`
+  table always also has `distinct_id` and `time` (event time in seconds), and these
+  models rely on both. `insert_id` is Mixpanel's `$insert_id`
   property, snake_cased; it is present whenever your SDKs send it, which the official
   ones do.
 - **Duplicates are removed by Mixpanel's own rule.** Mixpanel shows one copy of events
   that share name, `distinct_id`, time and `$insert_id`. A client retry produces such a
-  copy with different processing metadata, so the connector's `event_hash` (a hash of the
-  whole event) differs between them and would count both. Staging de-duplicates on the
+  copy with different processing metadata, so `event_hash` (a hash of the whole
+  event) differs between them and would count both. Staging de-duplicates on the
   four fields instead, falling back to `event_hash` for events without an insert id. If
   your table has no `insert_id` column, set it to NULL in staging.
 - **Funnel days restate.** Each funnel day is a cohort of users entering on that day, and

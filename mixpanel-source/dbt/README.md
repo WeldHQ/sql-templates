@@ -28,7 +28,7 @@ are generated from the Weld versions, so the two dialects cannot disagree.
 Mixpanel tables.
 
 **Your properties, if you want them.** The events table has one column per event
-property in your project. Staging reads the four the connector always writes plus `insert_id`. Add
+property in your project. Staging reads the four that are always present plus `insert_id`. Add
 the ones you report on (plan, country, platform) in `stg_mixpanel_source__events` and
 carry them into the group-bys.
 

@@ -67,23 +67,23 @@ See the schema notes for why it is a floor.
   they are usually present, but very active members on older campaigns can lose theirs.
   Treat `unsubscribes` as a lower bound and compare with the campaign report.
 - **Audience activity starts 180 days back.** Mailchimp serves the last 180 days of
-  `list_activity`. Older days are only in the warehouse if the connector was already
+  `list_activity`. Older days are only in the warehouse if the connection was already
   syncing then.
-- **No per-campaign click URLs or opens by time.** The connector does not sync the click
-  details or open details reports, so the link performance table and the hourly opens
+- **No per-campaign click URLs or opens by time.** The click details and open details
+  reports are not synced, so the link performance table and the hourly opens
   chart are not rebuilt.
 - **Member ids repeat across audiences.** Mailchimp derives the member id from the email
   address, so every key here includes `list_id`.
 - **Two scales for rates.** Campaign reports give rates as fractions; audience stats
   (`open_rate_pct`, `click_rate_pct`) give percentages. The column names say which.
-- **No unsubscribe reasons and no automations.** The connector does not sync Mailchimp's
-  per-campaign unsubscribed report (which carries the reason a contact gave) or Classic
-  Automations and their emails. Unsubscribe reasons and automation performance are not
+- **No unsubscribe reasons and no automations.** Mailchimp's per-campaign unsubscribed
+  report (which carries the reason a contact gave) and Classic Automations and their
+  emails are not synced. Unsubscribe reasons and automation performance are not
   rebuilt here.
 - **E-commerce revenue** is in the connected store's currency and is only populated when a
   store is connected to the audience.
-- Staging columns were checked against the published ERD and the connector's stream
-  definitions; they agree for every table used here.
+- Staging columns were checked against the published ERD and the schema Weld syncs;
+  they agree for every table used here.
 
 ## Notes
 

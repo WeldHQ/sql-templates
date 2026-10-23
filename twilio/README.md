@@ -58,17 +58,17 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 
 - **Day is UTC.** Twilio timestamps are UTC; the Console shows them in your account's
   time zone, so single days near midnight can differ.
-- **Usage records are not used.** The connector reads Twilio's usage records as one row
-  per category covering the whole range from the sync's start day to the day it ran.
-  Consecutive syncs share their boundary days, and a day's usage keeps changing until it
+- **Usage records are not used.** Each usage record row covers one category over the
+  range from a sync's start day to the day it ran. Consecutive rows share their
+  boundary days, and a day's usage keeps changing until it
   is over, so the rows cannot be summed into a clean daily or monthly spend series. Spend
   here is built from message and call prices instead, which leaves out phone number
   rental, Verify, Conversations and other products billed outside messages and calls.
-- **In-progress calls are absent.** The connector fetches a call only after it ends.
+- **In-progress calls are absent.** A call arrives only after it ends.
 - **Message bodies are not carried into staging.** None of the reports need content, and
   it is personal data.
-- Staging columns were checked against the published ERD and the connector's stream
-  definitions; they agree for every table used here.
+- Staging columns were checked against the published ERD and the schema Weld syncs;
+  they agree for every table used here.
 
 ## Notes
 

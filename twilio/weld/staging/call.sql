@@ -6,7 +6,7 @@
 -- A call your application forwards with <Dial> is two legs: the parent (for example
 -- inbound) and a child (`outbound-dial`) with `parent_call_sid` set. Both are billed and
 -- both are rows here.
--- The connector only fetches calls once they have ended, so in-progress calls are absent.
+-- Calls arrive only once they have ended, so in-progress calls are absent.
 -- `duration` is in seconds. `price` is negative (a charge to you); `cost` flips the sign.
 
 SELECT

@@ -5,7 +5,7 @@
 -- Grain: list_id x day.
 -- Mailchimp serves the last 180 days of this endpoint and keeps restating recent days, so
 -- the stream is incremental on `day` and a day can arrive more than once. Only the latest
--- synced copy is kept. History older than 180 days exists only if the connector was
+-- synced copy is kept. History older than 180 days exists only if the connection was
 -- already syncing at the time.
 
 SELECT

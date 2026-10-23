@@ -65,10 +65,10 @@ they cannot be summed into a unique count for a longer window.
 
 - **Statistics are daily aggregates, not events.** SendGrid's Stats API is the source,
   so there is no per-message or per-recipient grain here. The `message` table (the Email
-  Activity Feed) needs SendGrid's paid Email Activity History add-on, and the connector
-  reads one page of up to 1,000 messages per sync, so it is not complete enough to
+  Activity Feed) needs SendGrid's paid Email Activity History add-on, and at most 1,000
+  messages arrive per sync, so it is not complete enough to
   report on and is not used.
-- **No per-campaign stats.** The connector syncs Single Sends (`single_send`) as objects
+- **No per-campaign stats.** Single Sends (`single_send`) are synced as objects
   without their statistics. Per-campaign reporting works through categories: give each
   campaign a category when sending and use `category_stats_daily`.
 - **Categories do not sum to the account.** A message with several categories is
@@ -78,8 +78,8 @@ they cannot be summed into a unique count for a longer window.
 - **Dates are the day buckets SendGrid's Stats API returns.** If the SendGrid UI shows
   a different time zone, days near midnight can land on different dates. Unless you set
   a start date on the connection, the stats streams fetch the last year on first sync.
-- Staging columns were checked against the published ERD and the connector's stream
-  definitions; they agree for every table used here.
+- Staging columns were checked against the published ERD and the schema Weld syncs;
+  they agree for every table used here.
 
 ## Reconciling
 

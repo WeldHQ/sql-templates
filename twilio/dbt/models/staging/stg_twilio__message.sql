@@ -3,7 +3,7 @@
 -- account. Casts, converts price to a positive cost, de-duplicates.
 --
 -- Grain: message_sid.
--- The connector re-reads the last two days on every sync to catch status changes, so a
+-- Every sync reads the last two days again to catch status changes, so a
 -- message can arrive more than once; the latest copy is kept.
 -- Twilio reports `price` as a negative number (a charge to you) in `price_unit` currency,
 -- and leaves it empty until the carrier has priced the message. `cost` flips the sign.
