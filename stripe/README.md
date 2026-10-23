@@ -13,9 +13,10 @@ SQL reports over Weld's Stripe connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -47,6 +48,11 @@ core/mrr_summary               <- mrr_time_series
 `raw.forex_eur.incremental` (columns `rate`, `currency`, `timestamp`), such as
 Weld's Foreign Exchange connector with EUR as the base. Point it at your own
 rates table if it lives elsewhere.
+
+Corrected in review:
+
+- `core/mrr_active_subscriptions` groups by its output columns by position. The website version grouped by unqualified names that several joined tables share, and by subscription status as well, which could give a customer two rows for one month and fan out the time series.
+- `core/mrr_time_series` starts its calendar at the earliest subscription start month in the data. The website version truncated a string literal (`date_trunc('2021-01-01', month)`), which fails, and hardcoded 2021.
 
 ## Required tables
 
@@ -120,11 +126,3 @@ pricing and intervals. Furthermore, it fetches discount details applied through
 coupons, a crucial insight for understanding customer incentives. It also provides
 an additional metric - if the subscription was deleted within the same month of its
 start date.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/mrr_active_subscriptions`: the outer GROUP BY uses unqualified `customer_id`, `status` and `canceled_at`, which exist in several joined tables. Grouping by `r.status` as well can produce duplicate customer-month rows that fan out downstream (likely).
-- `core/mrr_time_series`: `date_trunc('2021-01-01', month)` truncates a string literal; use `DATE '2021-01-01'`. The 2021 start date is hardcoded (likely).

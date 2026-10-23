@@ -3,8 +3,12 @@
 -- revenue per subscription and applies discounts to provide a net monthly amount.
 -- It then identifies if a subscription is active or canceled based on the status.
 --
--- From the weld.app template library. Not reconciled against Stripe;
--- check the output against the source before relying on it.
+-- Grain: customer x month a subscription started. status and canceled_at
+-- describe the customer (active if any subscription is still live), so each
+-- customer has one row per start month for the time series to join on.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- Stripe; check the output against the source before relying on it.
 
 with
 revenue_per_subscription as (
@@ -50,7 +54,7 @@ cancelled_subscriptions as (
 select
     r.customer_id,
     coalesce(s.status, c.status) as status,
-    start_date_month,
+    r.start_date_month,
     case
         when coalesce(s.status, c.status) = 'canceled' then c.canceled_at
         else null
@@ -63,10 +67,9 @@ from
 left join active_subscriptions s on r.customer_id = s.customer_id
 left join cancelled_subscriptions c on r.customer_id = c.customer_id
 group by
-    customer_id,
-    status,
-    r.status,
-    start_date_month,
-    canceled_at
+    1,
+    2,
+    3,
+    4
 order by
     customer_id

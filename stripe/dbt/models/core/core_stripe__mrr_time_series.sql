@@ -4,8 +4,11 @@
 -- provides a rank based on the MRR. It also considers the customer's subscription
 -- status and cancellation date.
 --
--- From the weld.app template library. Not reconciled against Stripe;
--- check the output against the source before relying on it.
+-- The monthly calendar starts at the earliest subscription start month in
+-- the data and runs to the current month.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- Stripe; check the output against the source before relying on it.
 
 with
     time_series as (
@@ -14,7 +17,7 @@ with
         from
             unnest (
                 generate_date_array(
-                    date_trunc('2021-01-01', month)
+                    (select min(start_date_month) from {{ ref('core_stripe__mrr_active_subscriptions') }})
                   , current_date
                   , interval 1 month
                 )
