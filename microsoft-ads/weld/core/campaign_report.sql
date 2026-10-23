@@ -1,66 +1,70 @@
 -- core.microsoft_ads.campaign_report
--- Campaign Report. Generates a campaign report by integrating with Microsoft Ads.
--- It combines data from the campaign performance daily report, campaign, and
--- account tables. The joined table includes information such as date, account name
--- and ID, campaign name and ID, campaign type and status, device OS and type,
--- network, currency code, clicks, impressions, and spend.
+-- Daily Microsoft Advertising delivery per campaign, split by device and
+-- network, with the campaign's type and current status.
 --
--- From the weld.app template library. Not reconciled against Microsoft Ads;
--- check the output against the source before relying on it.
+-- Grain: day x campaign x device OS x device type x network x currency.
+-- Dates are the report dates Microsoft Advertising returns, in the account's
+-- time zone. Spend is in currency_code. campaign_status is the campaign's
+-- status today, not on the report date. conversions and revenue are
+-- Microsoft's own attributed figures.
+--
+-- Depends on: raw.microsoft_ads.campaign_performance_daily_report, campaign,
+--             account
+--
+-- From the weld.app template library, rewritten. Not reconciled against
+-- Microsoft Ads; check the output against the source before relying on it.
 
-with
-    report as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.campaign_performance_daily_report}}
-    )
-  , campaigns as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.campaign}}
-    )
-  , accounts as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.account}}
-    )
-  , joined as (
-        select
-            report.date date_day
-          , accounts.name account_name
-          , accounts.id account_id
-          , campaigns.campaign campaign_name
-          , campaigns.id campaign_id
-          , campaigns.campaign_type
-          , campaigns.status as campaign_status
-          , report.device_os
-          , report.device_type
-          , report.network
-          , report.currency_code
-          , sum(report.clicks) as clicks
-          , sum(report.impressions) as impressions
-          , sum(report.spend) as spend -- Additional pass-through columns should be manually specified if needed
-        from
-            report
-            left join accounts on report.account_id = accounts.id
-            left join campaigns on report.campaign_id = campaigns.id
-        group by
-            1
-          , 2
-          , 3
-          , 4
-          , 5
-          , 6
-          , 7
-          , 8
-          , 9
-          , 10
-          , 11 -- Adjust these numbers according to the selected columns
-    )
-select
-    *
-from
-    joined
+WITH delivery AS (
+    SELECT
+        date                                        AS date_day,
+        account_id,
+        campaign_id,
+        device_os,
+        device_type,
+        network,
+        currency_code,
+        SUM(impressions)                            AS impressions,
+        SUM(clicks)                                 AS clicks,
+        SUM(spend)                                  AS spend,
+        SUM(conversions)                            AS conversions,
+        SUM(revenue)                                AS revenue
+    FROM {{raw.microsoft_ads.campaign_performance_daily_report}}
+    GROUP BY 1, 2, 3, 4, 5, 6, 7
+),
+
+campaign_lookup AS (
+    SELECT
+        id                                          AS campaign_id,
+        campaign                                    AS campaign_name,
+        campaign_type,
+        status                                      AS campaign_status
+    FROM {{raw.microsoft_ads.campaign}}
+),
+
+account_lookup AS (
+    SELECT id AS account_id, name AS account_name
+    FROM {{raw.microsoft_ads.account}}
+)
+
+SELECT
+    d.date_day,
+    d.account_id,
+    a.account_name,
+    d.campaign_id,
+    c.campaign_name,
+    c.campaign_type,
+    c.campaign_status,
+    d.currency_code,
+    d.network,
+    d.device_type,
+    d.device_os,
+    d.impressions,
+    d.clicks,
+    d.spend,
+    d.conversions,
+    d.revenue
+FROM delivery d
+LEFT JOIN campaign_lookup c
+  ON c.campaign_id = d.campaign_id
+LEFT JOIN account_lookup a
+  ON a.account_id = d.account_id

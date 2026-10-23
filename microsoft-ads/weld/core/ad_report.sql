@@ -1,88 +1,84 @@
 -- core.microsoft_ads.ad_report
--- Ad Report. Generates an ad report by joining data from multiple tables related to
--- Microsoft Ads. It retrieves information such as date, account name and ID,
--- campaign name and ID, ad group name and ID, ad name and ID, device OS, device
--- type, network, currency code, clicks, impressions, and spend. The template
--- performs a left join on the specified tables and groups the data based on
--- selected columns. The final result includes all columns from the joined data.
+-- Daily Microsoft Advertising delivery per ad, split by device and network,
+-- labelled with its ad group, campaign and account.
 --
--- From the weld.app template library. Not reconciled against Microsoft Ads;
--- check the output against the source before relying on it.
+-- Grain: day x ad x device OS x device type x network x currency.
+-- Dates are the report dates Microsoft Advertising returns, in the account's
+-- time zone. Spend is in currency_code. ad_name is the ad's title, which some
+-- ad types leave empty. conversions and revenue are Microsoft's own attributed
+-- figures.
+--
+-- Depends on: raw.microsoft_ads.ad_performance_daily_report, ad, ad_group,
+--             campaign, account
+--
+-- From the weld.app template library, rewritten and corrected. Not reconciled
+-- against Microsoft Ads; check the output against the source before relying on it.
 
-with
-    report as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.ad_performance_daily_report}}
-    )
-  , ads as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.ad}} 
-    )
-  , ad_groups as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.ad_group}}
-    )
-  , campaigns as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.campaign}} 
-    )
-  , accounts as (
-        select
-            *
-        from
-            {{raw.microsoft_ads.account}} 
-    )
-  , joined as (
-        select
-            report.date date_day
-          , accounts.name account_name
-          , accounts.id account_id
-          , campaigns.campaign campaign_name
-          , campaigns.id campaign_id
-          , ad_groups.ad_group ad_group_name
-          , ad_groups.id ad_group_id
-          , ads.title ad_name
-          , ads.title ad_name
-          , ads.id ad_id
-          , report.device_os
-          , report.device_type
-          , report.network
-          , report.currency_code
-          , sum(report.clicks) as clicks
-          , sum(report.impressions) as impressions
-          , sum(report.spend) as spend 
-          -- Additional pass-through columns should be manually specified if needed
-        from
-            report
-            left join ads on report.ad_id = ads.id
-            left join ad_groups on report.ad_group_id = ad_groups.id
-            left join campaigns on report.campaign_id = campaigns.id
-            left join accounts on report.account_id = accounts.id
-        group by
-            1
-          , 2
-          , 3
-          , 4
-          , 5
-          , 6
-          , 7
-          , 8
-          , 9
-          , 10
-          , 11
-          , 12
-          , 13
-          , 14  -- Adjust these numbers according to the selected columns
-    )
-select
-    *
-from
-    joined
+WITH delivery AS (
+    SELECT
+        date                                        AS date_day,
+        account_id,
+        campaign_id,
+        ad_group_id,
+        ad_id,
+        device_os,
+        device_type,
+        network,
+        currency_code,
+        SUM(impressions)                            AS impressions,
+        SUM(clicks)                                 AS clicks,
+        SUM(spend)                                  AS spend,
+        SUM(conversions)                            AS conversions,
+        SUM(revenue)                                AS revenue
+    FROM {{raw.microsoft_ads.ad_performance_daily_report}}
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
+),
+
+ad_lookup AS (
+    SELECT id AS ad_id, title AS ad_name
+    FROM {{raw.microsoft_ads.ad}}
+),
+
+ad_group_lookup AS (
+    SELECT id AS ad_group_id, ad_group AS ad_group_name
+    FROM {{raw.microsoft_ads.ad_group}}
+),
+
+campaign_lookup AS (
+    SELECT id AS campaign_id, campaign AS campaign_name
+    FROM {{raw.microsoft_ads.campaign}}
+),
+
+account_lookup AS (
+    SELECT id AS account_id, name AS account_name
+    FROM {{raw.microsoft_ads.account}}
+)
+
+SELECT
+    d.date_day,
+    d.account_id,
+    a.account_name,
+    d.campaign_id,
+    c.campaign_name,
+    d.ad_group_id,
+    g.ad_group_name,
+    d.ad_id,
+    ad.ad_name,
+    d.currency_code,
+    d.network,
+    d.device_type,
+    d.device_os,
+    d.impressions,
+    d.clicks,
+    d.spend,
+    d.conversions,
+    d.revenue
+FROM delivery d
+LEFT JOIN ad_lookup ad
+  ON ad.ad_id = d.ad_id
+LEFT JOIN ad_group_lookup g
+  ON g.ad_group_id = d.ad_group_id
+LEFT JOIN campaign_lookup c
+  ON c.campaign_id = d.campaign_id
+LEFT JOIN account_lookup a
+  ON a.account_id = d.account_id
