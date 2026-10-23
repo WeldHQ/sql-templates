@@ -24,7 +24,7 @@ FROM (
         CAST(COALESCE(share_count, 0) AS INT64)                                AS shares,
         CAST(engagement AS FLOAT64)                                            AS engagement_rate,
         ROW_NUMBER() OVER (
-            PARTITION BY organization_id, start_date ORDER BY _weld_synced DESC
+            PARTITION BY organization_id, CAST(start_date AS INT64) ORDER BY _weld_synced DESC
         )                                                                      AS row_rank
     FROM {{ source('linkedin_pages', 'share_statistics_time_bound') }}
     WHERE start_date IS NOT NULL

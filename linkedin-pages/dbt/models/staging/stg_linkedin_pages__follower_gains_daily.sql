@@ -16,7 +16,7 @@ FROM (
         CAST(COALESCE(organic_follower_gain, 0) AS INT64)                      AS organic_follower_gain,
         CAST(COALESCE(paid_follower_gain, 0) AS INT64)                         AS paid_follower_gain,
         ROW_NUMBER() OVER (
-            PARTITION BY organization_id, start_date ORDER BY _weld_synced DESC
+            PARTITION BY organization_id, CAST(start_date AS INT64) ORDER BY _weld_synced DESC
         )                                                                      AS row_rank
     FROM {{ source('linkedin_pages', 'follower_statistics_time_bound') }}
     WHERE start_date IS NOT NULL

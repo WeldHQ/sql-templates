@@ -85,7 +85,7 @@ less than the follower total; `share_of_followers` shows that gap.
 
 ## Schema notes
 
-The ERD matches the connector's definitions for every table used here. The
+The ERD matches the schema Weld syncs for every table used here. The
 connector also syncs `share_statistics` and `follower_statistics` (lifetime
 totals without dates) and `organization_lookup` (Page profile details); the
 templates do not need them.

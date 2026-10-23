@@ -5,7 +5,7 @@ drive transactions, how many of them get approved, what that costs as a share of
 revenue, and what Daisycon actually invoices. BigQuery.
 
 Weld connector: **Daisycon** ([docs](https://weld.app/docs/applications/daisycon)).
-The connector reads the advertiser side of Daisycon; publisher accounts are not
+The connector covers the advertiser side of Daisycon; publisher accounts are not
 covered.
 
 | Model | Recreates | Grain |

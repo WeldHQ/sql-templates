@@ -43,7 +43,7 @@ structure or adjust the refs.
 
 ## Notes
 
-- **The daily table is long, core makes it wide.** The connector stores one row per
+- **The daily table is long, core makes it wide.** The raw table has one row per
   location, day and metric. Core pivots the eleven metrics Google publishes into
   columns. A metric Google adds later is ignored until you add a column for it.
 - **Impressions are unique users per day per surface.** Google counts a person who
@@ -59,7 +59,7 @@ structure or adjust the refs.
   rating Google shows on Maps, which it computes and rounds itself.
 - **Reply time is approximate.** The API gives the reply's last update time, not
   when it was first posted, so an edited reply looks slow.
-- **History:** the connector reads 18 months of daily metrics on the first sync,
+- **History:** the first sync covers 18 months of daily metrics,
   re-reads the last three days afterwards, and Google publishes a day's metrics with
   a delay of a few days. Keyword data arrives a month in arrears.
 - **Not run against a warehouse.** These models were checked for syntax and
@@ -68,7 +68,7 @@ structure or adjust the refs.
 
 ## Schema notes
 
-The ERD matches the connector's definitions for every table used here. In the
+The ERD matches the schema Weld syncs for every table used here. In the
 ERD, `review.review_id` is drawn as a foreign key to `review` itself; it is the
 review's own id.
 

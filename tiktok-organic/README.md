@@ -78,7 +78,7 @@ it cannot be summed into an account reach.
 
 ## Schema notes
 
-The ERD matches the connector's definitions for every table used here. The
+The ERD matches the schema Weld syncs for every table used here. The
 connector also syncs audience tables (`profile_audience_country`,
 `profile_audience_gender`, `profile_audience_activity` by hour) and per-video
 `video_impression_source` and `video_audience_country` shares; the templates do

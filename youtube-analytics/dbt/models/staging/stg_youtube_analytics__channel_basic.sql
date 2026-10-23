@@ -7,7 +7,7 @@
 -- watch page, mostly subscriptions from the channel page; they are kept and
 -- video_id is set to NULL.
 --
--- The connector upserts on every dimension column, so a report YouTube
+-- Rows are keyed on every dimension column, so a report YouTube
 -- regenerates replaces the earlier rows instead of duplicating them.
 
 SELECT

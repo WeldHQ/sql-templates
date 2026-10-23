@@ -8,8 +8,8 @@
 -- Google hides small counts behind a threshold. For those rows `impressions` is
 -- NULL, `is_below_threshold` is TRUE and `impressions_upper_bound` is the
 -- threshold. Sum `impressions` for a floor and `impressions_upper_bound` for a
--- ceiling; there is no exact total. Google also reports a keyword's impressions as
--- unique users, so keyword counts do not add up to the daily impressions.
+-- ceiling; there is no exact total. Keyword impressions are counted per month, not
+-- per day, so they do not add up to the daily impressions.
 
 SELECT
     k.month,

@@ -3,8 +3,8 @@
 -- Performance API daily metrics. Casts and renames. No other logic.
 --
 -- Grain: location x date x metric (long format: one row per metric per day).
--- The connector upserts on (location_id, date, metric) and re-reads the last three
--- days on each sync, so rows do not repeat. Google omits days with no value for a
+-- The raw table has one row per (location_id, date, metric), and the last three
+-- days are re-read on each sync, so rows do not repeat. Google omits days with no value for a
 -- metric rather than sending zero.
 
 SELECT

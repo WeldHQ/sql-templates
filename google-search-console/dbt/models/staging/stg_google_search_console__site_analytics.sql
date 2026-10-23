@@ -6,8 +6,8 @@
 -- Web search only. To add image, video or news results, UNION ALL the matching
 -- `_image`, `_video` or `_news` table; `search_type` keeps them apart.
 --
--- The connector upserts on its primary key (site plus every dimension) and
--- re-reads the last three days on each sync, so rows do not repeat.
+-- The raw table has one row per site and every dimension, and the last three
+-- days are re-read on each sync, so rows do not repeat.
 
 SELECT
     CAST(site AS STRING)                     AS site,

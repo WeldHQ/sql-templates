@@ -85,8 +85,8 @@ therefore exceeds the site total. Clicks are not affected.
 
 ## Schema notes
 
-The ERD matches the connector's definitions for every table used here. The
-connector also has a legacy `analytics` stream (query × page, without
+The ERD matches the schema Weld syncs for every table used here. Weld
+also syncs a legacy `analytics` stream (query × page, without
 `search_type`) that is not in the ERD; it is superseded by
 `keyword_page_analytics_web` and not used.
 

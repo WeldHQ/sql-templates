@@ -40,8 +40,8 @@ the refs.
 | post performance | `post`, `post_lifetime_insights`, `page` |
 
 **More than one Page.** With a single Page the post tables are called `post` and
-`post_lifetime_insights`. When the connection covers several Pages, the connector
-writes one set per Page, named `<page_name>__<page_id>__post` and
+`post_lifetime_insights`. When the connection covers several Pages, there is one
+set per Page, named `<page_name>__<page_id>__post` and
 `<page_name>__<page_id>__post_lifetime_insights`. `UNION ALL` them in the two
 staging models; `page_id` and `post_id` keep the rows apart. The Page level
 tables always hold every Page.
@@ -77,9 +77,8 @@ post seen by 50 people like one seen by 50,000.
 - **Unique counts are estimates.** Meta marks viewers and new likes as estimated;
   small differences against Page Insights are expected.
 - **Video view time** arrives in milliseconds and is converted to seconds.
-- **History:** the connector reads up to 36 months of daily Page insights on the
-  first sync and continues incrementally. Post insights are re-read for every
-  post on every sync.
+- **History:** the first sync covers up to 36 months of daily Page insights and
+  continues incrementally. Post insights are re-read for every post on every sync.
 - **Follower change needs consecutive days.** `follower_change` compares with the
   previous calendar day and is NULL when that day has no row, so a gap in the
   sync never shows up as a one-day jump.
@@ -92,11 +91,11 @@ post seen by 50 people like one seen by 50,000.
 
 ## Schema notes
 
-The ERD matches the connector's definitions for every table used here. The
+The ERD matches the schema Weld syncs for every table used here. The
 connector also syncs `page_lifetime_insights`, `post_daily_insights` (video
 metrics per day), `post_comment`, `post_reaction`, `video` and
 `video_lifetime_insights`; the templates do not need them. The ERD draws only
-the single-Page table names; the per-Page names above come from the connector.
+the single-Page table names; the per-Page names above are how they appear in the warehouse.
 
 ## Vendor docs
 

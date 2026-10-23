@@ -69,11 +69,11 @@ staging models at those tables to use them.
   Studio before formatting it.
 - **No video titles.** The Reporting API returns IDs only. Join your own video list
   on `video_id` for names.
-- **Data starts when the reporting job starts.** The connector creates a Reporting
-  API job on first sync; YouTube generates daily reports from then on and backfills
+- **Data starts when the reporting job starts.** A Reporting API job is created on
+  the first sync; YouTube generates daily reports from then on and backfills
   a limited window before it. Older history is not available from this API.
 - **Reports can be regenerated.** YouTube re-issues a report when it corrects data.
-  The connector upserts on every dimension, so a correction replaces the earlier rows.
+  Rows are keyed on every dimension, so a correction replaces the earlier rows.
 - **Dates are Pacific Time,** as in YouTube Studio.
 - **Numbers will not match Studio to the view.** Studio applies its own freshness
   and privacy thresholds, and the bulk reports are finalised later. Expect small
@@ -87,7 +87,7 @@ staging models at those tables to use them.
 
 ## Schema notes
 
-The ERD matches the connector's definitions for every table used here.
+The ERD matches the schema Weld syncs for every table used here.
 
 ## Vendor docs
 
