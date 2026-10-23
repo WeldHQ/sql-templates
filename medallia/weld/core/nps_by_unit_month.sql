@@ -6,7 +6,7 @@
 --
 -- WHICH QUESTION IS NPS is instance configuration in Medallia, not a fixed field
 -- id. The `nps_questions` CTE below picks questions whose name mentions
--- "recommend". Check what it selects with tests/assert_nps_questions_are_0_to_10.sql
+-- "recommend". Check what it selects with tests/assert_medallia__nps_questions_are_0_to_10.sql
 -- and replace the rule with an explicit list of question ids (for example
 -- `WHERE field_id IN ('q_ltr')`) once you know yours. This is the one edit most
 -- instances need.

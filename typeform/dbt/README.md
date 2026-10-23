@@ -9,9 +9,9 @@ models/core/core_typeform__response_volume.sql  responses per form per day
 models/core/core_typeform__answer_detail.sql    every answer, choices unnested
 models/core/core_typeform__score_summary.sql    NPS, average and top-two-box per question
 models/analytics/analytics__typeform_*.sql      thin BI-facing contracts
-tests/assert_response_volume_reconciles.sql     the series counts every response once
-tests/assert_nps_buckets_cover_every_answer.sql promoters + passives + detractors = answers
-tests/assert_no_duplicate_answers.sql           one row per answer x choice
+tests/assert_typeform__response_volume_reconciles.sql     the series counts every response once
+tests/assert_typeform__nps_buckets_cover_every_answer.sql promoters + passives + detractors = answers
+tests/assert_typeform__no_duplicate_answers.sql           one row per answer x choice
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

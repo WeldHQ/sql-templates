@@ -25,7 +25,7 @@ touchpoint, product line) to that model and they flow through to core.
 **2. Which question is NPS is your configuration.** There is no fixed field id for
 likelihood to recommend. `nps_by_unit_month` picks questions whose name contains
 "recommend", which is a guess.
-[`assert_nps_questions_are_0_to_10`](dbt/tests/assert_nps_questions_are_0_to_10.sql)
+[`assert_medallia__nps_questions_are_0_to_10`](dbt/tests/assert_medallia__nps_questions_are_0_to_10.sql)
 shows what it picked; replace the rule with your question ids (often `q_ltr` or
 similar) in the `nps_questions` CTE. This is the one edit most instances need.
 

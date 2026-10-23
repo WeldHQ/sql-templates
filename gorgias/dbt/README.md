@@ -11,9 +11,9 @@ models/core/core_gorgias__response_times_by_month.sql   response, resolution, on
 models/core/core_gorgias__agent_performance_by_month.sql per agent activity and satisfaction
 models/core/core_gorgias__voice_calls_by_day.sql        Gorgias Voice calls
 models/analytics/analytics__gorgias_*.sql               thin BI-facing contracts
-tests/assert_no_duplicate_tickets.sql                   one row per ticket
-tests/assert_backlog_ties_to_open.sql                   last day of backlog = open now
-tests/assert_response_times_not_negative.sql            no impossible durations
+tests/assert_gorgias__no_duplicate_tickets.sql                   one row per ticket
+tests/assert_gorgias__backlog_ties_to_open.sql                   last day of backlog = open now
+tests/assert_gorgias__response_times_not_negative.sql            no impossible durations
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

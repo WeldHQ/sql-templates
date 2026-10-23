@@ -11,9 +11,9 @@ models/core/core_freshdesk__first_response_by_month.sql   first response time an
 models/core/core_freshdesk__agent_performance_by_month.sql per agent activity and CSAT
 models/core/core_freshdesk__csat_by_month.sql             satisfaction survey results
 models/analytics/analytics__freshdesk_*.sql               thin BI-facing contracts
-tests/assert_no_duplicate_tickets.sql                     one row per ticket
-tests/assert_first_response_after_creation.sql            no negative response times
-tests/assert_created_reconciles.sql                       daily and monthly created counts agree
+tests/assert_freshdesk__no_duplicate_tickets.sql                     one row per ticket
+tests/assert_freshdesk__first_response_after_creation.sql            no negative response times
+tests/assert_freshdesk__created_reconciles.sql                       daily and monthly created counts agree
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

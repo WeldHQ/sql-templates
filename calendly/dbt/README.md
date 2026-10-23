@@ -9,9 +9,9 @@ models/core/core_calendly__scheduled_events.sql     meeting grain, outcome class
 models/core/core_calendly__meetings_by_day.sql      daily series per host and event type
 models/core/core_calendly__bookings_by_source.sql   UTM funnel, reschedules followed
 models/analytics/analytics__calendly_*.sql          thin BI-facing contracts
-tests/assert_no_duplicate_scheduled_events.sql      multi-host dedupe holds
-tests/assert_daily_meetings_tie_to_events.sql       daily series counts each meeting once
-tests/assert_bookings_reconcile_to_events.sql       funnel bookings = new bookings on events
+tests/assert_calendly__no_duplicate_scheduled_events.sql      multi-host dedupe holds
+tests/assert_calendly__daily_meetings_tie_to_events.sql       daily series counts each meeting once
+tests/assert_calendly__bookings_reconcile_to_events.sql       funnel bookings = new bookings on events
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

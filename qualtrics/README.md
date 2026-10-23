@@ -122,7 +122,7 @@ carries no survey id.
 - **NPS scores are recodes.** Qualtrics' default recodes for an NPS question are 0 to
   10. A question whose recodes were edited produces wrong scores here and in Qualtrics'
   own NPS widget alike; `invalid_scores` and
-  [`assert_nps_buckets_cover_every_answer`](dbt/tests/assert_nps_buckets_cover_every_answer.sql)
+  [`assert_qualtrics__nps_buckets_cover_every_answer`](dbt/tests/assert_qualtrics__nps_buckets_cover_every_answer.sql)
   surface it.
 - **Roll distribution rates up from counts too.** Sum `finished` and `delivered`
   across distributions and divide. Reminders and thank-yous are their own rows, linked

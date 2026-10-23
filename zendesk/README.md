@@ -129,7 +129,7 @@ Nothing here has been run against a live warehouse. Before relying on it:
 
 1. Compare today's total of `unsolved_backlog_end_of_day` with the "Unsolved
    tickets" count in Zendesk. They should match exactly;
-   [`assert_backlog_ties_to_unsolved`](dbt/tests/assert_backlog_ties_to_unsolved.sql)
+   [`assert_zendesk__backlog_ties_to_unsolved`](dbt/tests/assert_zendesk__backlog_ties_to_unsolved.sql)
    checks it.
 2. In Explore, build "Tickets solved" and "First reply time (min), median" by
    month on *Ticket solved, Date* and compare with `response_times_by_month`.

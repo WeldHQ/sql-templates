@@ -14,7 +14,7 @@
 --   * Only the latest solve is known. A ticket solved in March, reopened in May
 --     and solved again in June counts as unsolved from creation to June.
 -- The last day of the series ties exactly to Zendesk's current unsolved count
--- (see dbt/tests/assert_backlog_ties_to_unsolved.sql); earlier days are a
+-- (see dbt/tests/assert_zendesk__backlog_ties_to_unsolved.sql); earlier days are a
 -- reconstruction. For an exact history, materialise this model daily and keep
 -- the runs.
 --

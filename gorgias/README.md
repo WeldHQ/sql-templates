@@ -123,7 +123,7 @@ agent or forwarding number answering it.
 Nothing here has been run against a live warehouse. Before relying on it:
 
 1. Today's total `open_backlog_end_of_day` should equal the open ticket count in
-   Gorgias; [`assert_backlog_ties_to_open`](dbt/tests/assert_backlog_ties_to_open.sql)
+   Gorgias; [`assert_gorgias__backlog_ties_to_open`](dbt/tests/assert_gorgias__backlog_ties_to_open.sql)
    checks the model side.
 2. For a closed month, compare tickets created and the median first response time
    with Statistics → Support performance, filtered to the same channels. A gap on

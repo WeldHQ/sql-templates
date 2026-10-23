@@ -10,9 +10,9 @@ models/core/core_medallia__answer_detail.sql       every answer with label and s
 models/core/core_medallia__nps_by_unit_month.sql   NPS per unit per month
 models/core/core_medallia__topic_volume.sql        comment topics per unit per month
 models/analytics/analytics__medallia_*.sql         thin BI-facing contracts
-tests/assert_nps_questions_are_0_to_10.sql         the NPS question rule picked the right questions
-tests/assert_feedback_volume_reconciles.sql        the series counts every response once
-tests/assert_no_duplicate_answers.sql              one row per record x question x position
+tests/assert_medallia__nps_questions_are_0_to_10.sql         the NPS question rule picked the right questions
+tests/assert_medallia__feedback_volume_reconciles.sql        the series counts every response once
+tests/assert_medallia__no_duplicate_answers.sql              one row per record x question x position
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics
@@ -27,7 +27,7 @@ syntax.** They are generated from the Weld versions.
 Medallia tables.
 
 **Your NPS question.** `core_medallia__nps_by_unit_month` picks questions whose name
-contains "recommend". Run `tests/assert_nps_questions_are_0_to_10.sql`, then replace
+contains "recommend". Run `tests/assert_medallia__nps_questions_are_0_to_10.sql`, then replace
 the rule in the `nps_questions` CTE with your question ids.
 
 **Your segment fields.** `stg_medallia__feedback` reads only the columns every

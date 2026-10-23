@@ -10,9 +10,9 @@ models/core/core_zigpoll__answer_detail.sql          every answer, options unnes
 models/core/core_zigpoll__score_summary.sql          average rating, NPS on 0 to 10 scales
 models/core/core_zigpoll__attribution_by_answer.sql  orders and revenue per answer
 models/analytics/analytics__zigpoll_*.sql            thin BI-facing contracts
-tests/assert_response_volume_reconciles.sql          the series counts every answer once
-tests/assert_nps_buckets_cover_every_answer.sql      buckets add up on NPS slides
-tests/assert_no_negative_order_values.sql            no negative attributed revenue
+tests/assert_zigpoll__response_volume_reconciles.sql          the series counts every answer once
+tests/assert_zigpoll__nps_buckets_cover_every_answer.sql      buckets add up on NPS slides
+tests/assert_zigpoll__no_negative_order_values.sql            no negative attributed revenue
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

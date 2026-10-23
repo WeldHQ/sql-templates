@@ -9,9 +9,9 @@ models/core/core_grin__creator_campaign_performance.sql  campaign x creator, eve
 models/core/core_grin__campaign_performance.sql          campaign rollup with cost ratios
 models/core/core_grin__conversions_by_day.sql            attributed sales per day
 models/analytics/analytics__grin_*.sql                   thin BI-facing contracts
-tests/assert_no_duplicate_creator_campaigns.sql          no fan-out at campaign x creator
-tests/assert_daily_revenue_ties_to_campaigns.sql         daily series sums to campaign totals
-tests/assert_one_currency_per_campaign.sql               campaign revenue sums are single-currency
+tests/assert_grin__no_duplicate_creator_campaigns.sql          no fan-out at campaign x creator
+tests/assert_grin__daily_revenue_ties_to_campaigns.sql         daily series sums to campaign totals
+tests/assert_grin__one_currency_per_campaign.sql               campaign revenue sums are single-currency
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

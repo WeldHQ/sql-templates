@@ -10,10 +10,10 @@ models/core/core_qualtrics__answer_detail.sql            every answer, long form
 models/core/core_qualtrics__nps_by_month.sql             NPS per question per month
 models/core/core_qualtrics__distribution_performance.sql email funnel per distribution
 models/analytics/analytics__qualtrics_*.sql              thin BI-facing contracts
-tests/assert_response_volume_reconciles.sql              the series counts every response once
-tests/assert_nps_buckets_cover_every_answer.sql          buckets add up, no scores outside 0 to 10
-tests/assert_distribution_funnel_is_monotonic.sql        finished <= started, opened <= sent
-tests/assert_response_channels_add_up.sql               channel columns add up to responses
+tests/assert_qualtrics__response_volume_reconciles.sql              the series counts every response once
+tests/assert_qualtrics__nps_buckets_cover_every_answer.sql          buckets add up, no scores outside 0 to 10
+tests/assert_qualtrics__distribution_funnel_is_monotonic.sql        finished <= started, opened <= sent
+tests/assert_qualtrics__response_channels_add_up.sql               channel columns add up to responses
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

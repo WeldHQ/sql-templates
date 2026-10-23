@@ -10,9 +10,9 @@ models/core/core_gong__rep_call_activity_by_day.sql       calls and minutes per 
 models/core/core_gong__rep_interaction_stats_by_week.sql  talk ratio and friends per rep per week
 models/core/core_gong__scorecard_scores_by_rep.sql        coaching scores per rep per month
 models/analytics/analytics__gong_*.sql                    thin BI-facing contracts
-tests/assert_no_duplicate_calls.sql                       no fan-out at call grain
-tests/assert_daily_activity_ties_to_calls.sql             daily series counts every call once
-tests/assert_interaction_stats_are_recognised.sql         no Gong statistic silently dropped
+tests/assert_gong__no_duplicate_calls.sql                       no fan-out at call grain
+tests/assert_gong__daily_activity_ties_to_calls.sql             daily series counts every call once
+tests/assert_gong__interaction_stats_are_recognised.sql         no Gong statistic silently dropped
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref
