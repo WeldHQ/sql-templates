@@ -1,8 +1,8 @@
 # Mixpanel templates
 
 Rebuilds the core Mixpanel Insights and Funnels numbers in your warehouse: events and
-unique users per event per day, DAU/WAU/MAU with stickiness, and your saved funnels step
-by step. BigQuery.
+unique users per event per day, DAU/WAU/MAU with stickiness and new users, sessions,
+and your saved funnels step by step. BigQuery.
 
 Weld connector: **Mixpanel** ([docs](https://weld.app/docs/applications/mixpanel)).
 The integration id, and so the folder and namespace, is `mixpanel-source`.
@@ -11,6 +11,7 @@ The integration id, and so the folder and namespace, is `mixpanel-source`.
 |---|---|---|
 | [`weld/core/events_daily.sql`](weld/core/events_daily.sql) · [dbt](dbt/models/core/core_mixpanel_source__events_daily.sql) | Insights: total events and unique users, by event | day × event name |
 | [`weld/core/active_users_daily.sql`](weld/core/active_users_daily.sql) · [dbt](dbt/models/core/core_mixpanel_source__active_users_daily.sql) | Insights: DAU, WAU, MAU and stickiness | day |
+| [`weld/core/sessions.sql`](weld/core/sessions.sql) · [dbt](dbt/models/core/core_mixpanel_source__sessions.sql) | Session counts and lengths (30-minute timeout) | session |
 | [`weld/core/funnel_conversion_daily.sql`](weld/core/funnel_conversion_daily.sql) · [dbt](dbt/models/core/core_mixpanel_source__funnel_conversion_daily.sql) | Funnels: your saved funnels | funnel × entry day × step |
 
 ## Layers
@@ -37,7 +38,7 @@ the refs.
 
 | Model | Raw tables |
 |---|---|
-| events daily, active users daily | `events` |
+| events daily, active users daily, sessions | `events` |
 | funnel conversion daily | `funnels` |
 
 ## Two kinds of numbers
@@ -53,6 +54,10 @@ Why the event counts can differ slightly from Mixpanel's UI:
   one person. These models count the raw `distinct_id`, so unique users can run a little
   higher than Mixpanel shows.
 - **Time zone.** Days here are UTC. Mixpanel shows days in your project time zone.
+- **Sessions.** Mixpanel computes sessions at query time and does not export them.
+  `sessions` rebuilds them with Mixpanel's default 30-minute inactivity timeout and splits
+  them at UTC midnight. If your project uses a different timeout or event-based sessions,
+  adjust the model before comparing.
 - **Rolling windows.** WAU and MAU use 7- and 28-day windows ending on the row's day,
   Mixpanel's defaults. The first 27 days of synced history have incomplete windows, flagged
   by `is_full_window`.
@@ -61,20 +66,32 @@ Why the event counts can differ slightly from Mixpanel's UI:
 
 - **The events table is as wide as your tracking plan.** The connector writes one column
   per event property, snake_cased, so no two projects have the same table. These models
-  read only the columns the connector always writes: `event_hash`, `event_name`,
-  `distinct_id` and `time`. Add your own properties in staging to report on them.
+  read the columns the connector always writes (`event_hash`, `event_name`,
+  `distinct_id`, `time`) plus `insert_id`. Add your own properties in staging to report
+  on them.
 - **ERD versus connector.** The published ERD for this connector lists only `event_hash`
   and `event_name` on `events`, because the rest of the table is project-specific. The
   connector's stream definition always adds `distinct_id` and `time` (event time in
-  seconds), and these models rely on both.
-- **Duplicates are removed by `event_hash`.** The events stream appends, and the hash is
-  computed from the whole event, so a re-delivered event has the same hash.
+  seconds), and these models rely on both. `insert_id` is Mixpanel's `$insert_id`
+  property, snake_cased; it is present whenever your SDKs send it, which the official
+  ones do.
+- **Duplicates are removed by Mixpanel's own rule.** Mixpanel shows one copy of events
+  that share name, `distinct_id`, time and `$insert_id`. A client retry produces such a
+  copy with different processing metadata, so the connector's `event_hash` (a hash of the
+  whole event) differs between them and would count both. Staging de-duplicates on the
+  four fields instead, falling back to `event_hash` for events without an insert id. If
+  your table has no `insert_id` column, set it to NULL in staging.
 - **Funnel days restate.** Each funnel day is a cohort of users entering on that day, and
   Mixpanel updates it until the conversion window has passed. Staging keeps the latest
   copy of each funnel day.
 - **Not used:** `revenue` (Mixpanel's legacy Revenue report, built on people-profile
   transactions), `people`, `cohorts`, `cohort_members` and `annotations`. They are synced,
   but none of the three reports needs them.
+
+## Notes
+
+- Metric definitions were cross-checked against Fivetran's open-source `dbt_mixpanel`
+  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 
