@@ -11,9 +11,10 @@ SQL reports over Weld's Amazon Ads connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -23,6 +24,12 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/ad_report` joins ads on `report.ad_id`; the website version's `ad.ad_id = ad.ad_id` matched every ad to every row. `ad_id` is now part of the grain, so rows are per product ad as described.
 
 ## Required tables
 
@@ -81,7 +88,6 @@ advertising strategies and make informed decisions.
 
 ## Known issues
 
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
+Still open after the review, with the reason each is left as it is.
 
-- `core/ad_report`: the ad join is `on ad.ad_id = ad.ad_id`, which is always true, so every report row matches every ad and spend, clicks and impressions multiply. It should join on `report.ad_id`.
+- All four reports read the sponsored products report tables of Amazon's retired v2 reporting API (`sponsored_product_campaign_report` and so on). Current connections land the v3 tables instead (`sponsored_product_campaign_report_v3` and siblings), with different columns. Porting them means changing every ref and column, so they are left as published for connections that still have the v2 tables.
