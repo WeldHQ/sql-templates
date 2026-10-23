@@ -83,8 +83,6 @@ Analytics models are `SELECT *` over core so dashboards can bind to a stable nam
   `avg_days_to_complete` as `SUM(days_to_complete_total) / SUM(tasks_with_known_start)`
   and `on_time_rate` as `SUM(completed_on_time) / SUM(tasks_with_due_date)`.
 
-- Metric definitions were cross-checked against Fivetran's open-source `dbt_asana`
-  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 
