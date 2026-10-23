@@ -12,9 +12,10 @@ SQL reports over Weld's Xero connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -24,6 +25,13 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/monthly_sales_report` reads `{{raw.xero.invoice_line_item}}` and `{{raw.xero.invoice}}` instead of bare table names. It also keeps to approved and paid sales invoices (type ACCREC), leaving out drafts, voided invoices and supplier bills, and splits revenue by invoice currency.
+- `core/journal_entries_report` counts entries with `count(distinct journal_id)` and lines from the journal line table; the website version counted both per line.
 
 ## Required tables
 
@@ -99,11 +107,3 @@ separately, it then combines them to present a holistic report. This detailed re
 not only outlines the financial particulars such as net amount, gross amount, and
 tax details but also categorizes them based on their source, aiding in a
 comprehensive and streamlined financial tracking and reporting.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/monthly_sales_report`: reads bare `invoice_line_item` and `invoice` instead of `{{raw.xero.invoice_line_item}}` and `{{raw.xero.invoice}}`, so the tables won't resolve.
-- `core/journal_entries_report`: after the line join, entries and lines are both counted per line; entries should be `count(distinct j.journal_id)`.
