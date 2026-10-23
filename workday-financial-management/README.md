@@ -132,9 +132,6 @@ positive, expenses negative, so a plain `SUM` gives net income.
 - **Multi-tenant ready.** Every staging model emits a `workday_tenant` label that
   is part of every join key. To add a tenant, `UNION ALL` a second block in each
   staging model with a different label.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_workday_financial_management` package; the SQL here is written
-  independently for Weld's schema.
 
 ## Reconciling
 

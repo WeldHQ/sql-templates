@@ -128,9 +128,6 @@ positive, expenses negative, so a plain `SUM` gives net income.
 - **Multi-account ready.** Every staging model emits a `netsuite_account` label
   that is part of every join key. To add a second NetSuite account, `UNION ALL` a
   second block in each staging model with a different label.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_netsuite` package; the SQL here is written independently for Weld's
-  schema.
 
 ## Reconciling
 

@@ -178,8 +178,6 @@ subscription for another shows up here but not as churn in the bridge.
   twelfth in every month it covers.
 - **Failed invoices stay in billing.** They were billed; `failed_total` shows how
   much of a month's billing collection gave up on.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_recurly` package; the SQL here is written independently for Weld's schema.
 
 ## Schema notes
 

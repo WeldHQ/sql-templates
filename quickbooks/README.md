@@ -132,9 +132,6 @@ from the company settings.
 - **Multi-company ready.** Every staging model emits a `quickbooks_company` label
   that is part of every join key in core. To add a company, `UNION ALL` a second
   block in each staging model with a different label.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_quickbooks` package; the SQL here is written independently for Weld's
-  schema.
 
 ## Reconciling
 
