@@ -76,8 +76,8 @@ in a `staging > sona` folder. Mirror that structure or adjust the refs.
 
 ## Schema notes
 
-There is no public ERD for this connector; tables and columns follow the connector's
-own definitions.
+There is no public ERD for this connector; tables and columns follow the schema
+Weld syncs.
 
 ## Vendor docs
 

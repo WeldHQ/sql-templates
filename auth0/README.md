@@ -88,7 +88,7 @@ counted.
 
 ## Schema notes
 
-The public ERD and the connector definition agree on every table and column used
+The public ERD and the schema Weld syncs agree on every table and column used
 here.
 
 ## Vendor docs
