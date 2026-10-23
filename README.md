@@ -17,9 +17,10 @@ Each integration ships both dialects:
 
 ### From the weld.app template library
 
-Single-query reports, moved here from weld.app/templates. Simpler than the model sets
-above and not reconciled against the source systems; each directory's README says
-where every query sits and lists known issues.
+Single-query reports, moved here from weld.app/templates. Each was reviewed and
+corrected on the way in, but they are simpler than the model sets above and not
+reconciled against the source systems. Each directory's README says where every
+query sits, what was corrected, and any issues still open.
 
 | | Models |
 |---|---|
