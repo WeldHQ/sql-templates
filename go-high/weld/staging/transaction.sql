@@ -3,7 +3,7 @@
 -- Payments (funnels, invoices, subscriptions, order forms). Casts and renames.
 --
 -- Grain: transaction_id.
--- The connector fetches transactions per location and HighLevel records the location as
+-- Transactions are synced per location and HighLevel records the location as
 -- `alt_id` when `alt_type` is "location"; that is surfaced as `location_id`.
 -- `amount` and `amount_refunded` are in the transaction's currency as HighLevel returns
 -- them. Check one transaction against Payments > Transactions in HighLevel to confirm the

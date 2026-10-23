@@ -2,7 +2,7 @@
 -- Thin wrapper over raw `analytics`: QRFY's detailed scan report, one row per recorded
 -- scan with where and on what device it happened. Casts and de-duplicates.
 --
--- Grain: one scan, keyed as the connector keys it: scan_url x scan time x country x
+-- Grain: one scan, keyed as the raw table is: scan_url x scan time x country x
 -- city x operating system x OS version.
 -- Rows carry no QR id. `scan_url` is the QR code's short link and identifies the code;
 -- `qr_name` and `folder` are the code's name and folder at the time of the report.

@@ -45,8 +45,8 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
   `scan_url`; the code list keys on the QR id. There is no reliable join between the two,
   so they are kept apart, and `qr_codes.lifetime_scans` is the figure to reconcile the
   scan totals against.
-- **How scans are keyed.** The connector keys scan rows on link, scan time, country,
-  city, operating system and OS version. Two scans identical on all of those are stored
+- **How scans are keyed.** Scan rows are keyed on link, scan time, country, city,
+  operating system and OS version. Two scans identical on all of those are stored
   once, so summed scans can sit slightly below QRFY's counter.
 - **History starts two years back.** Unless you set a start date on the connection, the
   first sync fetches the last two years of scans.
@@ -56,8 +56,8 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 - **Days are UTC.**
 - **The `qr_data_*` and `qr_style` tables are not used.** They describe each code's
   landing page content and design, which no scan report needs.
-- Staging columns were checked against the published ERD and the connector's stream
-  definitions; they agree for every table used here.
+- Staging columns were checked against the published ERD and the schema Weld syncs;
+  they agree for every table used here.
 
 ## Reconciling
 

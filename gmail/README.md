@@ -70,8 +70,8 @@ and `profile`.
   for mail from people.
 - **Root headers only.** Headers are read from the message's root MIME part, the one with
   an empty part id. Attachment and alternative-body headers are ignored.
-- Staging columns were checked against the published ERD and the connector's stream
-  definitions; they agree for every table used here.
+- Staging columns were checked against the published ERD and the schema Weld syncs;
+  they agree for every table used here.
 
 ## Reconciling
 

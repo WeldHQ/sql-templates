@@ -63,8 +63,8 @@ to folder paths, so `{{staging.go_high.opportunity}}` expects the model in a
 
 ## Schema notes
 
-- **Location on transactions.** The transaction table has no `location_id` column. The
-  connector fetches transactions per location, and HighLevel records that location in
+- **Location on transactions.** The transaction table has no `location_id` column.
+  Transactions are synced per location, and HighLevel records that location in
   `alt_id` with `alt_type = 'location'`; staging surfaces it as `location_id`.
 - **Amount units.** Check one transaction against Payments > Transactions in HighLevel
   to confirm amounts are in the unit you expect before relying on totals.
@@ -73,8 +73,8 @@ to folder paths, so `{{staging.go_high.opportunity}}` expects the model in a
   current stage.
 - **Messages and conversations are not used.** The message table has no direction column
   for non-email channels, so inbound versus outbound volume cannot be reported reliably.
-- Staging columns were checked against the published ERD and the connector's stream
-  definitions; they agree for every table used here.
+- Staging columns were checked against the published ERD and the schema Weld syncs;
+  they agree for every table used here.
 
 ## Reconciling
 
