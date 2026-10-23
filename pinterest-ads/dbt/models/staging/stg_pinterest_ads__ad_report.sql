@@ -6,8 +6,8 @@
 -- CTR, CPM, and total conversions. The data is grouped by various columns for
 -- analysis.
 --
--- From the weld.app template library. Not reconciled against Pinterest Ads;
--- check the output against the source before relying on it.
+-- From the weld.app template library, corrected. Not reconciled against
+-- Pinterest Ads; check the output against the source before relying on it.
 
 with
     report as (
@@ -33,9 +33,9 @@ with
 select
     cast(report.date as date) date_day
   , advertisers.name account_name
-  , advertisers.id account_id
-  , '' as campaign_name
-  , ad.campaign_id campaign_id
+  , report.ad_account_id as account_id
+  , report.campaign_name
+  , report.campaign_id
   , ad.name ad_name
   , report.ad_id
   , ad.status as ad_status
@@ -46,9 +46,9 @@ select
         when report.impression_1_gross is null then report.impression_2
         else report.impression_1_gross
     end as impressions
-  , total_engagement as clicks
+  , report.total_clickthrough as clicks -- pin clicks; engagements also count saves and closeups
   , total_conversions conversions
 from
     report
-    left join ad on report.ad_group_id = ad.id
-    left join advertisers on ad.ad_account_id = advertisers.id
+    left join ad on report.ad_id = ad.id
+    left join advertisers on report.ad_account_id = advertisers.id

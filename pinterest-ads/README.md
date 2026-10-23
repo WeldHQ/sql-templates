@@ -8,9 +8,10 @@ SQL reports over Weld's Pinterest Ads connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that other templates read as a `{{staging...}}` ref sit in
   `weld/staging/`, so those refs resolve.
@@ -20,6 +21,13 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `staging/ad_report` joins ads on `report.ad_id`; the website version used the ad group ID, so ad names and statuses came out wrong or empty.
+- It also reads the campaign ID and name from the report (the website version output an empty `campaign_name`), takes the account ID from the report, and counts clicks as pin clicks (`total_clickthrough`) rather than total engagement, which also counts saves and closeups.
 
 ## Required tables
 
@@ -37,10 +45,3 @@ Generate a comprehensive report on advertising performance using data from the
 Pinterest Ads integration. This SQL model combines data from multiple tables,
 including ad reports, ad accounts, campaigns, and ads, to provide insights into
 various metrics related to ad performance.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `staging/ad_report`: the ad join uses `report.ad_group_id = ad.id`; it should be `report.ad_id`.
