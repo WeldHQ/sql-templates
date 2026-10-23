@@ -4,13 +4,14 @@ SQL reports over Weld's LinkedIn Ads connector. BigQuery.
 
 | Model | Report | What it returns |
 |---|---|---|
-| [`weld/staging/creative_report.sql`](weld/staging/creative_report.sql) · [dbt](dbt/models/staging/stg_linkedin_ads__creative_report.sql) | Creative Report | Generate a report on LinkedIn Ads performance. It combines data from various tables such as creative, campaign, campaign_group, account, and report to provide insights on metrics like spend, impressions, clicks, CPC, CTR, and conversions. The template uses left joins to connect the tables based on their respective IDs and groups the data by specific columns for aggregation. |
+| [`weld/staging/creative_report.sql`](weld/staging/creative_report.sql) · [dbt](dbt/models/staging/stg_linkedin_ads__creative_report.sql) | Creative Report | Daily delivery per creative, labelled with campaign, campaign group and ad account: impressions, clicks, spend, conversions, conversion value, CTR, CPC and CPM. The LinkedIn input to the cross-channel marketing reports. |
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that other templates read as a `{{staging...}}` ref sit in
   `weld/staging/`, so those refs resolve.
@@ -20,6 +21,13 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `staging/creative_report` was rewritten from the raw tables. CPC, CTR and CPM are now worked out from each day's totals; the website version added up per-row ratios.
+- It now outputs `creative_name` (the creative's title), `creative_status` and `conversion_value`, which the cross-channel marketing reports in `google-ads/` and `facebook-ads/` read. The creative created and modified timestamps are no longer output.
 
 ## Required tables
 
@@ -33,13 +41,6 @@ rather than a layered model set, so:
 
 `weld/staging/creative_report.sql`
 
-Designed to retrieve data from the LinkedIn Ads integration. It combines multiple
-tables, including "creative," "campaign," "campaign_group," "account," and "report,"
-to generate insightful reports on advertising performance.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `staging/creative_report`: CPC, CTR and CPM add up per-row ratios rather than dividing totals.
+Daily LinkedIn Ads delivery per creative, read from the creative analytics
+table and labelled with the creative's campaign, campaign group and ad account.
+Rates are worked out from each day's totals, in the ad account's currency.
