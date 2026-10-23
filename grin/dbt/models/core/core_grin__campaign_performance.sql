@@ -19,7 +19,7 @@
 -- costs were entered in and is left out of the ratio; add it yourself once you
 -- know which currency that is.
 
-WITH rollup AS (
+WITH campaign_rollup AS (
     SELECT
         grin_account,
         campaign_id,
@@ -118,7 +118,7 @@ SELECT
     COALESCE(r.seeding_shipping_cost, 0)   AS seeding_shipping_cost,
     COALESCE(r.seeding_retail_value, 0)    AS seeding_retail_value
 FROM {{ ref('stg_grin__campaign') }} c
-LEFT JOIN rollup r
+LEFT JOIN campaign_rollup r
     ON  r.grin_account = c.grin_account AND r.campaign_id = c.campaign_id
 LEFT JOIN campaign_currency cc
     ON  cc.grin_account = c.grin_account AND cc.campaign_id = c.campaign_id
