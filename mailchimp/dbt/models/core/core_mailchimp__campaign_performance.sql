@@ -16,7 +16,9 @@
 --
 -- `unsubscribes` comes from the member activity feed, which Mailchimp caps at the last
 -- 50 events per member. It is a floor and can undercount for old campaigns sent to very
--- active members.
+-- active members. An unsubscribe only counts for a campaign when the member is on that
+-- campaign's sent-to list, so the numerator of `unsubscribe_rate` is always a subset of
+-- its denominator. A member who unsubscribes twice from one campaign counts once.
 --
 -- The member-level aggregates are built per campaign before the join, so the joins are
 -- one-to-one and nothing fans out.
@@ -33,12 +35,16 @@ WITH delivery AS (
 ),
 
 unsubscribes AS (
+    -- unsub events tied to a campaign, kept only for members that campaign was sent to
     SELECT
-        campaign_id,
-        COUNT(DISTINCT CONCAT(list_id, ':', member_id))     AS unsubscribes
-    FROM {{ ref('stg_mailchimp__member_activity') }}
-    WHERE action = 'unsub'
-      AND campaign_id IS NOT NULL
+        a.campaign_id,
+        COUNT(DISTINCT CONCAT(a.list_id, ':', a.member_id)) AS unsubscribes
+    FROM {{ ref('stg_mailchimp__member_activity') }} a
+    INNER JOIN {{ ref('stg_mailchimp__campaign_member_recipient') }} sent_to
+        ON  sent_to.campaign_id = a.campaign_id
+        AND sent_to.list_id = a.list_id
+        AND sent_to.member_id = a.member_id
+    WHERE a.action = 'unsub'
     GROUP BY 1
 )
 

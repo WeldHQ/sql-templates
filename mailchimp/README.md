@@ -56,8 +56,9 @@ Rebuilt from the per-recipient "sent to" list: `recipients`, `hard_bounces`,
 successful deliveries, so `unique_opens / delivered` should land on `open_rate`. That is
 the quickest check that the sent-to stream is complete.
 
-`unsubscribes` is counted from the member activity feed. See the schema notes for why it
-is a floor.
+`unsubscribes` is counted from the member activity feed: distinct members with an
+unsubscribe event tied to the campaign, and only members on that campaign's sent-to list.
+See the schema notes for why it is a floor.
 
 ## Schema notes
 
@@ -75,10 +76,19 @@ is a floor.
   address, so every key here includes `list_id`.
 - **Two scales for rates.** Campaign reports give rates as fractions; audience stats
   (`open_rate_pct`, `click_rate_pct`) give percentages. The column names say which.
+- **No unsubscribe reasons and no automations.** The connector does not sync Mailchimp's
+  per-campaign unsubscribed report (which carries the reason a contact gave) or Classic
+  Automations and their emails. Unsubscribe reasons and automation performance are not
+  rebuilt here.
 - **E-commerce revenue** is in the connected store's currency and is only populated when a
   store is connected to the audience.
 - Staging columns were checked against the published ERD and the connector's stream
   definitions; they agree for every table used here.
+
+## Notes
+
+- Metric definitions were cross-checked against Fivetran's open-source `dbt_mailchimp`
+  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 
