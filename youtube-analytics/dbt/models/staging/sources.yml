@@ -7,5 +7,6 @@ sources:
     schema: raw_youtube_analytics
     tables:
       - name: channel_basic_a3
+      - name: channel_demographics_a1
       - name: channel_reach_basic_a1
       - name: channel_traffic_source_a3

@@ -7,7 +7,8 @@
 -- Depends on: staging.youtube_analytics.channel_basic, .channel_reach
 --
 -- Averages are recomputed from sums: average view duration is watch time over
--- views, and average percentage viewed is weighted by views. To report a week or
+-- views, and average percentage viewed is weighted by views. average_percentage_viewed
+-- stays on YouTube's 0 to 100 scale, as Studio shows it. To report a week or
 -- a month, re-sum the base columns and divide again. The *_weighted columns are
 -- there for exactly that.
 --
@@ -24,12 +25,12 @@ WITH activity AS (
         SUM(premium_views)               AS premium_views,
         SUM(watch_time_minutes)          AS watch_time_minutes,
         SUM(average_view_duration_percentage * views) AS view_percentage_weighted,
-        SUM(likes)                       AS likes,
-        SUM(dislikes)                    AS dislikes,
-        SUM(comments)                    AS comments,
-        SUM(shares)                      AS shares,
         SUM(subscribers_gained)          AS subscribers_gained,
         SUM(subscribers_lost)            AS subscribers_lost,
+        SUM(likes)                       AS likes,
+        SUM(dislikes)                    AS dislikes,
+        SUM(shares)                      AS shares,
+        SUM(comments)                    AS comments,
         SUM(IF(subscribed_status = 'subscribed', views, 0)) AS views_from_subscribers,
         SUM(IF(live_or_on_demand = 'live', views, 0))       AS live_views
     FROM {{ ref('stg_youtube_analytics__channel_basic') }}
