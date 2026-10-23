@@ -17,7 +17,7 @@ SELECT
     CAST(app_apple_identifier AS STRING)    AS app_apple_id,
     CAST(app_name AS STRING)                AS app_name,
     CAST(event AS STRING)                   AS event,           -- 'Install' or 'Delete'
-    CAST(download_type AS STRING)           AS download_type,   -- 'First-time download', 'Redownload', 'Manual update', ...
+    CAST(download_type AS STRING)           AS download_type,   -- 'First-time download', 'Redownload', 'Manual update', 'Restore'
     COALESCE(CAST(app_version AS STRING), 'unknown')  AS app_version,
     COALESCE(CAST(device AS STRING), 'unknown')       AS device,
     CAST(platform_version AS STRING)        AS platform_version,

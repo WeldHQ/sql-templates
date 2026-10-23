@@ -6,6 +6,10 @@
 --
 -- Grain: one row per review.
 --
+-- TERRITORY IS A THREE-LETTER CODE here ('USA', 'DEU'). Apple's analytics reports
+-- and the Sales report use two-letter codes ('US', 'DE'), so the column is named
+-- territory_alpha3 to stop it being joined to those as if it matched.
+--
 -- Star-only ratings without text are not returned by Apple's API, so the average
 -- rating here is the average of written reviews, not the rating shown on the App
 -- Store.
@@ -19,7 +23,7 @@ FROM (
         CAST(title AS STRING)                       AS review_title,
         CAST(created_date AS TIMESTAMP)             AS created_at,
         DATE(CAST(created_date AS TIMESTAMP))       AS created_date,
-        UPPER(CAST(territory AS STRING))            AS territory,
+        UPPER(CAST(territory AS STRING))            AS territory_alpha3,
         CAST(response_id AS STRING)                 AS response_id,
         CAST(response_last_modified_date AS TIMESTAMP) AS response_modified_at,
         CAST(response_state AS STRING)              AS response_state,

@@ -9,6 +9,18 @@
 -- sit below the units in sales_and_proceeds. Use this model for mix and trend
 -- (which source, which territory, how many deletions per install), and
 -- sales_and_proceeds for absolute download counts.
+--
+-- INSTALLS, NOT DOWNLOADS. Every column counts install or delete events on a
+-- device. Apple labels each install with the download that caused it: a
+-- first-time download is the first Get or Buy on an Apple ID, a redownload is the
+-- same account installing again. App Store Connect's own download figures come
+-- from a separate Downloads report, counted per account and including pre-orders,
+-- which the connector does not sync. Expect these to run close to, not equal to,
+-- the downloads shown in App Analytics.
+--
+-- Apple documents four install types: first-time download, redownload, manual
+-- update and restore. Anything else Apple sends lands in other_installs, so the
+-- type columns always add up to total_installs.
 
 SELECT
     date_day,
@@ -21,8 +33,10 @@ SELECT
     SUM(IF(event = 'Install' AND download_type = 'First-time download', event_count, 0)) AS first_time_downloads,
     SUM(IF(event = 'Install' AND download_type = 'Redownload', event_count, 0))          AS redownloads,
     SUM(IF(event = 'Install' AND download_type = 'Manual update', event_count, 0))       AS manual_updates,
-    SUM(IF(event = 'Install' AND download_type = 'Auto-update', event_count, 0))         AS auto_updates,
     SUM(IF(event = 'Install' AND download_type = 'Restore', event_count, 0))             AS restores,
+    SUM(IF(event = 'Install' AND COALESCE(download_type, '') NOT IN
+           ('First-time download', 'Redownload', 'Manual update', 'Restore'), event_count, 0))
+                                                                                         AS other_installs,
     SUM(IF(event = 'Install', event_count, 0))                                           AS total_installs,
     SUM(IF(event = 'Delete', event_count, 0))                                            AS deletions,
 

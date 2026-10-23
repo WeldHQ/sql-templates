@@ -16,7 +16,11 @@
 --
 -- Impressions are counted on event = 'Impression' across all engagement types;
 -- page views on event = 'Page view'. Apple counts impressions and page views
--- separately: a page view is not also an impression.
+-- separately: a page view is not also an impression. get_taps is Apple's 'Get'
+-- engagement type, which covers taps on Get, Buy and Pre-order alike.
+--
+-- Downloads here are install events of the first-time and redownload types (see
+-- downloads_and_deletions), not Apple's per-account download count.
 
 WITH engagement AS (
     SELECT

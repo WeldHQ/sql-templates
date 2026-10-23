@@ -4,8 +4,10 @@
 -- Join columns that Apple leaves empty become 'unknown', so the core models can
 -- join reports on them without losing rows to NULL keys.
 --
--- Grain: day x app x app version x device x OS version x source type x source info
--- x campaign x page type x territory.
+-- Grain: day x app x app version x device x OS version.
+-- Apple's crash report has no territory, source or page breakdown. The connector
+-- keys the table on those columns too, but they arrive empty on crash rows, so
+-- crashes can only be joined to other reports on day, app, version and device.
 --
 -- Opted-in users only. Crash counts here are for reporting trends; Xcode Organizer
 -- and your crash reporter remain the place to debug individual crashes.

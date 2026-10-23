@@ -8,11 +8,11 @@ Weld connector: **App Store Connect** ([docs](https://weld.app/docs/applications
 
 | Model | Recreates | Grain |
 |---|---|---|
-| [`weld/core/downloads_and_deletions.sql`](weld/core/downloads_and_deletions.sql) · [dbt](dbt/models/core/core_app_store_connect__downloads_and_deletions.sql) | App Analytics, Installations and Deletions: first-time downloads, redownloads, updates, deletions | day × app × territory × source type × device |
+| [`weld/core/downloads_and_deletions.sql`](weld/core/downloads_and_deletions.sql) · [dbt](dbt/models/core/core_app_store_connect__downloads_and_deletions.sql) | App Analytics, Installations and Deletions: installs by type (first-time download, redownload, update, restore) and deletions | day × app × territory × source type × device |
 | [`weld/core/product_page_conversion.sql`](weld/core/product_page_conversion.sql) · [dbt](dbt/models/core/core_app_store_connect__product_page_conversion.sql) | App Analytics, Sources: impressions, page views, Get taps, downloads, conversion | day × app × territory × source type × device |
 | [`weld/core/usage_and_stability.sql`](weld/core/usage_and_stability.sql) · [dbt](dbt/models/core/core_app_store_connect__usage_and_stability.sql) | App Analytics, Usage and Crashes: sessions, session length, crashes per 1,000 sessions | day × app × app version × device |
 | [`weld/core/sales_and_proceeds.sql`](weld/core/sales_and_proceeds.sql) · [dbt](dbt/models/core/core_app_store_connect__sales_and_proceeds.sql) | Sales and Trends: units, customer sales and estimated proceeds, refunds netted | day × app × product × country × product category × currencies |
-| [`weld/core/ratings_and_reviews.sql`](weld/core/ratings_and_reviews.sql) · [dbt](dbt/models/core/core_app_store_connect__ratings_and_reviews.sql) | Ratings and Reviews: written reviews, average stars, replies | day × app × territory |
+| [`weld/core/ratings_and_reviews.sql`](weld/core/ratings_and_reviews.sql) · [dbt](dbt/models/core/core_app_store_connect__ratings_and_reviews.sql) | Ratings and Reviews: written reviews, average stars, replies | day × app × territory (three-letter code) |
 
 ## Layers
 
@@ -49,7 +49,10 @@ or adjust the refs.
 **Analytics Reports** (`app_installs_deletions`, `app_store_engagement`,
 `app_sessions`, `app_crashes`) only include people who agreed to share analytics
 with developers, and Apple drops any row with fewer than five users. They are good
-for mix, trend and rates, and always lower than the true totals.
+for mix, trend and rates, and always lower than the true totals. The connector
+reads the Detailed variant of each report, which adds source info and campaign but
+applies stricter privacy thresholds than the Standard variant, so small slices
+(one campaign in one territory on one day) are the most likely to be missing.
 
 **The Sales report** (`sales_report`) counts every transaction. Use
 `sales_and_proceeds` for absolute download and revenue numbers, and the analytics
@@ -75,6 +78,17 @@ models for where downloads came from and what people did after.
   ratings, so `avg_rating` will not match the rating on your App Store page.
 - **History.** Apple's analytics reports go back to 1 January 2024 at most. Recent
   days are provisional: Apple says reports are complete within three to five days.
+- **Installs are not downloads.** The analytics models count install events on
+  devices, labelled with the kind of download behind them. App Store Connect's
+  download figures come from Apple's separate Downloads report, counted per Apple
+  ID and including pre-orders. See Schema notes.
+- **Territory codes.** The analytics reports and the Sales report use two-letter
+  codes (`US`); customer reviews use three-letter codes (`USA`), kept as
+  `territory_alpha3` so the two are not joined by mistake. Map them before
+  combining reviews with downloads.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_apple_store` package; the SQL here is written independently for Weld's
+  schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Compare a week of units and proceeds per app with Sales and
   Trends, and first-time downloads per source with App Analytics, before relying on
@@ -95,6 +109,18 @@ models for where downloads came from and what people did after.
   same effect for two products sharing a title, or one product sold at two prices in
   the same country on the same day. If a day's totals come in below App Store
   Connect, this is the first thing to check.
+- **Not synced, so not built.** The connector reads five Analytics Reports and the
+  Summary Sales report. It does not sync Apple's App Store Downloads or Pre-Order
+  reports, so per-account download counts and pre-orders are not available; the
+  install events above are the closest substitute. It does not sync the
+  Subscription, Subscription Event or Subscriber reports either, so active
+  subscriptions by offer type (free trial, pay as you go, pay up front), and
+  subscribe, renew and cancel events, cannot be built. Auto-renewable
+  subscription units and proceeds are still in `sales_and_proceeds` under
+  `product_category = 'auto_renewable_subscription'`.
+- **Crashes have no territory or source.** Apple's crash report is broken down by
+  app version, device and OS version only, which is why `usage_and_stability` has
+  no territory or source type.
 - **`date` and `processing_date`.** The connector writes both on the analytics
   tables. `processing_date` is the date Apple processed the report instance a row
   came from. If the two are equal on every row in your warehouse, `date` is the
