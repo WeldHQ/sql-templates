@@ -13,9 +13,8 @@ Weld connector: **Typeform** ([docs](https://weld.app/docs/applications/typeform
 
 ## Read this first: what this connector cannot do
 
-**1. Only submitted responses are synced.** The connector reads Typeform's Responses
-API with its default filter, which returns completed responses. Views, starts and
-partial responses are not synced. That rules out completion rate, drop-off per
+**1. Only submitted responses are synced.** Views, starts and partial responses
+are not. That rules out completion rate, drop-off per
 question and the "views → starts → submissions" funnel on Typeform's Results page.
 `response_volume` reconciles to the Results page's response count, nothing more.
 

@@ -5,8 +5,8 @@
 --
 -- Built on a day spine, so a quiet group or channel returns zeros instead of a gap.
 --
--- NO RESOLVED COUNT AND NO BACKLOG HISTORY. The connector does not sync when a
--- ticket was resolved, so "resolved per day" and the backlog on a past day cannot
+-- NO RESOLVED COUNT AND NO BACKLOG HISTORY. The synced data does not record when
+-- a ticket was resolved, so "resolved per day" and the backlog on a past day cannot
 -- be computed. unresolved_now is a snapshot of tickets created on that day that
 -- are still unresolved today, not a backlog. Materialise ticket_lifecycle daily
 -- and keep the runs if you need a backlog trend.

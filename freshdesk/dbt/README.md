@@ -32,7 +32,7 @@ No vars, no packages.
 
 ## Notes
 
-- **No resolution time.** The connector does not sync Freshdesk's ticket stats;
+- **No resolution time.** Freshdesk's ticket stats are not synced;
   see the [main README](../README.md).
 - **BigQuery.** `GENERATE_DATE_ARRAY`, `APPROX_QUANTILES`, `COUNTIF`, `QUALIFY` and
   `SAFE_DIVIDE` need swapping for other engines.

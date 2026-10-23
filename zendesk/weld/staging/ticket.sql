@@ -2,8 +2,8 @@
 -- Thin wrapper over raw `ticket`. Casts, renames, unpacks two JSON columns, and
 -- keeps one row per ticket. No business logic.
 --
--- The connector reads Zendesk's incremental ticket export, which Zendesk itself
--- documents as able to return the same ticket more than once. The latest version
+-- The same ticket can arrive more than once, as Zendesk documents for its
+-- incremental export. The latest version
 -- of each ticket wins here, so a repeated row can never double a count in core.
 --
 -- `via` and `satisfaction_rating` arrive as JSON strings. Only the parts the

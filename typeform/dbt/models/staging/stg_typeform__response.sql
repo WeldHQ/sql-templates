@@ -1,9 +1,8 @@
 -- stg_typeform__response
 -- Thin wrapper over raw `response`. One row per submitted response.
 --
--- COMPLETED RESPONSES ONLY: the connector reads Typeform's Responses API with its
--- default filter, which returns submitted responses. Partial and started-but-not-
--- submitted responses are not synced, and neither are form views. Completion rate
+-- COMPLETED RESPONSES ONLY: only submitted responses are synced. Partial and
+-- started-but-not-submitted responses are not, and neither are form views. Completion rate
 -- and drop-off cannot be computed from this connector; use Typeform's own Results
 -- page for those.
 --

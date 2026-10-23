@@ -1,8 +1,8 @@
 -- stg_typeform__form
 -- Thin wrapper over raw `form`. One row per form (typeform).
 --
--- The connector re-reads a form whenever Typeform reports it as updated and merges
--- on `id`, so a form appears once. A deleted form is not removed from the table;
+-- A form is synced again whenever Typeform reports it as updated, and appears
+-- once. A deleted form is not removed from the table;
 -- it simply stops receiving updates.
 
 SELECT

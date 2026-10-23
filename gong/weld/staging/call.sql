@@ -8,8 +8,8 @@
 -- 'Inbound', 'Outbound', 'Conference' or 'Unknown'. `system` is the recording or
 -- telephony source (Zoom, Teams, a dialer and so on).
 --
--- Deduped on id. The connector re-reads its whole window weekly to pick up edits
--- to older calls, and the destination merges on id, so this is belt and braces.
+-- Deduped on id. Calls are re-read weekly to pick up edits to older calls; the
+-- dedupe keeps a re-read from ever double counting.
 --
 -- Single Gong instance. To add another, UNION ALL a second block below pointing at
 -- that connector with a different gong_account label. Keep it in staging so the

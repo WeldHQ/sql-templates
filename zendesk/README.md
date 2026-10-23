@@ -38,9 +38,9 @@ consequences:
   earlier days are an approximation. If an exact backlog history matters,
   materialise that model on a daily schedule and keep the runs.
 
-The connector also syncs `ticket_audit`, which holds status changes as a JSON
-array. It is read from Zendesk's audit list endpoint, which does not include
-archived tickets, so it cannot give a complete history either and is not used here.
+`ticket_audit` is also synced and holds status changes as a JSON array. It does
+not include archived tickets, so it cannot give a complete history either and is
+not used here.
 
 **CSAT has no date of its own.** The satisfaction rating on a ticket is a score
 (`good`, `bad`, `offered`, `unoffered`) and a reason, with no timestamp, so CSAT is
@@ -140,7 +140,7 @@ Nothing here has been run against a live warehouse. Before relying on it:
 ## Schema notes
 
 - The public ERD types every Zendesk timestamp column (`created_at`, `solved_at`
-  and the like) as `date`. The connector loads them as millisecond timestamps.
+  and the like) as `date`. They arrive as millisecond timestamps.
   Staging casts them to `TIMESTAMP`, which is correct either way.
 - `via` and `satisfaction_rating` are JSON objects stored as strings.
 - **No schedules or holidays.** The connector does not sync Zendesk's business
@@ -152,9 +152,8 @@ Nothing here has been run against a live warehouse. Before relying on it:
   so SLA breach reports cannot be built from this connector.
 - **No complete field history.** A daily history of each ticket's status,
   assignee, group or priority needs every change event. The `ticket_audit`
-  stream has them as a JSON array, but it reads Zendesk's audit list endpoint,
-  which leaves out archived tickets (Zendesk archives tickets closed for more
-  than 120 days). A history built on it would silently lose older tickets, so
+  table has them as a JSON array, but it leaves out archived tickets (Zendesk
+  archives tickets closed for more than 120 days). A history built on it would silently lose older tickets, so
   none is built. This is also why solved counts use the latest solve.
 
 ## Notes

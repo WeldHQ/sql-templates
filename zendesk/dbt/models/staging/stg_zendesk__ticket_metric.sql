@@ -2,7 +2,7 @@
 -- Thin wrapper over raw `ticket_metric`: Zendesk's own per-ticket metrics, one
 -- row per ticket. Casts and renames only.
 --
--- The connector fetches these alongside each ticket, so the table refreshes
+-- These are synced alongside each ticket, so the table refreshes
 -- whenever the ticket changes. Every duration is in MINUTES and comes in two
 -- flavours: _calendar (wall clock) and _business (inside the schedule applied to
 -- the ticket). These are the same numbers Zendesk Explore uses for "First reply

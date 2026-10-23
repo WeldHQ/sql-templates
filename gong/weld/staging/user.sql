@@ -1,6 +1,6 @@
 -- staging.gong.user
 -- Thin wrapper over raw `user`: every Gong user, active or not, with their
--- manager. Current state only; the connector reads the full list each sync.
+-- manager. Current state only; the full list is read each sync.
 --
 -- Single Gong instance; see staging.gong.call.
 

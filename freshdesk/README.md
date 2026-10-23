@@ -18,9 +18,8 @@ Every grain also includes `freshdesk_account`.
 ## Read this first: what this connector cannot do
 
 **There is no resolution time.** Freshdesk keeps `resolved_at`, `closed_at` and
-`first_responded_at` in a separate "stats" block on each ticket, and the connector
-does not sync it. That has three consequences, and they are properties of the
-connector rather than of these models:
+`first_responded_at` in a separate "stats" block on each ticket, which is not part
+of the synced data. That has three consequences:
 
 - **Resolution time and "resolved per day" cannot be built.** `updated_at` is not a
   substitute: it moves on every later edit, and Freshdesk's own auto-close of
@@ -36,8 +35,8 @@ connector rather than of these models:
   Expect small differences from Freshdesk's own number where its rules differ
   (for example on tickets forwarded in or replied to by a public note).
 
-**Deleted and spam tickets go stale.** The connector reads Freshdesk's ticket list,
-which hides deleted and spam tickets. A ticket deleted or marked spam after it was
+**Deleted and spam tickets go stale.** Freshdesk's ticket list hides deleted and
+spam tickets, so a ticket deleted or marked spam after it was
 synced therefore stops updating and keeps its last state in the warehouse. If the
 counts must match Freshdesk exactly, run a full resync of the `ticket` stream from
 time to time.
@@ -125,7 +124,7 @@ hours), and the CSAT score in the Satisfaction survey report.
 ## Schema notes
 
 - The public ERD types timestamp columns (`created_at`, `fr_due_by`, ...) as `date`.
-  The connector loads them as millisecond timestamps; staging casts to `TIMESTAMP`.
+  They arrive as millisecond timestamps; staging casts to `TIMESTAMP`.
 - Custom ticket fields land as extra `cf_*` columns that differ per helpdesk. They
   are not used here; add the ones you report on to `weld/staging/ticket.sql`.
 - `satisfaction_rating_value.survey_question_id` holds Freshdesk's question key,

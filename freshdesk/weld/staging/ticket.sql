@@ -11,8 +11,7 @@
 -- number instead of silently becoming NULL. Put your custom status names in the
 -- CASE if you use them.
 --
--- WHAT IS NOT HERE: the connector does not sync Freshdesk's ticket stats, so
--- there is no resolved_at, closed_at or first_responded_at. First response is
+-- WHAT IS NOT HERE: Freshdesk's ticket stats are not synced, so there is no resolved_at, closed_at or first_responded_at. First response is
 -- derived from conversations in core; resolution time cannot be built at all.
 --
 -- reporting_timezone: Freshdesk reports in the helpdesk's time zone. The synced

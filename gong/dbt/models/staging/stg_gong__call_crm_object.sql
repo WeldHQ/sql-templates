@@ -2,9 +2,8 @@
 -- The CRM records a call is linked to, from raw `call_context_integration`. One row
 -- per call x CRM object.
 --
--- The raw table is one row per CRM FIELD of every linked object, and the connector
--- asks Gong for the context both as it is now and as it was at the time of the
--- call (`timing`), so the same object appears many times. Only the link itself is
+-- The raw table is one row per CRM FIELD of every linked object, and it holds the
+-- context both as it is now and as it was at the time of the call (`timing`), so the same object appears many times. Only the link itself is
 -- kept here: system, object type and object id. The field values are not unpacked,
 -- because their shape varies by CRM and field.
 --

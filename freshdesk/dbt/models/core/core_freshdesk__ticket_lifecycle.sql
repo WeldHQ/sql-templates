@@ -8,11 +8,11 @@
 --   * not incoming, not private, not a note (source_code 2), and
 --   * not an automated reply.
 -- first_response_minutes is calendar time from ticket creation to that reply.
--- Freshdesk's own report can also show business hours; the connector does not
--- sync ticket stats, so only calendar time is available. Outbound tickets
+-- Freshdesk's own report can also show business hours; ticket stats are not
+-- synced, so only calendar time is available. Outbound tickets
 -- (an agent wrote first) are flagged and left out of response-time averages.
 --
--- RESOLUTION TIME IS NOT HERE. The connector syncs no resolved_at or closed_at,
+-- RESOLUTION TIME IS NOT HERE. There is no resolved_at or closed_at,
 -- and updated_at moves on every later edit (Freshdesk's auto-close alone adds
 -- days), so any resolution time built from it would be wrong. is_resolved says
 -- whether a ticket is resolved NOW, which is all the data supports.

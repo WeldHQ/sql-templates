@@ -9,7 +9,7 @@
 --   replies_sent          the reply's date, the agent who sent it
 --   first_responses       the first reply's date, the agent who sent it
 --   tickets_assigned      the ticket's creation date, its CURRENT assignee
---                         (the connector syncs no assignment history)
+--                         (no assignment history is synced)
 --   csat_*                the survey answer's date, the agent on the response
 -- So never divide one column by another from a different line above and call it
 -- a rate. Medians do not roll up across months.

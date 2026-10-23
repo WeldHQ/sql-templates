@@ -16,8 +16,8 @@ Weld connector: **Medallia** ([docs](https://weld.app/docs/applications/medallia
 
 **1. The feedback table's columns are your instance's fields.** Every single-valued
 record field (`e_*`, `a_*`, `k_*`, ...) becomes a column of `feedback`, so the table
-differs per company. `staging/feedback.sql` reads only the columns the connector
-always writes: `id`, `timezone`, `a_unit_identifier`, `e_status`, `e_survey_method`,
+differs per company. `staging/feedback.sql` reads only the columns every instance
+has: `id`, `timezone`, `a_unit_identifier`, `e_status`, `e_survey_method`,
 `e_survey_source`, `e_creationdate`, `e_responsedate`, `e_accepteddate`,
 `e_expirationdate` and `e_lastupdated`. Add the fields you segment on (region,
 touchpoint, product line) to that model and they flow through to core.
@@ -34,9 +34,8 @@ field lands in `feedback_answer`, one row per value. For a question with fixed
 options, the value is the option id, and `field_option` gives its label and numeric
 value. `answer_detail` does that lookup once.
 
-**4. Units are only those seen on feedback.** The connector reaches units through
-each record's primary unit, so `unit` holds the units of synced records, not the full
-unit hierarchy. Records join to a unit on `a_unit_identifier`. Unit groups are synced
+**4. Units are only those seen on feedback.** `unit` holds each synced record's
+primary unit, not the full unit hierarchy. Records join to a unit on `a_unit_identifier`. Unit groups are synced
 (`unit_group`, `group`) but not modelled; join them on `unit_id` to roll up to a
 region or brand.
 
@@ -112,8 +111,8 @@ instances) count as responses but never in the cohort columns.
   shrinks, or a comment is re-tagged, the rows that were removed stay in
   `feedback_answer` and `feedback_topic` until a full re-sync. Deletes are not captured
   either.
-- **Dates are UTC.** The connector converts Medallia's wall-clock datetimes to UTC
-  using each record's time zone. Medallia's reports use the unit's local time, so a
+- **Dates are UTC.** Medallia's wall-clock datetimes are converted to UTC using
+  each record's time zone. Medallia's reports use the unit's local time, so a
   day's count can differ near midnight. `feedback.timezone` is kept if you want to
   report in local time.
 - **History is limited to the sync start.** The first sync reads two years of feedback

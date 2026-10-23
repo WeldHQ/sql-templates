@@ -146,7 +146,7 @@ right per deal and too high when summed over deals. For totals, use
   a native array column. The connector also syncs separate association tables for
   some activity objects; they are not needed here.
 - **The public ERD shows the top-level `created_at` and `updated_at` columns on
-  `deal`, `company` and `contact` as integers.** The connector declares them as
+  `deal`, `company` and `contact` as integers.** In the warehouse they are
   timestamps. These models use HubSpot's `createdate` properties instead, which are
   timestamps in both, so the difference does not matter here.
 - **Deletes.** The connector syncs archived (deleted) deals, companies and contacts

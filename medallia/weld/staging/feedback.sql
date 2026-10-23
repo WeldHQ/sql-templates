@@ -4,12 +4,12 @@
 --
 -- The raw table has one column per single-valued record field your Medallia
 -- instance defines (e_*, a_*, k_*, ...), so its width differs per company. This
--- model reads only the columns the connector always writes, which makes it portable.
+-- model reads only the columns every instance has, which makes it portable.
 -- Add your own fields here (a region, a product line, a touchpoint) and they flow to
 -- core unchanged.
 --
--- Datetimes are UTC instants: the connector converts Medallia's wall-clock values
--- using each record's time zone. `timezone` is kept for reporting in local time.
+-- Datetimes are UTC instants, converted from Medallia's wall-clock values using
+-- each record's time zone. `timezone` is kept for reporting in local time.
 --
 -- `status` holds Medallia's label, for example COMPLETED.
 
