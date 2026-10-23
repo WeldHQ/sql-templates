@@ -9,9 +9,9 @@ models/core/core_pager_duty__incident_response_daily.sql    incidents, MTTA, MTT
 models/core/core_pager_duty__responder_load_daily.sql       incidents per responder
 models/core/core_pager_duty__open_incidents.sql             unresolved incidents with age
 models/analytics/analytics__pager_duty_*.sql                thin BI-facing contracts
-tests/assert_raw_incident_is_unique.sql                     one row per incident after de-duplication
-tests/assert_incident_response_reconciles_to_incidents.sql  the daily report counts each incident once
-tests/assert_no_negative_response_times.sql                 timings are never negative
+tests/assert_pager_duty__raw_incident_is_unique.sql                     one row per incident after de-duplication
+tests/assert_pager_duty__incident_response_reconciles_to_incidents.sql  the daily report counts each incident once
+tests/assert_pager_duty__no_negative_response_times.sql                 timings are never negative
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

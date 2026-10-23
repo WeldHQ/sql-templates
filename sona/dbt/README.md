@@ -9,9 +9,9 @@ models/core/core_sona__shift_coverage_daily.sql  planned, filled, agency and ope
 models/core/core_sona__absence_daily.sql         absence days by type and location
 models/core/core_sona__paid_hours_daily.sql      paid hours by pay type and location
 models/analytics/analytics__sona_*.sql           thin BI-facing contracts
-tests/assert_shift_statuses_add_up.sql           filled + agency + open = all shifts
-tests/assert_no_negative_hours.sql               no negative shift or paid hours
-tests/assert_absence_days_reconcile.sql          every absence day counted once
+tests/assert_sona__shift_statuses_add_up.sql           filled + agency + open = all shifts
+tests/assert_sona__no_negative_hours.sql               no negative shift or paid hours
+tests/assert_sona__absence_days_reconcile.sql          every absence day counted once
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

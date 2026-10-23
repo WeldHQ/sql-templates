@@ -11,9 +11,9 @@ models/core/core_app_store_connect__usage_and_stability.sql      sessions and cr
 models/core/core_app_store_connect__sales_and_proceeds.sql       units, sales and proceeds, refunds netted
 models/core/core_app_store_connect__ratings_and_reviews.sql      written reviews and replies
 models/analytics/analytics__app_store_connect_*.sql              thin BI-facing contracts
-tests/assert_conversion_keeps_every_download.sql                 the funnel join loses no downloads
-tests/assert_sales_units_split_adds_up.sql                       sold - refunded = net units
-tests/assert_usage_is_unique.sql                                 one row per day, app, version, device
+tests/assert_app_store_connect__conversion_keeps_every_download.sql                 the funnel join loses no downloads
+tests/assert_app_store_connect__sales_units_split_adds_up.sql                       sold - refunded = net units
+tests/assert_app_store_connect__usage_is_unique.sql                                 one row per day, app, version, device
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

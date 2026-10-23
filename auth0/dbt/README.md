@@ -10,9 +10,9 @@ models/core/core_auth0__logins_by_application.sql   the same per application and
 models/core/core_auth0__monthly_active_users.sql    monthly active users, new vs. returning
 models/core/core_auth0__user_signups.sql            new users by signup connection
 models/analytics/analytics__auth0_*.sql             thin BI-facing contracts
-tests/assert_tenant_activity_is_one_row_per_day.sql one row per day
-tests/assert_application_logins_sum_to_tenant.sql   per-application logins add up to the tenant
-tests/assert_active_users_split_adds_up.sql         new + returning + unmatched = active
+tests/assert_auth0__tenant_activity_is_one_row_per_day.sql one row per day
+tests/assert_auth0__application_logins_sum_to_tenant.sql   per-application logins add up to the tenant
+tests/assert_auth0__active_users_split_adds_up.sql         new + returning + unmatched = active
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

@@ -9,8 +9,8 @@ models/staging/stg_wordpress__postmeta.sql             wp_postmeta key-value pai
 models/core/core_wordpress__content_inventory.sql      published posts and pages, as a content audit
 models/core/core_wordpress__publishing_cadence.sql     published and edited per month and author
 models/analytics/analytics__wordpress_*.sql            thin BI-facing contracts
-tests/assert_inventory_is_unique.sql                   one row per post
-tests/assert_cadence_reconciles_to_inventory.sql       monthly counts add up to the inventory
+tests/assert_wordpress__inventory_is_unique.sql                   one row per post
+tests/assert_wordpress__cadence_reconciles_to_inventory.sql       monthly counts add up to the inventory
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

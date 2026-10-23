@@ -9,9 +9,9 @@ models/core/core_launchdarkly__flag_inventory.sql           every flag with age,
 models/core/core_launchdarkly__flag_health_by_project.sql   flag debt per project
 models/core/core_launchdarkly__context_activity.sql         total and recently active contexts
 models/analytics/analytics__launchdarkly_*.sql              thin BI-facing contracts
-tests/assert_flag_inventory_is_unique.sql                   one row per project and flag
-tests/assert_project_health_reconciles_to_inventory.sql     project totals add up to the inventory
-tests/assert_context_recency_is_nested.sql                  1 day <= 7 days <= 30 days <= total
+tests/assert_launchdarkly__flag_inventory_is_unique.sql                   one row per project and flag
+tests/assert_launchdarkly__project_health_reconciles_to_inventory.sql     project totals add up to the inventory
+tests/assert_launchdarkly__context_recency_is_nested.sql                  1 day <= 7 days <= 30 days <= total
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

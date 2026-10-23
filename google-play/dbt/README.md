@@ -11,10 +11,10 @@ models/core/core_google_play__stability_by_app_version.sql  crashes and ANRs per
 models/core/core_google_play__subscriptions_daily.sql       new, canceled and active subscriptions
 models/core/core_google_play__earnings_monthly.sql          charges, fees, refunds, taxes, net
 models/analytics/analytics__google_play_*.sql               thin BI-facing contracts
-tests/assert_earnings_buckets_sum_to_net.sql                the buckets add up to net earnings
-tests/assert_installs_are_unique.sql                        one row per day, app and country
-tests/assert_store_listing_reconciles.sql                   acquisitions survive the rollup
-tests/assert_subscriptions_are_unique.sql                   one row per day, app, product and country
+tests/assert_google_play__earnings_buckets_sum_to_net.sql                the buckets add up to net earnings
+tests/assert_google_play__installs_are_unique.sql                        one row per day, app and country
+tests/assert_google_play__store_listing_reconciles.sql                   acquisitions survive the rollup
+tests/assert_google_play__subscriptions_are_unique.sql                   one row per day, app, product and country
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.
