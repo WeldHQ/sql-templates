@@ -5,8 +5,13 @@
 -- includes the billable amount, calculated based on a hypothetical rate of $50 per
 -- hour.
 --
--- From the weld.app template library. Not reconciled against ClickUp;
--- check the output against the source before relying on it.
+-- Grain: month x user, by the time entry's start (UTC). ClickUp records
+-- durations in milliseconds: the *_time columns stay in milliseconds as
+-- ClickUp reports them, the *_hours columns convert them. Running timers carry
+-- a negative duration and are left out until they stop.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- ClickUp; check the output against the source before relying on it.
 
 with
     MonthlyTimeSummary as (
@@ -29,6 +34,8 @@ with
           , sum(duration) as total_time
         from
             {{ source('clickup', 'time') }}
+        where
+            duration >= 0
         group by
             month
           , user_id
@@ -41,7 +48,10 @@ select
   , billable_time
   , non_billable_time
   , total_time
-  , billable_time * 50 as billable_amount -- Hypothetical rate of $50 per hour, adjust as needed
+  , billable_time / 3600000 as billable_hours
+  , non_billable_time / 3600000 as non_billable_hours
+  , total_time / 3600000 as total_hours
+  , billable_time / 3600000 * 50 as billable_amount -- hypothetical rate of $50 per hour, adjust as needed
 from
     MonthlyTimeSummary
 order by

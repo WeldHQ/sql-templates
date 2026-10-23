@@ -12,9 +12,10 @@ SQL reports over Weld's ClickUp connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -24,6 +25,13 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/monthly_time_tracking_and_billing_report` converts ClickUp's millisecond durations to hours (`*_hours` columns) and computes `billable_amount` from billable hours. Running timers, which carry a negative duration, are left out.
+- `core/task_dependency_analysis` flags a dependency as a potential blocker when the waiting task is still open and the task it waits on is not finished. The website version flagged completed tasks instead. Finished is read from the status type (closed or done), so custom status names work, and a dependency on a task that is not synced shows as Unknown.
 
 ## Required tables
 
@@ -79,11 +87,3 @@ time spent, and task status.
 The SQL template "User Activity and Performance Report" is designed to gather data
 from the ClickUp integration. It provides insights into user activity and
 performance based on various metrics.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/monthly_time_tracking_and_billing_report`: ClickUp durations are in milliseconds, so `billable_time * 50` is not $50 an hour; it needs dividing by 3,600,000 first (likely).
-- `core/task_dependency_analysis`: the blocker logic looks inverted. It flags a completed task whose dependency is open, rather than an open task waiting on an unfinished dependency (likely).
