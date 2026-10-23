@@ -8,7 +8,7 @@
 --
 -- FOLLOWERS IS A RUNNING TOTAL. page_follows is the follower count at the end of
 -- the day, so `followers` must never be summed across days; follower_change is
--- the day over day difference. Every other metric here counts the day itself and
+-- the difference from the previous calendar day, NULL when that day is missing. Every other metric here counts the day itself and
 -- can be summed, except `viewers`, which is unique people per day.
 --
 -- VIEWS REPLACED IMPRESSIONS. Meta removed Page impressions and reach from the
@@ -45,7 +45,12 @@ SELECT
     p.page_id,
     pg.page_name,
     CAST(p.followers AS INT64)                                                       AS followers,
-    CAST(p.followers - LAG(p.followers) OVER (PARTITION BY p.page_id ORDER BY p.date_day) AS INT64) AS follower_change,
+    -- Only against the calendar day before: if a day is missing, a LAG over rows
+    -- would put several days of change on one date.
+    CASE
+        WHEN LAG(p.date_day) OVER (PARTITION BY p.page_id ORDER BY p.date_day) = DATE_SUB(p.date_day, INTERVAL 1 DAY)
+        THEN CAST(p.followers - LAG(p.followers) OVER (PARTITION BY p.page_id ORDER BY p.date_day) AS INT64)
+    END                                                                              AS follower_change,
     CAST(p.new_likes AS INT64)                                                       AS new_likes,
     CAST(p.new_likes_paid AS INT64)                                                  AS new_likes_paid,
     CAST(p.new_likes_organic AS INT64)                                               AS new_likes_organic,

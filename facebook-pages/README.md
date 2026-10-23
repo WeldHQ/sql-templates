@@ -80,6 +80,12 @@ post seen by 50 people like one seen by 50,000.
 - **History:** the connector reads up to 36 months of daily Page insights on the
   first sync and continues incrementally. Post insights are re-read for every
   post on every sync.
+- **Follower change needs consecutive days.** `follower_change` compares with the
+  previous calendar day and is NULL when that day has no row, so a gap in the
+  sync never shows up as a one-day jump.
+- **Metric definitions were cross-checked** against Fivetran's open-source
+  `dbt_facebook_pages` package; the SQL here is written independently for
+  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a month of followers and views per Page, and a few
   posts, with Page Insights or Meta Business Suite before relying on the output.
