@@ -4,18 +4,22 @@
 -- number of deals they have, and the conversion rate between the two. It uses left
 -- joins to connect the necessary tables and groups the results by owner.
 --
--- From the weld.app template library. Not reconciled against HubSpot;
--- check the output against the source before relying on it.
+-- Owner is the contact's owner. Each contact and each deal counts once per
+-- owner, however many associations link them; conversion_rate is deals per
+-- 100 contacts.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- HubSpot; check the output against the source before relying on it.
 
 select
 concat(owners.firstName, ' ', owners.lastName) as owner
-, count(contacts.id) as contacts
-, count(deals.id) as deals
-, count(deals.id) / count(contacts.id) * 100 as conversion_rate
+, count(distinct contacts.id) as contacts
+, count(distinct deals.id) as deals
+, safe_divide(count(distinct deals.id), count(distinct contacts.id)) * 100 as conversion_rate
 from
 {{ source('hubspot', 'contacts') }} as contacts
 left join {{ source('hubspot', 'contact_deal') }} as contact_deal on contact_deal.contact_id = contacts.id
 left join {{ source('hubspot', 'deals') }} as deals on deals.id = contact_deal.deal_id
-left join {{ source('hubspot', 'owners') }} as owners on owners.id = contacts.properties_hubspot_owner_id
+left join {{ source('hubspot', 'owners') }} as owners on cast(owners.id as string) = cast(contacts.properties_hubspot_owner_id as string)
 group by
 owner

@@ -4,8 +4,8 @@
 -- result includes the owner's first and last name, as well as the count of
 -- completed tasks.
 --
--- From the weld.app template library. Not reconciled against HubSpot;
--- check the output against the source before relying on it.
+-- From the weld.app template library, corrected. Not reconciled against
+-- HubSpot; check the output against the source before relying on it.
 
 select
 concat(owners.firstName, ' ', owners.lastName) as owner
@@ -15,5 +15,5 @@ from
 left join {{raw.hubspot.owners}} as owners on cast(owners.id as integer) = engagements.ownerId
 where
 type = 'TASK' and
-json_value(metadata, ' .status') = 'COMPLETED'
+json_value(metadata, '$.status') = 'COMPLETED'
 group by owner

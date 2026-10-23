@@ -19,9 +19,10 @@ SQL reports over Weld's HubSpot connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -31,6 +32,13 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/tasks_completed_by_owner` reads the task status with the JSONPath `'$.status'`; the website version's `' .status'` was invalid.
+- `core/conversion_from_contacts_to_deals_by_owner` counts distinct contacts and deals, so a contact with several deals counts once, and divides with `safe_divide`. The owner join compares IDs as strings, which works whatever type each side lands as.
 
 ## Required tables
 
@@ -213,11 +221,3 @@ and identify areas where additional support may be needed. The output of this SQ
 code is a table that displays the owner's name and the number of tasks they have
 completed. This SQL template is a valuable tool for any business looking to optimize
 their sales process and improve team performance.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/tasks_completed_by_owner`: `json_value(metadata, ' .status')` is not a valid JSONPath; it should be `'$.status'`.
-- `core/conversion_from_contacts_to_deals_by_owner`: `count(contacts.id)` counts a contact once per deal, so the contact count and conversion rate are off (needs `count(distinct ...)`). The owner join also lacks the `cast(owners.id as int)` its sibling queries use (likely).
