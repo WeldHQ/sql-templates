@@ -62,14 +62,28 @@ SELECT
     m.requester_wait_minutes_calendar,
     m.requester_wait_minutes_business,
     m.agent_wait_minutes_calendar,
+    m.agent_wait_minutes_business,
     m.on_hold_minutes_calendar,
+    m.on_hold_minutes_business,
     m.replies,
     m.reopens,
     m.group_stations,
     m.assignee_stations,
-    -- Zendesk's "one-touch": solved with exactly one public agent reply.
-    t.status IN ('solved', 'closed') AND m.replies = 1     AS is_one_touch,
+    -- Touch buckets for solved tickets, counted on Zendesk's `replies` (public
+    -- agent replies). One-touch is exactly one, two-touch exactly two, and
+    -- multi-touch three or more. A solved ticket with zero replies (solved by a
+    -- trigger, or answered in a private note only) is in none of the three.
+    -- Unsolved tickets are never in a bucket: the count can still grow.
+    t.status IN ('solved', 'closed') AND COALESCE(m.replies, 0) = 1  AS is_one_touch,
+    t.status IN ('solved', 'closed') AND COALESCE(m.replies, 0) = 2  AS is_two_touch,
+    t.status IN ('solved', 'closed') AND COALESCE(m.replies, 0) >= 3 AS is_multi_touch,
+    -- Zendesk raises `reopens` each time a solved ticket goes back to an unsolved
+    -- status. Solves follow from it: every reopen undoes one earlier solve, so a
+    -- ticket that is solved now has been solved reopens + 1 times, and one that
+    -- is unsolved now has been solved reopens times.
     COALESCE(m.reopens, 0) > 0                             AS was_reopened,
+    COALESCE(m.reopens, 0)
+      + IF(t.status IN ('solved', 'closed'), 1, 0)         AS solve_count,
 
     -- CSAT. `offered` means a survey went out and nobody answered; `unoffered`
     -- means no survey was sent. Only good and bad are ratings.

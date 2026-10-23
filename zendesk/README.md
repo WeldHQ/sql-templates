@@ -106,8 +106,9 @@ definition: `new`, `open`, `pending` and `hold` are unsolved), `channel` (from
 `via.channel`: `email`, `web`, `chat`, `voice`, `api`, `native_messaging` and so
 on), group, assignee, priority, type, `created_date` and `resolved_date` in your
 reporting time zone, every `ticket_metric` duration, `replies`, `reopens`,
-`is_one_touch` (solved with exactly one agent reply) and the CSAT flags. Deleted
-tickets are dropped, as in Explore.
+`is_one_touch`, `is_two_touch` and `is_multi_touch` (solved with one, two, or
+three or more public agent replies), `solve_count` (derived from `reopens`) and
+the CSAT flags. Deleted tickets are dropped, as in Explore.
 
 **`ticket_volume_by_day`**: `tickets_created`, `tickets_solved` and
 `unsolved_backlog_end_of_day`. Built on a day spine, so a quiet group or channel
@@ -142,6 +143,19 @@ Nothing here has been run against a live warehouse. Before relying on it:
   and the like) as `date`. The connector loads them as millisecond timestamps.
   Staging casts them to `TIMESTAMP`, which is correct either way.
 - `via` and `satisfaction_rating` are JSON objects stored as strings.
+- **No schedules or holidays.** The connector does not sync Zendesk's business
+  hour schedules, holidays or the schedule assigned to each ticket, so business
+  time cannot be recomputed here. The `_business` columns are Zendesk's own
+  figures and are used as they are. A custom business-hours metric (for example,
+  time to the second reply in business hours) cannot be built.
+- **No SLA policies.** SLA policies and their per-ticket targets are not synced,
+  so SLA breach reports cannot be built from this connector.
+- **No complete field history.** A daily history of each ticket's status,
+  assignee, group or priority needs every change event. The `ticket_audit`
+  stream has them as a JSON array, but it reads Zendesk's audit list endpoint,
+  which leaves out archived tickets (Zendesk archives tickets closed for more
+  than 120 days). A history built on it would silently lose older tickets, so
+  none is built. This is also why solved counts use the latest solve.
 
 ## Notes
 
@@ -153,6 +167,12 @@ Nothing here has been run against a live warehouse. Before relying on it:
   Ticket IDs are only unique within one account.
 - **Business hours come from Zendesk.** The `_business` columns use the schedule
   Zendesk applied to each ticket; there is no need to model your hours.
+- **Touch counts use Zendesk's reply count.** `replies` counts public agent
+  replies, so a ticket answered only with private notes is in no touch bucket.
+  Compare with Explore's "One-touch tickets" for a closed month before relying
+  on the rate.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_zendesk` package; the SQL here is written independently for Weld's schema.
 
 Vendor references:
 [Ticket metrics API](https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_metrics/) ·

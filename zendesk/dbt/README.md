@@ -13,6 +13,7 @@ models/analytics/analytics__zendesk_*.sql               thin BI-facing contracts
 tests/assert_backlog_ties_to_unsolved.sql               last day of backlog = unsolved now
 tests/assert_no_duplicate_tickets.sql                   one row per ticket
 tests/assert_monthly_solved_reconciles.sql              daily and monthly solved counts agree
+tests/assert_touch_buckets_are_exclusive.sql            one, two and multi-touch never overlap
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics

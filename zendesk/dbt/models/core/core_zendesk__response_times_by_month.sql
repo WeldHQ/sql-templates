@@ -37,7 +37,10 @@ SELECT
     COUNTIF(first_reply_minutes_calendar IS NOT NULL)        AS tickets_with_first_reply,
     COUNTIF(is_one_touch)                                    AS one_touch_tickets,
     SAFE_DIVIDE(COUNTIF(is_one_touch), COUNT(*))             AS one_touch_rate,
+    COUNTIF(is_two_touch)                                    AS two_touch_tickets,
+    COUNTIF(is_multi_touch)                                  AS multi_touch_tickets,
     COUNTIF(was_reopened)                                    AS reopened_tickets,
+    SUM(reopens)                                             AS reopens,
 
     -- First reply time, minutes.
     SUM(first_reply_minutes_calendar)                        AS first_reply_minutes_calendar_sum,
@@ -56,6 +59,8 @@ SELECT
     -- Requester wait time: time the ticket spent in new, open or on hold.
     AVG(requester_wait_minutes_calendar)                     AS requester_wait_minutes_calendar_avg,
     APPROX_QUANTILES(requester_wait_minutes_calendar, 2)[SAFE_OFFSET(1)] AS requester_wait_minutes_calendar_median,
+    AVG(requester_wait_minutes_business)                     AS requester_wait_minutes_business_avg,
+    APPROX_QUANTILES(requester_wait_minutes_business, 2)[SAFE_OFFSET(1)] AS requester_wait_minutes_business_median,
 
     -- CSAT.
     COUNTIF(was_csat_offered)                                AS csat_offered,
