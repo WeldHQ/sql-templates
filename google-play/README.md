@@ -1,6 +1,6 @@
 # Google Play templates
 
-Installs, store listing conversion, stability and earnings for your Android apps,
+Installs, store listing conversion, stability, subscriptions and earnings for your Android apps,
 from the reports Play Console exports to Cloud Storage. BigQuery.
 
 Weld connector: **Google Play** ([docs](https://weld.app/docs/applications/google-play)).
@@ -10,6 +10,7 @@ Weld connector: **Google Play** ([docs](https://weld.app/docs/applications/googl
 | [`weld/core/installs_daily.sql`](weld/core/installs_daily.sql) · [dbt](dbt/models/core/core_google_play__installs_daily.sql) | Statistics: user and device installs, uninstalls, active device installs | day × app × country |
 | [`weld/core/store_listing_conversion.sql`](weld/core/store_listing_conversion.sql) · [dbt](dbt/models/core/core_google_play__store_listing_conversion.sql) | Store performance: visitors, acquisitions, conversion rate by traffic source | day × app × traffic source |
 | [`weld/core/stability_by_app_version.sql`](weld/core/stability_by_app_version.sql) · [dbt](dbt/models/core/core_google_play__stability_by_app_version.sql) | Crashes and ANRs per app version, against its active install base | day × app × version code |
+| [`weld/core/subscriptions_daily.sql`](weld/core/subscriptions_daily.sql) · [dbt](dbt/models/core/core_google_play__subscriptions_daily.sql) | Subscriptions: new, canceled and active subscriptions per product | day × app × product × country |
 | [`weld/core/earnings_monthly.sql`](weld/core/earnings_monthly.sql) · [dbt](dbt/models/core/core_google_play__earnings_monthly.sql) | Earnings report: charges, Google fees, refunds, taxes, net | month × app × product × payout currency |
 
 ## Layers
@@ -17,7 +18,7 @@ Weld connector: **Google Play** ([docs](https://weld.app/docs/applications/googl
 ```
 raw.google_play.*       ELT output, untouched
   ↓
-weld/staging/*.sql      5 thin wrappers: cast, rename, parse dates, keep the latest file read
+weld/staging/*.sql      6 thin wrappers: cast, rename, parse dates, keep the latest file read
   ↓
 weld/core/*.sql         the reports, all the business logic lives here
   ↓
@@ -38,6 +39,7 @@ model in a `staging > google_play` folder. Mirror that structure or adjust the r
 | installs daily | `stats_installs_country` |
 | store listing conversion | `stats_store_performance_traffic_source` |
 | stability by app version | `stats_crashes_app_version`, `stats_installs_app_version` |
+| subscriptions daily | `financial_stats_subscriptions_country` |
 | earnings monthly | `earnings` |
 
 Play Console exports the same statistics split six ways (by country, device, app
@@ -72,6 +74,17 @@ two, or every install is counted twice.
   way to compare versions, not a replacement.
 - **Earnings files cover every app in the developer account.** Filter on
   `package_name` if you only report on some.
+- **Earnings, not estimated sales.** Play Console's revenue chart comes from the
+  estimated sales report, in buyer currencies and before withholding tax and
+  chargebacks, so `earnings_monthly` will not match it. Reconcile it to the payout.
+  `charged_orders` and `refunded_orders` count distinct order IDs; each
+  subscription renewal is its own order.
+- **Active subscriptions are a level.** In `subscriptions_daily`, take the last day
+  of a period for `active_subscriptions` and sum `new_subscriptions` and
+  `canceled_subscriptions`.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_google_play` package; the SQL here is written independently for Weld's
+  schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Compare a closed month of `net_earnings` with the Play Console
   payout, and a week of user installs with the Statistics page, before relying on
@@ -81,6 +94,17 @@ two, or every install is counted twice.
 
 There is no public ERD for this connector; tables and columns follow the connector's
 own definitions, which mirror Google's export files.
+
+- **Rows with a blank breakdown share a key.** The statistics tables are keyed on
+  date, app and the breakdown column (country, app version, and so on). Google can
+  write several rows for the same day with that column empty, for users it cannot
+  attribute; they arrive with the same key and only one is kept. Country or version
+  totals can therefore come in slightly below the app's overall total in Play
+  Console.
+- **Ratings are not modelled.** The `stats_ratings_*` tables carry a daily average
+  and a running average per breakdown, but no count of ratings, so they cannot be
+  added up across countries or days without being wrong. Per-review star ratings
+  are in the `reviews` table if you need a rollup you control.
 
 ## Vendor docs
 

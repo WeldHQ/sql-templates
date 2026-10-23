@@ -11,3 +11,4 @@ sources:
       - name: stats_installs_app_version
       - name: stats_installs_country
       - name: stats_store_performance_traffic_source
+      - name: financial_stats_subscriptions_country

@@ -11,6 +11,10 @@
 -- payout: nothing is re-signed or ABS()-ed on the way. Lines whose type is not one
 -- of the named buckets (rebills, adjustments, new types Google adds) are in
 -- other_amounts; watch that column rather than assuming it stays zero.
+--
+-- This will not match the revenue chart in Play Console. That chart is built from
+-- the estimated sales report, in buyer currencies, before withholding tax and
+-- chargebacks. Earnings are what Google actually pays out; reconcile to the payout.
 
 SELECT
     DATE_TRUNC(transaction_date, MONTH)                                     AS month_start,
@@ -20,8 +24,9 @@ SELECT
     ANY_VALUE(product_type)                                                 AS product_type,
     merchant_currency,
 
-    COUNTIF(transaction_type = 'Charge')                                    AS charges,
-    COUNTIF(transaction_type = 'Charge refund')                             AS refunds,
+    -- Orders, not lines: description holds the order ID, and a renewal gets its own.
+    COUNT(DISTINCT IF(transaction_type = 'Charge', description, NULL))      AS charged_orders,
+    COUNT(DISTINCT IF(transaction_type = 'Charge refund', description, NULL)) AS refunded_orders,
     SUM(IF(transaction_type = 'Charge', amount_merchant_currency, 0))       AS gross_charges,
     SUM(IF(transaction_type = 'Charge refund', amount_merchant_currency, 0)) AS charge_refunds,
     SUM(IF(transaction_type = 'Google fee', amount_merchant_currency, 0))   AS google_fees,
