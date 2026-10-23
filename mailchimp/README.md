@@ -87,8 +87,6 @@ See the schema notes for why it is a floor.
 
 ## Notes
 
-- Metric definitions were cross-checked against Fivetran's open-source `dbt_mailchimp`
-  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 

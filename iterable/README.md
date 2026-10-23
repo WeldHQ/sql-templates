@@ -86,8 +86,6 @@ to folder paths, so `{{staging.iterable.email_send}}` expects the model in a
 
 ## Notes
 
-- Metric definitions were cross-checked against Fivetran's open-source `dbt_iterable`
-  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 

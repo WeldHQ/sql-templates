@@ -90,8 +90,6 @@ Why the event counts can differ slightly from Mixpanel's UI:
 
 ## Notes
 
-- Metric definitions were cross-checked against Fivetran's open-source `dbt_mixpanel`
-  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 

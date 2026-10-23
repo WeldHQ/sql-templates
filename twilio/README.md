@@ -72,8 +72,6 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 
 ## Notes
 
-- Metric definitions were cross-checked against Fivetran's open-source `dbt_twilio`
-  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 
