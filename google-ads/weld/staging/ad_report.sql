@@ -25,6 +25,6 @@ select
   , interactions
   , conversions 
   , conversions_value
-  , safe_divide( (cost_micros * 0.000001 ) , ifnull(conversions_value,0)) as roas
+  , safe_divide(conversions_value, cost_micros * 0.000001) as roas -- conversion value per unit of spend
 from
   {{raw.google_ads.ad_stats}} stats

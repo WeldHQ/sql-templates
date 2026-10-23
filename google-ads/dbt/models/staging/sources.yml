@@ -8,7 +8,5 @@ sources:
     tables:
       - name: ad_stats
       - name: account
-      - name: campaign
-      - name: ad_group
       - name: ad
       - name: ad_group_country_stats
