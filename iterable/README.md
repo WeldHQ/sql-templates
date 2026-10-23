@@ -41,8 +41,9 @@ to folder paths, so `{{staging.iterable.email_send}}` expects the model in a
 ## How the numbers are defined
 
 - **Delivered** is sends minus bounces.
-- **Unique opens and clicks** count distinct messages (one send to one person) with at
-  least one open or click, the way Iterable counts uniques.
+- **Unique opens, clicks and unsubscribes** count distinct people (by email) per
+  campaign, the way Iterable counts uniques. A triggered campaign that sends one person
+  ten messages counts that person once. The unsubscribe rate uses unique unsubscribes.
 - **Rates** are over delivered, except click-to-open, which is unique clicks over unique
   opens. Iterable's open rates include machine opens, such as Apple Mail Privacy
   Protection pre-fetching, so treat clicks as the firmer signal.
@@ -69,8 +70,23 @@ to folder paths, so `{{staging.iterable.email_send}}` expects the model in a
 - **`campaign_analytics_stream` holds user profiles, not campaign metrics.** The
   connector fills it from Iterable's user export, which is why the metrics here are rebuilt
   from the event tables instead.
+- **Recurring campaigns and journeys are not rolled up.** Each run of a recurring blast is
+  its own campaign id in Iterable, and journey sends carry their own campaign ids. The
+  parent recurring campaign and the journey (workflow) id are only in the raw campaigns
+  table when Iterable returns them, so these models report each campaign id on its own.
+- **No user or list history.** The connector syncs the current user profiles, not a
+  history of profile or list membership changes, so list growth over time and a user's
+  state at the time of a send cannot be rebuilt.
+- **Bot opens are not filtered.** Iterable's "filtered" open and click metrics drop
+  events it flags as bots. That flag is not part of the fields these models rely on, so
+  opens and clicks here match Iterable's unfiltered metrics.
 - **Transactional sends without a campaign** are kept in the daily model under a NULL
   campaign and left out of the campaign table.
+
+## Notes
+
+- Metric definitions were cross-checked against Fivetran's open-source `dbt_iterable`
+  package; the SQL here is written independently for Weld's schema.
 
 ## Reconciling
 

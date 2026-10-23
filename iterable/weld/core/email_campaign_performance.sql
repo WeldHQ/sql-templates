@@ -10,6 +10,12 @@
 -- Every event is attributed to its campaign whenever it happened, so opens and clicks
 -- that arrive days after the send still count for the campaign.
 --
+-- Unique counts are people, not messages: Iterable counts a unique open or click once per
+-- user per campaign, keyed on email (or userId in userId projects). For a blast campaign
+-- that is the same as one per message, but a triggered campaign can send one person many
+-- messages, and counting messages would put unique opens above recipients. Email is used
+-- here because it is on every email event in every project type.
+--
 -- Rates follow Iterable's definitions: delivered is sends minus bounces; unique open,
 -- unique click, complaint and unsubscribe rates are over delivered; click-to-open is
 -- unique clicks over unique opens. Each event table is aggregated per campaign before the
@@ -33,14 +39,14 @@ bounces AS (
 
 opens AS (
     SELECT campaign_id, COUNT(*) AS opens,
-           COUNT(DISTINCT COALESCE(message_id, email)) AS unique_opens
+           COUNT(DISTINCT email) AS unique_opens
     FROM {{staging.iterable.email_open}}
     GROUP BY 1
 ),
 
 clicks AS (
     SELECT campaign_id, COUNT(*) AS clicks,
-           COUNT(DISTINCT COALESCE(message_id, email)) AS unique_clicks
+           COUNT(DISTINCT email) AS unique_clicks
     FROM {{staging.iterable.email_click}}
     GROUP BY 1
 ),
@@ -52,7 +58,7 @@ complaints AS (
 ),
 
 unsubscribes AS (
-    SELECT campaign_id, COUNT(*) AS unsubscribes
+    SELECT campaign_id, COUNT(*) AS unsubscribes, COUNT(DISTINCT email) AS unique_unsubscribes
     FROM {{staging.iterable.email_unsubscribe}}
     GROUP BY 1
 ),
@@ -82,13 +88,14 @@ SELECT
     COALESCE(k.unique_clicks, 0)                                    AS unique_clicks,
     COALESCE(cp.complaints, 0)                                      AS complaints,
     COALESCE(u.unsubscribes, 0)                                     AS unsubscribes,
+    COALESCE(u.unique_unsubscribes, 0)                              AS unique_unsubscribes,
 
     SAFE_DIVIDE(COALESCE(s.sends, 0) - COALESCE(b.bounces, 0), s.sends)                       AS delivery_rate,
     SAFE_DIVIDE(o.unique_opens, COALESCE(s.sends, 0) - COALESCE(b.bounces, 0))                AS unique_open_rate,
     SAFE_DIVIDE(k.unique_clicks, COALESCE(s.sends, 0) - COALESCE(b.bounces, 0))               AS unique_click_rate,
     SAFE_DIVIDE(k.unique_clicks, o.unique_opens)                                              AS click_to_open_rate,
     SAFE_DIVIDE(cp.complaints, COALESCE(s.sends, 0) - COALESCE(b.bounces, 0))                 AS complaint_rate,
-    SAFE_DIVIDE(u.unsubscribes, COALESCE(s.sends, 0) - COALESCE(b.bounces, 0))                AS unsubscribe_rate
+    SAFE_DIVIDE(u.unique_unsubscribes, COALESCE(s.sends, 0) - COALESCE(b.bounces, 0))         AS unsubscribe_rate
 FROM campaign_ids ids
 LEFT JOIN {{staging.iterable.campaigns}} c ON c.campaign_id = ids.campaign_id
 LEFT JOIN sends s          ON s.campaign_id = ids.campaign_id

@@ -11,9 +11,10 @@
 -- happened this week". For "how did this campaign do", use email_campaign_performance,
 -- which is not split by day.
 --
--- `unique_opens` and `unique_clicks` count distinct messages (one send to one person)
--- that were opened or clicked that day, the way Iterable counts uniques. They are unique
--- per day and cannot be summed into unique counts over a longer window.
+-- `unique_opens` and `unique_clicks` count distinct people (by email) who opened or
+-- clicked that campaign that day, the way Iterable counts uniques: per user, not per
+-- message. They are unique per day and cannot be summed into unique counts over a longer
+-- window.
 -- Events with no campaign id (some transactional API sends) are grouped under a NULL
 -- campaign rather than dropped.
 
@@ -38,9 +39,9 @@ daily AS (
         COUNTIF(event_type = 'send')                                            AS sends,
         COUNTIF(event_type = 'bounce')                                          AS bounces,
         COUNTIF(event_type = 'open')                                            AS opens,
-        COUNT(DISTINCT IF(event_type = 'open', COALESCE(message_id, email), NULL))  AS unique_opens,
+        COUNT(DISTINCT IF(event_type = 'open', email, NULL))                    AS unique_opens,
         COUNTIF(event_type = 'click')                                           AS clicks,
-        COUNT(DISTINCT IF(event_type = 'click', COALESCE(message_id, email), NULL)) AS unique_clicks,
+        COUNT(DISTINCT IF(event_type = 'click', email, NULL))                   AS unique_clicks,
         COUNTIF(event_type = 'complaint')                                       AS complaints,
         COUNTIF(event_type = 'unsubscribe')                                     AS unsubscribes
     FROM events
