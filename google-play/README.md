@@ -92,15 +92,15 @@ two, or every install is counted twice.
 
 ## Schema notes
 
-There is no public ERD for this connector; tables and columns follow the connector's
-own definitions, which mirror Google's export files.
+There is no public ERD for this connector; tables and columns follow the schema
+Weld syncs, which mirrors Google's export files.
 
-- **Rows with a blank breakdown share a key.** The statistics tables are keyed on
-  date, app and the breakdown column (country, app version, and so on). Google can
-  write several rows for the same day with that column empty, for users it cannot
-  attribute; they arrive with the same key and only one is kept. Country or version
-  totals can therefore come in slightly below the app's overall total in Play
-  Console.
+- **Rows with a blank breakdown can appear once.** The statistics tables hold one
+  row per date, app and breakdown value (country, app version, and so on). Google
+  can write several rows for the same day with that value empty, for users it
+  cannot attribute, and these show up as a single row. Country or version totals
+  can therefore come in slightly below the app's overall total in Play Console;
+  compare a few days against Play Console before relying on them.
 - **Ratings are not modelled.** The `stats_ratings_*` tables carry a daily average
   and a running average per breakdown, but no count of ratings, so they cannot be
   added up across countries or days without being wrong. Per-review star ratings

@@ -49,8 +49,8 @@ or adjust the refs.
 **Analytics Reports** (`app_installs_deletions`, `app_store_engagement`,
 `app_sessions`, `app_crashes`) only include people who agreed to share analytics
 with developers, and Apple drops any row with fewer than five users. They are good
-for mix, trend and rates, and always lower than the true totals. The connector
-reads the Detailed variant of each report, which adds source info and campaign but
+for mix, trend and rates, and always lower than the true totals. These tables
+come from the Detailed variant of each report, which adds source info and campaign but
 applies stricter privacy thresholds than the Standard variant, so small slices
 (one campaign in one territory on one day) are the most likely to be missing.
 
@@ -96,20 +96,18 @@ models for where downloads came from and what people did after.
 
 ## Schema notes
 
-- **`customer_reviews` is not in the public ERD** but is a stream the connector
-  defines, with the columns used here (`id`, `app_id`, `rating`, `title`,
-  `created_date`, `territory`, `response_id`, `response_last_modified_date`,
-  `response_state`). The connector definition is the source.
-- **Rows can share a key.** The connector reads Apple's Detailed analytics reports
-  but keys them on a subset of their columns: `app_download_date` and `page_title`
-  are not part of the key for installs, sessions and crashes, and `page_title` and
-  `campaign` are not part of it for store engagement. Rows Apple splits only by
-  those columns arrive with the same key, and one replaces the other. The Sales
-  report is keyed without `sku`, `apple_identifier` or `customer_price`, with the
-  same effect for two products sharing a title, or one product sold at two prices in
-  the same country on the same day. If a day's totals come in below App Store
-  Connect, this is the first thing to check.
-- **Not synced, so not built.** The connector reads five Analytics Reports and the
+- **`customer_reviews` is not in the public ERD** but is synced, with the columns
+  used here (`id`, `app_id`, `rating`, `title`, `created_date`, `territory`,
+  `response_id`, `response_last_modified_date`, `response_state`).
+- **Some rows can appear once instead of several times.** Rows that Apple splits
+  only by `app_download_date` or `page_title` (installs, sessions and crashes), or
+  only by `page_title` or `campaign` (store engagement), show up as a single row in
+  the warehouse. In the Sales report the same holds for two products sharing a
+  title, or one product sold at two prices in the same country on the same day. If
+  a day's totals come in below App Store Connect, this is the first thing to check.
+  Compare a few days per report against App Store Connect before relying on
+  totals.
+- **Not synced, so not built.** Weld syncs five Analytics Reports and the
   Summary Sales report. It does not sync Apple's App Store Downloads or Pre-Order
   reports, so per-account download counts and pre-orders are not available; the
   install events above are the closest substitute. It does not sync the
@@ -121,8 +119,7 @@ models for where downloads came from and what people did after.
 - **Crashes have no territory or source.** Apple's crash report is broken down by
   app version, device and OS version only, which is why `usage_and_stability` has
   no territory or source type.
-- **`date` and `processing_date`.** The connector writes both on the analytics
-  tables. `processing_date` is the date Apple processed the report instance a row
+- **`date` and `processing_date`.** The analytics tables carry both. `processing_date` is the date Apple processed the report instance a row
   came from. If the two are equal on every row in your warehouse, `date` is the
   processing date rather than the event date; for daily instances they normally
   coincide, but late events Apple delivers in a later instance then land on the

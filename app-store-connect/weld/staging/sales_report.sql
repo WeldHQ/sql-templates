@@ -1,10 +1,10 @@
 -- staging.app_store_connect.sales_report
 -- Thin wrapper over raw `sales_report` (Apple's daily Sales and Trends summary
 -- report). Casts, renames, multiplies per-unit prices out to row totals,
--- classifies the product type. De-duplicates on the connector's primary key.
+-- classifies the product type. Keeps the latest row per key.
 --
 -- Grain: day x country x app version x device x product type x title x category x
--- subscription flag, as the connector keys it.
+-- subscription flag, as the raw table is keyed.
 --
 -- MONEY. customer_price and developer_proceeds are PER UNIT in Apple's file, in two
 -- different currencies: what the customer paid in customer_currency, what you earn

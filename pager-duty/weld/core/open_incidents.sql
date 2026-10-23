@@ -6,8 +6,8 @@
 -- Grain: one row per open incident (current state as of the last sync).
 -- Depends on: staging.pager_duty.raw_incident
 --
--- Status comes from the analytics table, which the connector reads by last update,
--- so an old incident that was resolved recently drops out of this model on the
+-- Status comes from the analytics table, which is updated whenever an incident
+-- changes, so an old incident that was resolved recently drops out of this model on the
 -- next sync.
 
 SELECT

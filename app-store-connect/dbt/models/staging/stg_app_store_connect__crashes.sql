@@ -1,12 +1,12 @@
 -- stg_app_store_connect__crashes
 -- Thin wrapper over raw `app_crashes` (Apple's "App Crashes Detailed" analytics
--- report). Casts, renames, de-duplicates on the connector's primary key.
+-- report). Casts, renames, keeps the latest row per key.
 -- Join columns that Apple leaves empty become 'unknown', so the core models can
 -- join reports on them without losing rows to NULL keys.
 --
 -- Grain: day x app x app version x device x OS version.
--- Apple's crash report has no territory, source or page breakdown. The connector
--- keys the table on those columns too, but they arrive empty on crash rows, so
+-- Apple's crash report has no territory, source or page breakdown. The raw table
+-- has those columns too, but they arrive empty on crash rows, so
 -- crashes can only be joined to other reports on day, app, version and device.
 --
 -- Opted-in users only. Crash counts here are for reporting trends; Xcode Organizer

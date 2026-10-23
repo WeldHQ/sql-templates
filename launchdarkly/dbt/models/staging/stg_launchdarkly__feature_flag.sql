@@ -5,7 +5,7 @@
 -- Grain: one row per project x flag key. Flag keys are only unique within a project,
 -- so project_id is part of every key downstream.
 --
--- The connector reads the flag list in full on each run, so archived flags are
+-- The full flag list is read on each sync, so archived flags are
 -- included (archived = TRUE) and a flag deleted in LaunchDarkly keeps its last row.
 
 SELECT * EXCEPT (row_rank)

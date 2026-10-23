@@ -5,8 +5,8 @@
 --
 -- Grain: one row per incident.
 --
--- This is the table to report from, rather than `incident`. The connector reads it
--- by last update, so an incident that resolves weeks after it was created still has
+-- This is the table to report from, rather than `incident`. It is updated whenever
+-- an incident changes, so an incident that resolves weeks after it was created still has
 -- its final status and timings here. All timestamps are UTC.
 
 SELECT * EXCEPT (row_rank)

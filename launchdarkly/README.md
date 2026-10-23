@@ -42,8 +42,8 @@ adjust the refs.
 
 ## Notes
 
-- **Everything here is a snapshot.** The connector reads flags and contexts as they
-  are now. `age_days` and the context recency windows are measured from
+- **Everything here is a snapshot.** Flags and contexts are synced as they are
+  now. `age_days` and the context recency windows are measured from
   `CURRENT_DATE()`, so the same query gives different answers on different days. To
   chart flag debt or active contexts over time, materialise a daily copy of
   `flag_health_by_project` or `context_activity` (an incremental model keyed on the
@@ -75,9 +75,8 @@ adjust the refs.
 
 ## Schema notes
 
-- `project_environment.project_id`: the connector writes this column (it links
-  each environment to its project), but the public ERD does not list it. The
-  connector definition is the source here.
+- `project_environment.project_id` is synced (it links each environment to its
+  project), but the public ERD does not list it.
 - `feature_flag_variations`, `feature_flag_environment` and the rule tables are
   shown in the ERD with their key columns only; their other columns depend on what
   the LaunchDarkly API returns for your flags. None of the models here read them.

@@ -15,7 +15,7 @@
 -- first-time download is the first Get or Buy on an Apple ID, a redownload is the
 -- same account installing again. App Store Connect's own download figures come
 -- from a separate Downloads report, counted per account and including pre-orders,
--- which the connector does not sync. Expect these to run close to, not equal to,
+-- which is not synced. Expect these to run close to, not equal to,
 -- the downloads shown in App Analytics.
 --
 -- Apple documents four install types: first-time download, redownload, manual

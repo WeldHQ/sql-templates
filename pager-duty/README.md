@@ -41,11 +41,10 @@ refs.
 
 ## Why `raw_incident` and not `incident`
 
-The connector syncs incidents twice. `incident` comes from the REST incidents list,
-which is filtered on creation date, so the connector can only see status changes on
-incidents created in the last 60 days. An incident opened three months ago and
-resolved today keeps its old status in `incident`. `raw_incident` comes from
-PagerDuty's Analytics API, is read by last update, and carries the timings PagerDuty
+Incidents arrive in two tables. In `incident`, status changes are only picked up
+for incidents created in the last 60 days, so an incident opened three months ago
+and resolved today keeps its old status there. `raw_incident` comes from
+PagerDuty's Analytics API, is updated whenever an incident changes, and carries the timings PagerDuty
 computes itself (`seconds_to_first_ack`, `seconds_to_resolve`, interruptions by time
 of day). Every model here reads `raw_incident` for that reason.
 
@@ -62,8 +61,8 @@ templates will not work without rewriting them on `incident` and `log_entry`.
   different, wrong number.
 - **Incidents are dated on creation, in UTC,** as PagerDuty's own reports are. Recent
   days still have open incidents, so their MTTR keeps moving until those resolve.
-  Analytics data also arrives up to a day late; the connector re-reads two days on
-  every run.
+  Analytics data also arrives up to a day late; each sync picks up the last two
+  days again.
 - **Interruptions belong to the incident, not the person.** PagerDuty counts how many
   notifications reached a responder during business, off and sleep hours (each
   responder's own working hours), per incident. `responder_load_daily` can say an
@@ -77,12 +76,12 @@ templates will not work without rewriting them on `incident` and `log_entry`.
 
 ## Schema notes
 
-There is no public ERD for this connector; tables and columns follow the connector's
-own definitions.
+There is no public ERD for this connector; tables and columns follow the schema
+Weld syncs.
 
-The connector also syncs `analytics_metric_service_daily`, PagerDuty's pre-aggregated
-daily metrics. That table carries no service column and is keyed on the day alone,
-so it cannot be split by service. These templates aggregate `raw_incident` instead,
+Weld also syncs `analytics_metric_service_daily`, PagerDuty's pre-aggregated daily
+metrics. That table has one row per day and no service column, so it cannot be
+split by service. These templates aggregate `raw_incident` instead,
 which gives the same metrics at any grain.
 
 ## Vendor docs

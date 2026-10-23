@@ -1,7 +1,7 @@
 -- stg_app_store_connect__installs_deletions
 -- Thin wrapper over raw `app_installs_deletions` (Apple's "App Store Installation
--- and Deletion Detailed" analytics report). Casts, renames, de-duplicates on the
--- connector's primary key.
+-- and Deletion Detailed" analytics report). Casts, renames, keeps the latest row
+-- per key.
 -- Join columns that Apple leaves empty become 'unknown', so the core models can
 -- join reports on them without losing rows to NULL keys.
 --

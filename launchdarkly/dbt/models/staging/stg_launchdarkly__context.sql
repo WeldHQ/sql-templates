@@ -2,8 +2,8 @@
 -- Thin wrapper over raw `context`: every context (user, device, organization, ...)
 -- LaunchDarkly has seen evaluate a flag. Casts, renames, de-duplicates.
 --
--- Grain: one row per project x environment x context kind x context key, which is
--- the connector's primary key. The same person seen as both a `user` and a `device`
+-- Grain: one row per project x environment x context kind x context key, the key
+-- of the raw table. The same person seen as both a `user` and a `device`
 -- context is two rows, as it is in LaunchDarkly.
 
 SELECT * EXCEPT (row_rank)

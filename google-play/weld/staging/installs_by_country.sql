@@ -4,8 +4,8 @@
 --
 -- Grain: one row per day x package x country.
 --
--- Google rewrites the current month's file every day and the connector re-reads
--- it, so a recent day can arrive more than once. Only the newest read is kept.
+-- Google rewrites the current month's file every day and it is read again on each
+-- sync, so a recent day can arrive more than once. Only the newest read is kept.
 
 SELECT
     CAST(date AS DATE)                              AS date_day,

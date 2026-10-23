@@ -1,5 +1,5 @@
 -- One row per incident after de-duplication in staging.
--- The connector re-reads recently updated incidents on every run, so the raw table
+-- Recently updated incidents are read again on every sync, so the raw table
 -- can hold several versions of one incident. Without the de-duplication every
 -- count and every MTTR would be inflated by the number of re-reads.
 

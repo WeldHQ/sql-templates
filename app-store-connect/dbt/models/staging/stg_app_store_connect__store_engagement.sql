@@ -1,16 +1,16 @@
 -- stg_app_store_connect__store_engagement
 -- Thin wrapper over raw `app_store_engagement` (Apple's "App Store Discovery and
 -- Engagement Detailed" analytics report): impressions, product page views and taps
--- on the App Store itself. Casts, renames, de-duplicates on the connector's
--- primary key. Join columns that Apple leaves empty become 'unknown', so the
+-- on the App Store itself. Casts, renames, keeps the latest row per key.
+-- Join columns that Apple leaves empty become 'unknown', so the
 -- core models can join reports on them without losing rows to NULL keys.
 --
 -- Grain: day x app x event x engagement type x device x OS version x source type x
 -- source info x page type x territory.
 --
 -- event is 'Impression', 'Page view' or 'Tap'. engagement_type is the action taken
--- ('Get', 'Redownload', 'Open', ...); the connector writes 'none' when Apple leaves
--- it empty. unique_counts is distinct users within the row and cannot be summed
+-- ('Get', 'Redownload', 'Open', ...); it arrives as 'none' when Apple leaves it
+-- empty. unique_counts is distinct users within the row and cannot be summed
 -- across rows.
 
 SELECT
