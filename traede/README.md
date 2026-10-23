@@ -128,7 +128,7 @@ Only invoices with status `booked` count as revenue. The invoice date is Traede'
 ## Schema notes
 
 The table and column names used here match both the public schema and the
-connector's own stream definitions. Two things worth knowing:
+schema Weld syncs. Two things worth knowing:
 
 - `invoice.invoice_date` lands as a string, not a date. Staging parses the first
   ten characters.

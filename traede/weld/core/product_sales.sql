@@ -9,7 +9,7 @@
 -- invoice header rather than on lines.
 --
 -- COST AND MARGIN. Cost is the variant's CURRENT cost_price from Traede x units.
--- Two limits follow, and both are properties of the connector:
+-- Two limits follow:
 --   1. It is today's cost, not the cost when the goods were sold.
 --   2. Traede does not document which currency cost_price is in. It is normally the
 --      account's base currency. Set base_currency below to yours. Margin is only

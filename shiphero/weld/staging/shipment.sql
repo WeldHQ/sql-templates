@@ -5,7 +5,7 @@
 -- created_date is when the shipment was created, i.e. when the order was packed
 -- and labelled. That is the "shipped" moment ShipHero reports on.
 --
--- STATUS FLAGS LAG. The connector reads shipments by creation date, so flags that
+-- STATUS FLAGS LAG. Shipments are picked up by creation date, so flags that
 -- change later (delivered, picked_up) only refresh when that period is re-synced.
 -- Do not build delivery-time reporting on them.
 

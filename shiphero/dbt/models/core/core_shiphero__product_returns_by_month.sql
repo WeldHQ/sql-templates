@@ -14,7 +14,7 @@
 -- product_id; the SKU is resolved through the product table. A return line whose
 -- product is not synced lands under a NULL sku rather than being dropped.
 --
--- Received and restocked counts lag: the connector reads returns by creation date,
+-- Received and restocked counts lag: returns are picked up by creation date,
 -- so items received after the return's period was synced keep their old counts
 -- until it is re-synced.
 --

@@ -1,6 +1,6 @@
 -- One row per payout, per merchant account, per connector.
 --
--- The connector merges payouts on payment_reference and merchant_id, so a
+-- Payouts are stored one row per payment_reference and merchant_id, so a
 -- duplicate here means a second Klarna account was unioned into staging without
 -- changing the klarna_account label, or a full resync landed beside the old table.
 -- Either one doubles every settlement amount downstream.

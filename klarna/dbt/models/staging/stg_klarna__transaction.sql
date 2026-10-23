@@ -6,8 +6,7 @@
 -- MINOR UNITS. amount, vat_amount and tax_in_currency_of_registration_country
 -- arrive as integers in the minor unit and are divided by 100 here.
 --
--- 'unset' AND ''. The connector fills an absent key with the literal string
--- 'unset', and Klarna itself sends an empty string for capture_id on returns and
+-- 'unset' AND ''. An absent value arrives as the literal string 'unset', and Klarna itself sends an empty string for capture_id on returns and
 -- reversals. Both mean "no value" and are turned into NULL, so a COUNT(DISTINCT
 -- order_id) does not count 'unset' as an order.
 --

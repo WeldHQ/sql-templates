@@ -1,8 +1,8 @@
 -- stg_bigcommerce__refund_line_item
 -- Thin wrapper over raw `refund_line_item`: what a refund covered.
 --
--- THE COLUMN CALLED product_id IS NOT A PRODUCT ID. The connector lands BigCommerce's
--- `item_id` under that name, and what item_id points at depends on item_type:
+-- THE COLUMN CALLED product_id IS NOT A PRODUCT ID. It holds BigCommerce's
+-- `item_id`, and what item_id points at depends on item_type:
 --
 --   PRODUCT, GIFT_WRAPPING   the order line (order_line_item.id)
 --   SHIPPING, HANDLING       the order's shipping address

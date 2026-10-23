@@ -1,7 +1,7 @@
 -- stg_shiphero__return
 -- Thin wrapper over raw `return`. One row per return (RMA).
 --
--- STATUS AND RECEIVED COUNTS LAG. The connector reads returns by creation date, so
+-- STATUS AND RECEIVED COUNTS LAG. Returns are picked up by creation date, so
 -- a return created weeks ago and received today keeps its old status and received
 -- counts until that period is re-synced.
 

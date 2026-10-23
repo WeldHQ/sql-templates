@@ -11,8 +11,8 @@ BigQuery, in each payout's own currency.
 
 ## Read this first: what this connector can and cannot tell you
 
-The connector reads Klarna's Settlements API: payouts, and the transactions settled
-in each payout. That shapes everything below.
+The data comes from Klarna's Settlements API: payouts, and the transactions
+settled in each payout. That shapes everything below.
 
 **1. This is settled money, not orders.** A sale appears once Klarna has put it in a
 payout, typically days after checkout. The last few days of every report are always
@@ -77,8 +77,8 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 | daily settlement activity | `transaction` |
 | fees by type | `transaction` |
 
-Sync both streams over the same window. The connector reads transactions payout by
-payout, so a transaction stream that reaches further back than the payout stream
+Sync both streams over the same window. Transactions are synced payout by payout,
+so a transaction stream that reaches further back than the payout stream
 produces orphans that
 [`assert_klarna__transactions_belong_to_a_payout`](dbt/tests/assert_klarna__transactions_belong_to_a_payout.sql)
 will list.
@@ -110,16 +110,15 @@ fees are still reported, they just are not in `settlement_amount`.
 
 ## Schema notes
 
-- **`shipping_address_country` is likely always NULL.** The table has the column,
-  but Klarna's API names the field `shipping_country`. Staging exposes it as
-  `shipping_country` anyway; use `purchase_country` for geography until you have
+- **`shipping_address_country` can be empty.** Staging exposes it as
+  `shipping_country`. Run `SELECT COUNT(shipping_address_country) FROM transaction`
+  before relying on it, and use `purchase_country` for geography until you have
   confirmed it is populated.
-- **The transaction table's merge key does not include `type`.** The connector
-  merges transactions on capture, order, refund, payout, merchant references and
-  `detailed_type`. If Klarna ever emits two rows that agree on all of those but
-  differ only in `type` or `amount`, one would overwrite the other. If a payout fails
-  to tie out on fees or tax by an amount that looks like a single line, this is the
-  first thing to check.
+- **Rows that differ only in `type` or `amount` can appear once.** The
+  transaction table holds one row per capture, order, refund, payout, merchant
+  references and `detailed_type`. If a payout fails to tie out on fees or tax by an
+  amount that looks like a single line, this is the first thing to check. Reconcile
+  fees against Klarna's payout report before relying on them.
 - **No merchant, order or capture tables.** `merchant_id`, `order_id` and
   `capture_id` are identifiers only; there is nothing to join them to inside the
   connector. Join `merchant_reference_1` (usually your own order number) to your shop

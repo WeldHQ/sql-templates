@@ -12,7 +12,7 @@
 -- the two to disagree at any date boundary and to agree over a closed month of
 -- payouts.
 --
--- ONLY SETTLED MONEY. The connector reads transactions through payouts, so a sale
+-- ONLY SETTLED MONEY. Transactions are synced through payouts, so a sale
 -- appears here once it is in a payout, not when the customer checked out. The last
 -- few days are always incomplete. For order-time revenue use your shop platform.
 --

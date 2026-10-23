@@ -13,12 +13,12 @@ productivity. BigQuery, UTC days.
 
 ## Read this first: what this connector cannot do
 
-**1. Shipment and return statuses lag.** The connector reads shipments and returns
-by **creation date**. Anything that changes afterwards, a shipment being
+**1. Shipment and return statuses lag.** Shipments and returns are picked up by
+**creation date**. Anything that changes afterwards, a shipment being
 delivered or a return being received and restocked, only reaches the warehouse
 when that period is read again. That is why nothing here reports delivery times,
 and why `units_received` and `units_restocked` on returns should be treated as a
-floor. Orders, by contrast, are read by update time and stay current.
+floor. Orders, by contrast, are picked up by update time and stay current.
 
 **2. There is no ship date per order line.** `order_line_item` carries how many
 units have shipped, not when. Units shipped by SKU therefore land on the order
@@ -129,7 +129,7 @@ cost per shipment `SUM(label_cost) / SUM(shipments)`, mean time to ship
 ## Schema notes
 
 The table and column names used here match both the public schema and the
-connector's own stream definitions. Money fields (`cost`, `price`, `total_price`,
+schema Weld syncs. Money fields (`cost`, `price`, `total_price`,
 `label_cost` and others) land as strings and are cast in staging.
 
 [ShipHero connector docs](https://weld.app/docs/applications/shiphero) ·

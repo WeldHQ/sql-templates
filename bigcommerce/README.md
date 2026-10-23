@@ -123,13 +123,12 @@ window for the order count and the average order value denominator.
 ## Schema notes
 
 - **Timestamps are full timestamps.** The ERD lists `date_created`, `date_modified`,
-  `date_shipped` and `refund.created` as dates; the connector syncs them as UTC
-  timestamps. Staging casts them to TIMESTAMP, which works either way.
+  `date_shipped` and `refund.created` as dates; they arrive as UTC timestamps. Staging casts them to TIMESTAMP, which works either way.
 - **`refund_line_item.product_id`** is BigCommerce's `item_id` under another name, as
-  described above. The ERD's edge from `product` to `refund_line_item` is therefore
-  wrong for every item type, and should not be used.
-- **`refund_line_item` is keyed on the refund and the item.** If one refund covered a
-  PRODUCT and a SHIPPING item whose IDs happen to coincide, only one of them is kept.
+  described above. The ERD's edge from `product` to `refund_line_item` does not
+  hold for any item type, so do not join on it.
+- **`refund_line_item` has one row per refund and item ID.** If one refund covered a
+  PRODUCT and a SHIPPING item whose IDs happen to coincide, only one row appears.
   Rare, but it would understate `quantity_refunded` on that refund. The refund's
   money comes from `refund.total_amount`, so `returns` is unaffected.
 

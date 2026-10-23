@@ -1,6 +1,6 @@
 -- Every settled transaction points at a payout that was synced.
 --
--- The connector reads transactions payout by payout, so an orphan means the
+-- Transactions are synced payout by payout, so an orphan means the
 -- payout stream and the transaction stream were synced over different windows,
 -- or only one of them is enabled. Orphaned transactions still show up in
 -- daily_settlement_activity but are invisible to payout_reconciliation, so the
