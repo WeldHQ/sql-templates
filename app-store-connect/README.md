@@ -86,9 +86,6 @@ models for where downloads came from and what people did after.
   codes (`US`); customer reviews use three-letter codes (`USA`), kept as
   `territory_alpha3` so the two are not joined by mistake. Map them before
   combining reviews with downloads.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_apple_store` package; the SQL here is written independently for Weld's
-  schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Compare a week of units and proceeds per app with Sales and
   Trends, and first-time downloads per source with App Analytics, before relying on

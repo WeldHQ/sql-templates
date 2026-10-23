@@ -82,9 +82,6 @@ two, or every install is counted twice.
 - **Active subscriptions are a level.** In `subscriptions_daily`, take the last day
   of a period for `active_subscriptions` and sum `new_subscriptions` and
   `canceled_subscriptions`.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_google_play` package; the SQL here is written independently for Weld's
-  schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Compare a closed month of `net_earnings` with the Play Console
   payout, and a week of user installs with the Statistics page, before relying on
