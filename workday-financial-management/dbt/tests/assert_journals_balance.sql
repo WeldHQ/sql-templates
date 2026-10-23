@@ -2,8 +2,8 @@
 --
 -- Workday will not post an unbalanced journal, so a failure means lines were lost
 -- or left behind on the way: most often a journal edited after it was synced
--- whose old lines are still in the line table, or ledger amounts missing on some
--- lines so the fallback to transaction amounts mixed currencies.
+-- whose old lines are still in the line table, or foreign-currency lines without
+-- ledger amounts (see assert_no_missing_ledger_amounts).
 --
 -- One cent of tolerance for rounding.
 

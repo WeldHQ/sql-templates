@@ -13,6 +13,7 @@ models/analytics/analytics__workday_financial_management_*.sql             thin 
 tests/assert_journals_balance.sql                                          debits equal credits per journal and company
 tests/assert_trial_balance_sums_to_zero.sql                                every month's trial balance balances
 tests/assert_every_line_has_a_classified_account.sql                       the account type mapping covers every posted account
+tests/assert_no_missing_ledger_amounts.sql                                 no foreign-currency line without ledger amounts
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

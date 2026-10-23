@@ -76,12 +76,19 @@ expects the model in a `staging > workday_financial_management` folder.
 line's transaction currency, and ledger amounts in the **ledger currency, the
 company's base currency** (`company_currency`, from the company's accounting
 setup). Every balance here uses the ledger amounts. Workday can leave them empty
-when the transaction is already in the base currency, so staging falls back to the
-transaction amounts in that case. `company_id` is in every grain: do not sum
+when the transaction is already in the base currency, so the ledger falls back to
+the transaction amounts, but only for lines whose currency is the company's base
+currency. A foreign-currency line without ledger amounts is kept at 0 and flagged
+(`is_ledger_amount_missing`), and `assert_no_missing_ledger_amounts` lists them;
+converting it with a guessed rate would put the wrong number in the balances. `company_id` is in every grain: do not sum
 across companies with different currencies without translating first. The AR
 aging is in invoice currency; sum it per `currency`.
 
-**Debit positive.** `ledger_debit` and `ledger_credit` are both positive.
+**Debit positive.** `ledger_debit` and `ledger_credit` are normally both
+positive. A company whose accounting setup keeps the debit or credit side on a
+reversal and reverses the sign instead books reversals as negative amounts on the
+original side, so negative values are valid there; every net figure below is
+right either way.
 `net_debit` is `ledger_debit - ledger_credit` and sums to zero over every journal
 and company; `assert_journals_balance` checks it. The trial balance's
 `closing_net_debit` uses the same convention.
@@ -119,9 +126,15 @@ positive, expenses negative, so a plain `SUM` gives net income.
   To age everything by due date, join your payment terms.
 - **No AP aging.** The supplier invoice operation does not return an open amount,
   so outstanding payables cannot be computed from it.
+- **Posted journals only.** The status filter reads the status code first and the
+  display name second, since the display name is translated in tenants that do
+  not run in English.
 - **Multi-tenant ready.** Every staging model emits a `workday_tenant` label that
   is part of every join key. To add a tenant, `UNION ALL` a second block in each
   staging model with a different label.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_workday_financial_management` package; the SQL here is written
+  independently for Weld's schema.
 
 ## Reconciling
 
@@ -136,6 +149,16 @@ positive, expenses negative, so a plain `SUM` gives net income.
    the wrong class.
 
 ## Schema notes
+
+- **Not built: fiscal periods and the retained earnings roll-forward.** Workday
+  reports by fiscal period and folds prior fiscal years' income and expense into
+  retained earnings. The company record names its fiscal schedule, but the
+  connector does not sync the schedule's periods or years, so these models use
+  calendar months of the accounting date and leave income and expense cumulative.
+- **Not built: translation to one currency.** The connector syncs currency
+  conversion rates, but which rate type and date a consolidation uses is tenant
+  configuration that is not in these tables, so no translated balances are
+  produced. Every grain keeps `company_id` instead.
 
 - **The public ERD for this connector only covers the purchasing tables**
   (`purchase_order*`, `receipt*`). Every table used here (`journal_entry`,

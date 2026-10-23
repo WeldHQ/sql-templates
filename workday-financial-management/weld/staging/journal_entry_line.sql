@@ -6,9 +6,17 @@
 -- Two sets of amounts. debit_amount and credit_amount are in the line's
 -- transaction currency (line_currency). ledger_debit_amount and
 -- ledger_credit_amount are in the ledger currency, the company's base currency.
--- Workday may leave the ledger amounts empty when the two currencies are the
--- same, so ledger_debit and ledger_credit fall back to the transaction amounts.
--- All four are positive; an empty side is 0.
+-- Workday can leave the ledger amounts empty when the line is already in the
+-- base currency. They are kept here as delivered, NULL included; core falls back
+-- to the transaction amounts only when the line currency is the company's base
+-- currency, since doing so for a foreign-currency line would mix currencies.
+-- currency_rate is the rate Workday used from the transaction currency to the
+-- ledger currency.
+--
+-- Signs: amounts are normally positive, with an empty side 0. A company set to
+-- "keep debit/credit and reverse sign" books reversals on the original side with
+-- a negative amount instead of swapping sides, so negative debits and credits
+-- are valid. Net amounts (debit - credit) are right either way.
 --
 -- account_set_code is the account set the line's ledger account belongs to
 -- (for example "Standard"), and ledger_account_code is the account's identifier
@@ -31,15 +39,8 @@ SELECT
     UPPER(CAST(currency_code AS STRING))             AS line_currency,
     COALESCE(CAST(debit_amount AS NUMERIC), 0)       AS debit,
     COALESCE(CAST(credit_amount AS NUMERIC), 0)      AS credit,
-    COALESCE(
-        CAST(ledger_debit_amount AS NUMERIC),
-        CAST(debit_amount AS NUMERIC),
-        0
-    )                                                AS ledger_debit,
-    COALESCE(
-        CAST(ledger_credit_amount AS NUMERIC),
-        CAST(credit_amount AS NUMERIC),
-        0
-    )                                                AS ledger_credit,
+    CAST(currency_rate AS NUMERIC)                   AS currency_rate,
+    CAST(ledger_debit_amount AS NUMERIC)             AS ledger_debit_amount,
+    CAST(ledger_credit_amount AS NUMERIC)            AS ledger_credit_amount,
     NULLIF(TRIM(CAST(memo AS STRING)), '')           AS memo
 FROM {{raw.workday_financial_management.journal_entry_line}}
