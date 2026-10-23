@@ -4,13 +4,14 @@ SQL reports over Weld's Salesforce connector. BigQuery.
 
 | Model | Report | What it returns |
 |---|---|---|
-| [`weld/core/aggregated_daily_sales_report.sql`](weld/core/aggregated_daily_sales_report.sql) · [dbt](dbt/models/core/core_salesforce__aggregated_daily_sales_report.sql) | Aggregated Daily Salesforce Report | Extracts a day-by-day breakdown of CRM activities on Salesforce, covering tasks, events, lead generation, and opportunities. It integrates various data points to deliver insights such as leads created, tasks completed, events held, and opportunity metrics. |
+| [`weld/core/aggregated_daily_sales_report.sql`](weld/core/aggregated_daily_sales_report.sql) · [dbt](dbt/models/core/core_salesforce__aggregated_daily_sales_report.sql) | Aggregated Daily Salesforce Report | One row per day: leads created and converted, closed tasks, events, and opportunities created, won, lost and in open pipeline, with their amounts. |
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -20,6 +21,12 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/aggregated_daily_sales_report` was rewritten from the raw tables. The calendar now runs from the first day with activity to today, or to the latest expected close date of open pipeline, instead of to 2099-12-31. Every date is taken with `DATE()` from the timestamps Weld lands, which removes the DATE/TIMESTAMP mix that failed. Deleted records are left out, `tasks_completed` counts closed tasks only, and quiet days show zeros.
 
 ## Required tables
 
@@ -33,15 +40,8 @@ rather than a layered model set, so:
 
 `weld/core/aggregated_daily_sales_report.sql`
 
-This SQL model offers a granular daily report of CRM activity on Salesforce. It
-integrates insights from tasks, events, leads, and opportunities to provide a
-holistic view of the business pipeline. The model captures metrics like tasks
-completed, events organized, leads generated and converted, opportunities created
-and closed, and the respective amounts associated with those opportunities.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/aggregated_daily_sales_report`: the date spine runs to 2099-12-31, producing tens of thousands of empty future rows. `COALESCE(DATE_TRUNC(activity_date, DAY), DATE_TRUNC(activity_date_time, DAY))` mixes DATE and TIMESTAMP, which fails without a cast (likely).
+A daily view of CRM activity in Salesforce. Each metric lands on the day it
+happened: leads on their created and converted dates, closed tasks on their
+activity date, events on their start, new opportunities on their created date,
+and won, lost and open pipeline amounts on their close date. Every day from the
+first activity to today has a row, so gaps show as zeros.
