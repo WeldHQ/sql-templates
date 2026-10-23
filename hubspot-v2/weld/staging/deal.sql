@@ -48,9 +48,12 @@ SELECT
     CAST(CAST(properties_hubspot_owner_id AS INT64) AS STRING) AS owner_id,
     NULLIF(TRIM(CAST(properties_hubspot_team_id AS STRING)), '') AS team_id,
 
-    -- Activity roll-ups HubSpot maintains on the deal itself.
+    -- Activity roll-ups HubSpot maintains on the deal itself. num_notes is
+    -- HubSpot's "Number of Sales Activities"; num_contacted_notes is "Number of
+    -- times contacted", which only counts touches that reach the buyer (calls,
+    -- sales emails, meetings and the like), so it is the smaller of the two.
     CAST(properties_num_notes AS INT64)                     AS num_activities,
-    CAST(properties_num_contacted_notes AS INT64)           AS num_sales_activities,
+    CAST(properties_num_contacted_notes AS INT64)           AS num_times_contacted,
     CAST(properties_notes_last_updated AS TIMESTAMP)        AS last_activity_at,
     CAST(properties_notes_next_activity_date AS TIMESTAMP)  AS next_activity_at,
     CAST(properties_num_associated_contacts AS INT64)       AS num_contacts,

@@ -7,6 +7,8 @@
 -- milliseconds and call status, task status, meeting outcome.
 --
 -- Inactive engagements (deleted in HubSpot) are dropped.
+--
+-- deal_ids is a native array column in the raw table.
 
 SELECT
     'portal_1'                                                AS hubspot_portal,
@@ -19,6 +21,9 @@ SELECT
     CAST(created_at AS TIMESTAMP)                             AS created_at,
     SAFE_CAST(JSON_VALUE(metadata, '$.durationMilliseconds') AS INT64) / 60000.0 AS call_duration_minutes,
     UPPER(JSON_VALUE(metadata, '$.status'))                   AS status,
-    UPPER(JSON_VALUE(metadata, '$.meetingOutcome'))           AS meeting_outcome
+    UPPER(JSON_VALUE(metadata, '$.meetingOutcome'))           AS meeting_outcome,
+    -- The deals the activity is associated with, as HubSpot sends them.
+    -- Unpacked to one row per deal in staging.hubspot_v2.engagement_deal.
+    deal_ids
 FROM {{raw.hubspot_v2.engagement}}
 WHERE COALESCE(active, TRUE)

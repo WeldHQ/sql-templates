@@ -47,7 +47,7 @@ late-evening activity can land on the next day.
 ```
 raw.hubspot_v2.*          ELT output, untouched
   ↓
-weld/staging/*.sql        10 thin wrappers: cast, rename, drop archived records
+weld/staging/*.sql        11 thin wrappers: cast, rename, drop archived records
   ↓
 weld/core/*.sql           the reports: all the business logic lives here
   ↓
@@ -78,7 +78,7 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 
 | Model | Raw tables |
 |---|---|
-| deal pipeline | `deal`, `deal_association`, `pipeline`, `pipeline_stage`, `owner`, `company`, `account_details` |
+| deal pipeline | `deal`, `deal_association`, `pipeline`, `pipeline_stage`, `owner`, `company`, `engagement`, `account_details` |
 | deal flow by month | the same |
 | deal stage history | the same, plus `deal_property_history` |
 | rep activity | `engagement`, `owner`, `account_details` |
@@ -101,8 +101,16 @@ stage default from the pipeline.
 Pipeline hygiene: `age_days` (time to close for a closed deal, time open for an open
 one), `is_overdue` (open and past its expected close date) and
 `has_no_next_activity` (open with nothing scheduled). HubSpot's own activity
-roll-ups on the deal (`num_activities`, `last_activity_at`, `next_activity_at`) come
-along.
+roll-ups on the deal (`num_activities`, `num_times_contacted`, `last_activity_at`,
+`next_activity_at`) come along.
+
+Activity attributed to the deal: `logged_activities` and `logged_emails`,
+`logged_calls`, `logged_meetings`, `logged_notes`, `logged_tasks` count the
+activities associated with the deal, with `first_logged_activity_at` and
+`last_logged_activity_at` (activities in the past only). An activity associated
+with two deals counts on both, so these columns are right per deal and too high
+when summed over deals. For totals, use `rep_activity`, which counts each activity
+once.
 
 Each deal gets **one** company: the primary association if there is one, otherwise
 the lowest associated company id. That keeps the model at deal grain and makes
@@ -120,7 +128,12 @@ the lowest associated company id. That keeps the model at deal grain and makes
   parsed from that JSON. The separate `call` object stream holds the same calls with
   more detail and is not needed here.
 - **Only active pipelines are synced.** A deal still in a pipeline that has been
-  archived keeps its stage id but gets no pipeline or stage label.
+  archived keeps its stage id but gets no pipeline or stage label. In
+  `deal_stage_history` labels are looked up by stage id across every synced deal
+  pipeline, so a deal moved between two active pipelines keeps labels for both.
+- **Activity associations come from the engagement's `deal_ids` array**, read as
+  a native array column. The connector also syncs separate association tables for
+  some activity objects; they are not needed here.
 - **The public ERD shows the top-level `created_at` and `updated_at` columns on
   `deal`, `company` and `contact` as integers.** The connector declares them as
   timestamps. These models use HubSpot's `createdate` properties instead, which are
@@ -143,6 +156,10 @@ the lowest associated company id. That keeps the model at deal grain and makes
   is part of every join key and of the grain in core. To add a portal, `UNION ALL` a
   second block in each staging model pointing at that connector with a different
   label, and change nothing else.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_hubspot` package; the SQL here is written independently for Weld's schema.
+  Weld's HubSpot schema differs from the one that package targets, so the
+  comparison was of definitions, not table shapes.
 - **Nothing here has been run against a warehouse.** Reconcile before relying on it:
   open pipeline and weighted amount against HubSpot's deal board for one pipeline,
   a closed month of wins against the "Deals won" report, and one rep's week of

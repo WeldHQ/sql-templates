@@ -3,7 +3,7 @@
 -- stayed. Grain: one row per deal x stage entry (a deal that goes back to a stage
 -- it already visited gets a second row).
 -- Depends on: staging.hubspot_v2.deal_property_history, .pipeline_stage,
---             core.hubspot_v2.deal_pipeline
+--             .pipeline, core.hubspot_v2.deal_pipeline
 --
 -- Answers what deal_pipeline cannot: how long deals sit in each stage, which stages
 -- they skip, and where they stall. It is the data behind HubSpot's "Deal stage
@@ -14,6 +14,13 @@
 -- still running and has exited_at NULL. Consecutive rows with the same stage (a
 -- re-save that wrote the same value) are collapsed into one entry, so they do not
 -- show up as zero-day visits.
+--
+-- STAGE LABELS are looked up by stage id across all deal pipelines, not only
+-- the deal's current one. HubSpot stage ids are unique within a portal, so a deal
+-- that moved from one pipeline to another keeps readable labels for the stages
+-- it passed through before the move, and `stage_pipeline_id` says which pipeline
+-- each entry belonged to. moved_backwards only compares stages in the same
+-- pipeline; a move to another pipeline is never called backwards.
 --
 -- REQUIRES the deal_property_history stream. Without it this model is empty.
 -- Deals created before HubSpot started recording history for your portal start
@@ -50,6 +57,20 @@ sequenced AS (
         ROW_NUMBER()     OVER w AS entry_number
     FROM entries e
     WINDOW w AS (PARTITION BY hubspot_portal, deal_id ORDER BY entered_at)
+),
+
+-- Deal stages only: the stage table also holds ticket pipeline stages. The
+-- QUALIFY makes sure a stage id can never fan an entry out into two rows.
+deal_stages AS (
+    SELECT st.*
+    FROM {{ ref('stg_hubspot_v2__pipeline_stage') }} st
+    JOIN {{ ref('stg_hubspot_v2__pipeline') }} p
+      ON p.hubspot_portal = st.hubspot_portal
+     AND p.pipeline_id    = st.pipeline_id
+    WHERE p.object_type = 'deal'
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY st.hubspot_portal, st.stage_id ORDER BY st.pipeline_id
+    ) = 1
 )
 
 SELECT
@@ -60,6 +81,7 @@ SELECT
     d.pipeline_label,
     q.entry_number,
     q.stage_id,
+    s.pipeline_id                                   AS stage_pipeline_id,
     s.stage_label,
     s.stage_display_order,
     q.next_stage_id,
@@ -73,8 +95,10 @@ SELECT
                                                     AS hours_in_stage,
     TIMESTAMP_DIFF(COALESCE(q.exited_at, CURRENT_TIMESTAMP()), q.entered_at, MINUTE) / 1440.0
                                                     AS days_in_stage,
-    -- Did the deal move backwards? Compares display order within the pipeline.
-    COALESCE(ns.stage_display_order < s.stage_display_order, FALSE) AS moved_backwards,
+    -- Did the deal move backwards? Compares display order, and only when both
+    -- stages sit in the same pipeline.
+    COALESCE(ns.pipeline_id = s.pipeline_id
+             AND ns.stage_display_order < s.stage_display_order, FALSE) AS moved_backwards,
 
     d.deal_status,
     d.amount_home_currency,
@@ -86,14 +110,12 @@ FROM sequenced q
 JOIN {{ ref('core_hubspot_v2__deal_pipeline') }} d
   ON d.hubspot_portal = q.hubspot_portal
  AND d.deal_id        = q.deal_id
--- The stage label is looked up in the deal's CURRENT pipeline. A deal moved between
--- pipelines keeps its earlier stage ids, which then find no label; stage_id is
--- always populated.
-LEFT JOIN {{ ref('stg_hubspot_v2__pipeline_stage') }} s
+-- Labels come from whichever deal pipeline owns the stage id. A stage from a
+-- pipeline that has since been archived is not synced and finds no label;
+-- stage_id is always populated.
+LEFT JOIN deal_stages s
        ON s.hubspot_portal = q.hubspot_portal
-      AND s.pipeline_id    = d.pipeline_id
       AND s.stage_id       = q.stage_id
-LEFT JOIN {{ ref('stg_hubspot_v2__pipeline_stage') }} ns
+LEFT JOIN deal_stages ns
        ON ns.hubspot_portal = q.hubspot_portal
-      AND ns.pipeline_id    = d.pipeline_id
       AND ns.stage_id       = q.next_stage_id

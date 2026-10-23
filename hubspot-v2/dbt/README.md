@@ -4,7 +4,7 @@ Drop-in model files. Not a runnable project: no `dbt_project.yml`, not run in CI
 
 ```
 models/staging/sources.yml                          one source, one portal
-models/staging/stg_hubspot_v2__*.sql                10 thin wrappers over the raw tables
+models/staging/stg_hubspot_v2__*.sql                11 thin wrappers over the raw tables
 models/core/core_hubspot_v2__deal_pipeline.sql      every deal, classified, with owner and company
 models/core/core_hubspot_v2__deal_flow_by_month.sql created, won, lost and win rate by month
 models/core/core_hubspot_v2__deal_stage_history.sql time in each stage, from property history
@@ -14,6 +14,7 @@ models/analytics/analytics__hubspot_v2_*.sql        thin BI-facing contracts
 tests/assert_no_duplicate_deals.sql                 deal_pipeline stays at deal grain
 tests/assert_company_360_reconciles_to_deals.sql    company totals add up to the pipeline
 tests/assert_one_current_stage_per_deal.sql         stage history is well sequenced
+tests/assert_one_row_per_stage_entry.sql            stage label lookup never fans out
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. These are the

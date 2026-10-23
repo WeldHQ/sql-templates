@@ -2,7 +2,7 @@
 -- Every deal with its pipeline, stage, outcome, owner and primary company.
 -- Grain: one row per deal. Money: the portal's home currency (amount_home_currency).
 -- Depends on: staging.hubspot_v2.deal, .pipeline, .pipeline_stage, .owner,
---             .deal_association, .company, .account_details
+--             .deal_association, .company, .account_details, .engagement_deal
 --
 -- This is the deal-grain model the other reports read. It recreates the numbers
 -- behind HubSpot's deal board and "Deal forecast" report: open pipeline, weighted
@@ -19,12 +19,36 @@
 -- deal to company) wins; a deal with no primary company falls back to the lowest
 -- associated company id, so the choice is stable between runs.
 --
+-- ACTIVITY ON THE DEAL comes two ways. num_activities and num_times_contacted
+-- are HubSpot's own roll-ups. The logged_* columns count the activities whose
+-- association list names this deal, by type, so a call logged against two deals
+-- counts on both. Use them per deal; for activity totals use rep_activity, which
+-- counts each activity once. Only activities that have already happened count
+-- towards last_logged_activity_at, so a meeting booked for next week does not
+-- make a deal look freshly worked.
+--
 -- CURRENT STATE. This is where every deal stands now. For how deals moved through
 -- the stages, use core.hubspot_v2.deal_stage_history.
 
 WITH portal AS (
     SELECT hubspot_portal, time_zone, home_currency
     FROM {{staging.hubspot_v2.account_details}}
+),
+
+deal_activity AS (
+    SELECT
+        ed.hubspot_portal,
+        ed.deal_id,
+        COUNT(*)                                                     AS logged_activities,
+        COUNTIF(ed.engagement_type IN ('EMAIL', 'INCOMING_EMAIL', 'FORWARDED_EMAIL')) AS logged_emails,
+        COUNTIF(ed.engagement_type = 'CALL')                         AS logged_calls,
+        COUNTIF(ed.engagement_type = 'MEETING')                      AS logged_meetings,
+        COUNTIF(ed.engagement_type = 'NOTE')                         AS logged_notes,
+        COUNTIF(ed.engagement_type = 'TASK')                         AS logged_tasks,
+        MIN(ed.occurred_at)                                          AS first_logged_activity_at,
+        MAX(IF(ed.occurred_at <= CURRENT_TIMESTAMP(), ed.occurred_at, NULL)) AS last_logged_activity_at
+    FROM {{staging.hubspot_v2.engagement_deal}} ed
+    GROUP BY 1, 2
 ),
 
 deal_company AS (
@@ -107,11 +131,22 @@ SELECT
     NOT d.is_closed AND d.next_activity_at IS NULL AS has_no_next_activity,
 
     d.num_activities,
-    d.num_sales_activities,
+    d.num_times_contacted,
     d.last_activity_at,
     d.next_activity_at,
     d.num_contacts,
     d.original_source,
+
+    -- Activities associated with the deal (an activity on several deals counts on
+    -- each). Zero, not NULL, for a deal nobody has logged anything against.
+    COALESCE(da.logged_activities, 0)       AS logged_activities,
+    COALESCE(da.logged_emails, 0)           AS logged_emails,
+    COALESCE(da.logged_calls, 0)            AS logged_calls,
+    COALESCE(da.logged_meetings, 0)         AS logged_meetings,
+    COALESCE(da.logged_notes, 0)            AS logged_notes,
+    COALESCE(da.logged_tasks, 0)            AS logged_tasks,
+    da.first_logged_activity_at,
+    da.last_logged_activity_at,
 
     d.owner_id,
     o.owner_name,
@@ -138,6 +173,9 @@ LEFT JOIN {{staging.hubspot_v2.pipeline_stage}} s
 LEFT JOIN {{staging.hubspot_v2.owner}} o
        ON o.hubspot_portal = d.hubspot_portal
       AND o.owner_id       = d.owner_id
+LEFT JOIN deal_activity da
+       ON da.hubspot_portal = d.hubspot_portal
+      AND da.deal_id        = d.deal_id
 LEFT JOIN deal_company dc
        ON dc.hubspot_portal = d.hubspot_portal
       AND dc.deal_id        = d.deal_id
