@@ -6,8 +6,11 @@
 -- name is "Placed Order"). The results are ordered by the event timestamp in
 -- descending order.
 --
--- From the weld.app template library. Not reconciled against Klaviyo;
--- check the output against the source before relying on it.
+-- Klaviyo prefixes its own property keys with $ ($flow, $message, $event_id).
+-- Each lookup strips the $ from the JSON first so plain paths can reach them.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- Klaviyo; check the output against the source before relying on it.
 
 select
     id as event_id
@@ -20,7 +23,7 @@ select
   , metric_id
   , campaign_id
   , flow_id
-  , json_extract_scalar(klaviyo_properties, '$.flow') as flow
+  , json_extract_scalar(replace(klaviyo_properties, '$', ''), '$.flow') as flow
   , json_extract_scalar(
         replace(klaviyo_properties, '$', '')
       , "$['attribution'].attributed_event_id"
@@ -35,7 +38,7 @@ select
       , "$['attribution'].send_ts"
     ) as send_ts
   , case
-        when event_name like 'Placed Order' then json_extract_scalar(klaviyo_properties, '$.event_id')
+        when event_name like 'Placed Order' then json_extract_scalar(replace(klaviyo_properties, '$', ''), '$.event_id')
     end as order_id
 from
     {{ source('klaviyo_import', 'event') }}

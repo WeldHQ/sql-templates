@@ -8,8 +8,8 @@
 -- timestamps. The final result is sorted in descending order based on the event
 -- timestamps.
 --
--- From the weld.app template library. Not reconciled against Klaviyo;
--- check the output against the source before relying on it.
+-- From the weld.app template library, corrected. Not reconciled against
+-- Klaviyo; check the output against the source before relying on it.
 
 with
     events as (
@@ -30,10 +30,7 @@ with
           , send_ts
           , order_id
         from
-        select
-            distinct event_name
-        from
-           {{staging.klaviyo.email_events}}
+            {{staging.klaviyo.email_events}}
     )
   , campaign as (
         select
@@ -50,7 +47,7 @@ with
         select
             id flow_id
           , name flow_name
-          , status status_flow_status
+          , status as flow_status
           , trigger_type
           , trigger_filter
           , trigger_list_id

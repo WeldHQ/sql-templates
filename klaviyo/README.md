@@ -12,9 +12,10 @@ SQL reports over Weld's Klaviyo connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -26,6 +27,13 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/events_flow_campaign_report` reads from `{{staging.klaviyo.email_events}}`; the website version had a stray `select distinct event_name` in its FROM clause, a syntax error. The flow status column is aliased `flow_status`, which the final select reads.
+- `staging/email_events` strips the `$` from Klaviyo's property keys before reading `flow` and `event_id`, as it already did for the other keys, so those two no longer come back NULL.
 
 ## Required tables
 
@@ -86,8 +94,7 @@ integrated with Klaviyo, a popular email marketing platform.
 
 ## Known issues
 
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
+Still open after the review, with the reason each is left as it is.
 
-- `core/events_flow_campaign_report`: `from select distinct event_name from ...` is a syntax error; it should read `from {{staging.klaviyo.email_events}}`. It also selects `flow.flow_status`, which the CTE names `status_flow_status`.
-- `staging/email_events`: `'$.flow'` and `'$.event_id'` are read without stripping `$` from the Klaviyo keys, unlike the neighbouring lines, so they probably return NULL (likely).
+- `core/monthly_campaign_status_breakdown_by_list` reads `klaviyo.campaign_list`, which the current Klaviyo connector does not sync; campaign audiences now land in `campaign_audiences_included`. Porting it means rewriting the list join, so it is left as published for connections that still have the table.
+- `staging/email_events` reads `klaviyo_import.event`, which has `event_name` and `person_id`. The current connector's `event` table has neither (it carries `metric_id` and `profile_id`), so this model needs that import table or a rewrite against the metric table.
