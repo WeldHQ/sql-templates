@@ -73,9 +73,9 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 | campaign performance | the same |
 | conversions by day | `campaign_conversion`, `campaign` |
 
-**Watch your Grin API quota.** Grin limits API requests per month, and the
-connector reads `campaign_conversion`, `campaign_payable` and `campaign_content`
-once per campaign on every sync. On an account with many campaigns, sync these
+**Watch your Grin API quota.** Grin limits API requests per month, and
+`campaign_conversion`, `campaign_payable` and `campaign_content` are synced once per
+campaign on every sync. On an account with many campaigns, sync these
 streams less often rather than switching them off. Do not enable `contact_campaign`
 on a large account: it is read once per contact, and these models do not need it.
 

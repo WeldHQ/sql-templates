@@ -2,8 +2,8 @@
 -- Thin wrapper over raw `ticket`. Casts, renames, unpacks the team, keeps one row
 -- per ticket. No business logic.
 --
--- The connector reads tickets both from the ticket list and from merge events, so
--- the same ticket can arrive more than once; the latest version wins here. A
+-- Tickets arrive both from the ticket list and from merge events, so the same
+-- ticket can arrive more than once; the latest version wins here. A
 -- ticket merged into another can arrive as little more than its id and the merge
 -- fields, which is why core drops merged tickets rather than counting them.
 --

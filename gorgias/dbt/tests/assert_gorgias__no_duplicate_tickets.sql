@@ -1,6 +1,6 @@
 -- One row per ticket, per Gorgias account.
 --
--- The connector reads tickets from both the ticket list and merge events, and
+-- Tickets arrive from both the ticket list and merge events, and
 -- staging keeps one version. This guards that, plus the message, survey and
 -- first-reply joins in ticket_lifecycle, any of which would double every count
 -- downstream if it ever returned two rows for one ticket.

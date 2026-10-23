@@ -1,9 +1,8 @@
 -- stg_qualtrics__survey_response
 -- Thin wrapper over raw `survey_response`. One row per recorded response.
 --
--- The connector uses Qualtrics' response export, which returns recorded responses:
--- completed ones, and incomplete ones Qualtrics has closed and recorded. Responses
--- still in progress are not exported, so `finished = FALSE` here means "recorded
+-- Only recorded responses are synced: completed ones, and incomplete ones
+-- Qualtrics has closed and recorded. Responses still in progress are not synced, so `finished = FALSE` here means "recorded
 -- as incomplete", not "currently being filled in".
 --
 -- `status` is Qualtrics' response type code. It is decoded here and flagged, so

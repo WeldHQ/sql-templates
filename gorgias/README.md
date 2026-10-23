@@ -65,8 +65,7 @@ weld/analytics/*.sql    BI-facing contracts, deliberately thin
 
 **Staging** casts, renames and keeps one row per id. It unpacks the assigned team
 from its JSON object and the message sender's id and name, and reads the merged
-flag across every copy of a ticket, because the connector receives merges as
-separate events.
+flag across every copy of a ticket, because merges arrive as separate events.
 
 **Core** holds the first-response rule, the exclusions, the spine and the
 aggregations. `ticket_lifecycle` is ticket grain and three of the other models read
@@ -134,7 +133,7 @@ Nothing here has been run against a live warehouse. Before relying on it:
 ## Schema notes
 
 - The public ERD types timestamp columns (`created_datetime`, `closed_datetime`, ...)
-  as `date`. The connector loads them as millisecond timestamps; staging casts to
+  as `date`. They arrive as millisecond timestamps; staging casts to
   `TIMESTAMP`.
 - `assignee_team` and the message `sender` are JSON objects stored as strings.
 

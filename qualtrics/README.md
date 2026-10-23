@@ -14,17 +14,16 @@ Weld connector: **Qualtrics** ([docs](https://weld.app/docs/applications/qualtri
 
 ## Read this first: what this connector cannot do
 
-**1. Responses in progress are not synced.** The connector uses Qualtrics' response
-export, which returns recorded responses: finished ones, and unfinished ones Qualtrics
-has closed and recorded. Someone halfway through the survey right now is not in the
-data. So `finish_rate` in `response_volume` is the share of *recorded* responses that
+**1. Responses in progress are not synced.** Only recorded responses are synced:
+finished ones, and unfinished ones Qualtrics has closed and recorded. Someone
+halfway through the survey right now is not in the data. So `finish_rate` in `response_volume` is the share of *recorded* responses that
 were finished, not the share of people who started. The only start counts available
 are on email distributions, in `distribution_performance`.
 
 **2. Distribution stats are snapshots.** `stats_sent`, `stats_opened`,
 `stats_started` and `stats_finished` are Qualtrics' running totals for each
-distribution, not events. The connector re-reads the last week of distributions once
-a day. A distribution older than that keeps the totals it had when last read, so a
+distribution, not events. The last week of distributions is re-read once a day.
+A distribution older than that keeps the totals it had when last read, so a
 late trickle of responses to an old invite shows in `response_volume` but not in
 `distribution_performance`.
 
@@ -33,17 +32,16 @@ late trickle of responses to an old invite shows in `response_volume` but not in
 wording against every past answer; a deleted one leaves its answers with a NULL
 `question_text`.
 
-**4. Some answers are not synced.** The connector keeps an answer when its export
-key is a question id, a question id plus a matrix row, or a text-entry question's
-text. Three kinds of answer have other keys and are not in `question_response`:
+**4. Some answers are not synced.** An answer is synced when its export key is a
+question id, a question id plus a matrix row, or a text-entry question's text. Three kinds of answer have other keys and are not in `question_response`:
 answers inside a Loop & Merge block (prefixed with the loop number), the free
 text typed into an "Other, please specify" choice, and Qualtrics' own computed
 NPS group. The NPS group is recomputed from the score in `nps_by_month`; the
 other two cannot be rebuilt.
 
 **5. No per-recipient distribution history.** Qualtrics keeps a status per
-recipient for each distribution (sent, opened, started, finished, bounced). The
-connector syncs the distribution's totals, not that per-recipient table, so a
+recipient for each distribution (sent, opened, started, finished, bounced). Only the
+distribution's totals are synced, not that per-recipient table, so a
 contact-level funnel ("who opened but did not start") cannot be built.
 
 **6. Only email distributions are modelled.** SMS distributions are synced as a
@@ -99,8 +97,8 @@ the refs.
 
 ## What answer_detail returns
 
-One row per answer component, already in long format: the connector splits a
-multi-select answer into one row per selected choice (`response_index` 0, 1, 2, ...)
+One row per answer component, already in long format: a multi-select answer
+arrives split into one row per selected choice (`response_index` 0, 1, 2, ...)
 and a matrix answer into one row per matrix row (`sub_question_key`, labelled by
 `sub_question_text`).
 

@@ -46,8 +46,8 @@ weld/analytics/*.sql    BI-facing contracts, deliberately thin
 
 **Staging** casts the ISO timestamp strings, unpacks the JSON objects (location,
 invitee counter, cancellation, UTM tracking, no-show, payment, the host list) and
-dedupes. The dedupe matters: the connector reads scheduled events once per
-organisation member, so a meeting with two hosts lands twice in raw.
+dedupes. The dedupe matters: scheduled events are synced once per organisation
+member, so a meeting with two hosts lands twice in raw.
 
 **Core** holds the outcome classification, the reschedule chain and the date
 spine. `scheduled_events` is meeting grain and the other two read it.

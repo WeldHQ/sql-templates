@@ -5,10 +5,10 @@
 -- Depends on: staging.qualtrics.distribution, .survey
 --
 -- This recreates the per-distribution stats on Qualtrics' Distributions tab. The
--- counts are Qualtrics' own running totals as of the last time the connector read
--- the distribution (see staging/distribution.sql), so a distribution sent months
+-- counts are Qualtrics' own running totals as of the last time the distribution
+-- was synced (see staging/distribution.sql), so a distribution sent months
 -- ago may show slightly lower started and finished figures than the UI if
--- respondents kept trickling in after it left the connector's look-back window.
+-- respondents kept trickling in after it left the sync's look-back window.
 --
 -- RATES ARE PER DISTRIBUTION. To roll up to survey or month, sum the counts and
 -- divide, never average the rates. Reminders and thank-yous are separate rows,

@@ -1,8 +1,8 @@
 -- staging.qualtrics.question_response
 -- Thin wrapper over raw `question_response`. One row per response x question x
--- matrix row (sub question) x selected value. Long format already: the connector
--- splits a multi-select answer into one row per selected choice, numbered by
--- `response_index`, and a matrix answer into one row per row of the matrix.
+-- matrix row (sub question) x selected value. Long format already: a multi-select
+-- answer arrives as one row per selected choice, numbered by `response_index`,
+-- and a matrix answer as one row per row of the matrix.
 --
 -- `response_value` is what Qualtrics exports as the value: the choice's recode for
 -- a choice question, the typed text for a text entry. `response_label` is the

@@ -100,8 +100,8 @@ you hear about us" report: which channel buyers credit, weighted by what they sp
 - **NPS is computed from counts.** Promoters score 9 or 10, passives 7 or 8,
   detractors 0 to 6; `nps` is the share of promoters minus the share of detractors,
   times 100. Roll a quarter up from the summed counts, never by averaging monthly NPS.
-- **Matrix answers may be incomplete.** The connector keys option rows on the option
-  handle within a response. On a matrix where a respondent picks the same column for
+- **Matrix answers may be incomplete.** Option rows are keyed on the option handle
+  within a response. On a matrix where a respondent picks the same column for
   two rows, check one response against Zigpoll before relying on matrix counts.
 - **Dates are UTC.** Zigpoll's dashboard may show your local time, so a day's count can
   differ near midnight.

@@ -3,8 +3,8 @@
 -- meeting on the calendar, active or canceled. Casts, renames, unpacks the JSON
 -- objects. No business logic.
 --
--- DEDUPED ON uri. The connector reads scheduled events once per organisation
--- member, so a meeting with two hosts (a collective or round robin pooled event)
+-- DEDUPED ON uri. Scheduled events are synced once per organisation member,
+-- so a meeting with two hosts (a collective or round robin pooled event)
 -- arrives once for each host. Without the QUALIFY every multi-host meeting would be
 -- counted twice in every report.
 --
