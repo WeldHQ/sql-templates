@@ -6,14 +6,36 @@
 -- count, and comments count. The final result is sorted by month and media posted
 -- date in descending order.
 --
--- From the weld.app template library. Not reconciled against Instagram Business;
--- check the output against the source before relying on it.
+-- Grain: one row per media post, dated by the month it was posted. Insights
+-- are lifetime totals as of the latest sync. Instagram has renamed some
+-- metrics: reel plays are now views, and story exits and taps are reported as
+-- story_tap_exit, story_tap_back and story_tap_forward; the output keeps the
+-- older column names where the meaning is the same.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- Instagram Business; check the output against the source before relying on it.
 
 with
-    MediaDeepDive as (
+    latest_media as (
+        -- media_history keeps a snapshot of each post per sync; the latest one
+        -- carries the current like and comment counts
+        select
+            *
+        from
+            {{raw.instagram.media_history}}
+        where
+            true
+        qualify
+            row_number() over(
+                partition by
+                    id
+                order by
+                    _weld_synced_at desc
+            ) = 1
+    )
+  , MediaDeepDive as (
         select
             id as media_id
-          , date_trunc(_weld_synced_at, month) as month
           , -- Carousel Metrics
             carousel_album_engagement
           , carousel_album_impressions
@@ -23,18 +45,18 @@ with
           , -- Reel Metrics
             reel_comments
           , reel_likes
-          , reel_plays
+          , reel_views
           , reel_reach
           , reel_saved
           , reel_shares
           , reel_total_interactions
           , -- Story Metrics
-            story_exits
+            story_tap_exit as story_exits
           , story_impressions
           , story_reach
           , story_replies
-          , story_taps_back
-          , story_taps_forward
+          , story_tap_back as story_taps_back
+          , story_tap_forward as story_taps_forward
           , -- Feed Metrics
             feed_engagement
           , feed_impressions
@@ -58,7 +80,8 @@ with
             {{raw.instagram.media_insights}}
     )
 select
-    md.*
+    date_trunc(date(mh.timestamp), month) as month
+  , md.*
   , mh.caption
   , mh.timestamp as media_posted_date
   , mh.media_type
@@ -66,7 +89,7 @@ select
   , mh.comments_count
 from
     MediaDeepDive md
-    join {{raw.instagram.media_history}} mh on md.media_id = mh.id
+    join latest_media mh on md.media_id = mh.id
 order by
-    md.month desc
+    month desc
   , media_posted_date desc

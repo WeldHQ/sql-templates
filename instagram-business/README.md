@@ -13,9 +13,10 @@ SQL reports over Weld's Instagram Business connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -25,6 +26,14 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/engagement_metric_analysis`, `core/growth_analysis`, `core/media_performance_report` and `core/media_insights_deep_dive` count each post once, from its latest `media_history` snapshot, and date it by the month it was posted rather than when Weld synced it. The website versions summed every snapshot of a post.
+- `core/growth_analysis` works out followers per account by snapshot month and engagement per account by post month, then compares each account's months. The website version joined every account snapshot to every post. Follower counts stay dated by `_weld_synced_at` on purpose: Instagram only returns the current count, so the snapshot time is when it was measured.
+- Instagram has renamed some media metrics. The queries now read `story_tap_exit`, `story_tap_back`, `story_tap_forward` and `reel_views`; `media_performance_report` outputs `total_reel_views` in place of `total_reel_plays`.
 
 ## Required tables
 
@@ -93,8 +102,6 @@ subqueries: MonthlyFollowers, MonthlyProfileEngagement, and MonthlyMediaEngageme
 
 ## Known issues
 
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
+Still open after the review, with the reason each is left as it is.
 
-- `core/growth_analysis` and `core/engagement_metric_analysis`: summing likes and comments across snapshot tables adds up repeated snapshots of the same post (likely).
-- Every query here buckets by `_weld_synced_at` (when Weld synced the row), not by post or metric date.
+- `core/profile_overview_report` and `core/user_engagement_and_outreach_report` read `profile_views` and `website_clicks` from `user_insights`, which the connector does not sync (it holds follower count and reach by date). They fail as published, and there is no source in the connector for those two metrics, so they are left as they are. They also still bucket by `_weld_synced_at`.

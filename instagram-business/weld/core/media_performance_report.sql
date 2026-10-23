@@ -6,66 +6,53 @@
 -- comments, carousel engagement, impressions, reach, reel likes, plays, feed
 -- engagement, impressions, and reach.
 --
--- From the weld.app template library. Not reconciled against Instagram Business;
--- check the output against the source before relying on it.
+-- Grain: account x month the media was posted. Each post counts once, with its
+-- latest lifetime likes, comments and insights. Instagram now reports reel
+-- plays as views, so total_reel_views replaces the old plays column.
+--
+-- From the weld.app template library, corrected. Not reconciled against
+-- Instagram Business; check the output against the source before relying on it.
 
 with
-    MonthlyMediaMetrics as (
-        -- Aggregating metrics from media_history
+    latest_media as (
+        -- media_history keeps a snapshot of each post per sync; the latest one
+        -- carries the current like and comment counts
         select
-            user_id
-          , date_trunc(_weld_synced_at, month) month
-          , count(distinct id) as total_media_posts
-          , sum(like_count) as total_likes
-          , sum(comments_count) as total_comments
+            *
         from
             {{raw.instagram.media_history}}
-        group by
-            user_id
-          , month
+        where
+            true
+        qualify
+            row_number() over(
+                partition by
+                    id
+                order by
+                    _weld_synced_at desc
+            ) = 1
     )
-  , MonthlyMediaInsightsMetrics as (
-        -- Aggregating metrics from media_insights
-        select
-            h.user_id
-          , date_trunc(i._weld_synced_at, month) month
-          , sum(carousel_album_engagement) as total_carousel_engagement
-          , sum(carousel_album_impressions) as total_carousel_impressions
-          , sum(carousel_album_reach) as total_carousel_reach
-          , sum(carousel_album_saved) as total_carousel_saved
-          , sum(reel_likes) as total_reel_likes
-          , sum(reel_plays) as total_reel_plays
-          , sum(reel_reach) as total_reel_reach
-          , sum(feed_engagement) as total_feed_engagement
-          , sum(feed_impressions) as total_feed_impressions
-          , sum(feed_reach) as total_feed_reach
-        from
-            {{raw.instagram.media_insights}} i
-            left join {{raw.instagram.media_history}} h on i.id = h.id
-        group by
-            month
-          , h.user_id
-    ) -- Merging the two aggregated tables to provide a comprehensive view
 select
-    mmm.user_id
-  , mmm.month
-  , mmm.total_media_posts
-  , mmm.total_likes
-  , mmm.total_comments
-  , mmim.total_carousel_engagement
-  , mmim.total_carousel_impressions
-  , mmim.total_carousel_reach
-  , mmim.total_carousel_saved
-  , mmim.total_reel_likes
-  , mmim.total_reel_plays
-  , mmim.total_reel_reach
-  , mmim.total_feed_engagement
-  , mmim.total_feed_impressions
-  , mmim.total_feed_reach
+    mh.user_id
+  , date_trunc(date(mh.timestamp), month) as month
+  , count(distinct mh.id) as total_media_posts
+  , sum(mh.like_count) as total_likes
+  , sum(mh.comments_count) as total_comments
+  , sum(mi.carousel_album_engagement) as total_carousel_engagement
+  , sum(mi.carousel_album_impressions) as total_carousel_impressions
+  , sum(mi.carousel_album_reach) as total_carousel_reach
+  , sum(mi.carousel_album_saved) as total_carousel_saved
+  , sum(mi.reel_likes) as total_reel_likes
+  , sum(mi.reel_views) as total_reel_views
+  , sum(mi.reel_reach) as total_reel_reach
+  , sum(mi.feed_engagement) as total_feed_engagement
+  , sum(mi.feed_impressions) as total_feed_impressions
+  , sum(mi.feed_reach) as total_feed_reach
 from
-    MonthlyMediaMetrics mmm
-    join MonthlyMediaInsightsMetrics mmim on mmm.user_id = mmim.user_id
-    and mmm.month = mmim.month
+    latest_media mh
+    left join {{raw.instagram.media_insights}} mi on mi.id = mh.id
+group by
+    user_id
+  , month
 order by
-    mmm.user_id
-  , mmm.month desc
+    user_id
+  , month desc
