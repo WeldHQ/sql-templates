@@ -9,3 +9,4 @@ sources:
       - name: account
       - name: invoice
       - name: invoice_line_item
+      - name: subscription

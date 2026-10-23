@@ -2,7 +2,8 @@
 
 Rebuilds MRR movements from Recurly's invoiced line items: new, expansion,
 contraction, churn and reactivation, by month and by customer, plus what was
-billed, credited and collected each month. BigQuery.
+billed, credited and collected each month, and why subscriptions ended.
+BigQuery.
 
 Weld connector: **Recurly** ([docs](https://weld.app/docs/applications/recurly)).
 
@@ -11,6 +12,7 @@ Weld connector: **Recurly** ([docs](https://weld.app/docs/applications/recurly))
 | [`weld/core/mrr_movements.sql`](weld/core/mrr_movements.sql) · [dbt](dbt/models/core/core_recurly__mrr_movements.sql) | MRR movements (the MRR bridge) | month × currency |
 | [`weld/core/mrr_by_customer_month.sql`](weld/core/mrr_by_customer_month.sql) · [dbt](dbt/models/core/core_recurly__mrr_by_customer_month.sql) | MRR and its movement per account | month × account × currency |
 | [`weld/core/billing_by_month.sql`](weld/core/billing_by_month.sql) · [dbt](dbt/models/core/core_recurly__billing_by_month.sql) | charge and credit invoices totalled by month | month × currency |
+| [`weld/core/subscription_churn.sql`](weld/core/subscription_churn.sql) · [dbt](dbt/models/core/core_recurly__subscription_churn.sql) | churned subscriptions by reason, voluntary or involuntary | expired subscription |
 | [`weld/core/recurring_revenue_lines.sql`](weld/core/recurring_revenue_lines.sql) · [dbt](dbt/models/core/core_recurly__recurring_revenue_lines.sql) | (input to the MRR models) | line item |
 
 Nothing here has been run against a warehouse. Reconcile a closed month against
@@ -82,7 +84,7 @@ exchange rate on invoices, so join a daily or monthly FX table of your own to
 ```
 raw.recurly.*          ELT output, untouched
   ↓
-weld/staging/*.sql     3 thin wrappers: cast, rename, round floats, de-duplicate
+weld/staging/*.sql     4 thin wrappers: cast, rename, round floats, de-duplicate
   ↓
 weld/core/*.sql        the reports: all the business logic lives here
   ↓
@@ -114,8 +116,28 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 | mrr by customer month | the above, plus `account` |
 | mrr movements | the above |
 | billing by month | `invoice` |
+| subscription churn | `subscription`, `account`, plus the tables for recurring revenue lines |
 
-`subscription`, `subscription_history` and `plan` are not needed.
+`subscription_history` and `plan` are not needed.
+
+## Churn reasons
+
+The MRR bridge says how much MRR was lost; `subscription_churn` says why. It
+takes every expired subscription and groups Recurly's `expiration_reason`:
+
+| churn_type | expiration_reason |
+|---|---|
+| voluntary | canceled |
+| involuntary | nonpayment (dunning gave up), tax location invalid |
+| term_ended | fixed billing cycles ran out |
+| trial_not_converted | a cardless trial or a gift ended without billing info |
+| other | anything else, left in `expiration_reason` to map |
+
+`mrr_at_expiry` is the subscription's MRR on its last day, built the same way as
+the bridge. A canceled subscription still running to the end of its term is not
+churned yet and is not in the model until it expires. The bridge counts
+customers and this model counts subscriptions, so an account swapping one
+subscription for another shows up here but not as churn in the bridge.
 
 ## Reconciling
 
@@ -150,8 +172,14 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 - **Net amount is subtotal minus discount.** Recurly's own `amount` column is kept
   in staging, but MRR does not read it, so it does not matter whether your
   invoices are tax inclusive.
+- **Churn is measured in months, not per renewal.** An account churns in the
+  month its last recurring service period ends without a successor. MRR is not
+  attributed to the month an invoice was created: a yearly plan counts one
+  twelfth in every month it covers.
 - **Failed invoices stay in billing.** They were billed; `failed_total` shows how
   much of a month's billing collection gave up on.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_recurly` package; the SQL here is written independently for Weld's schema.
 
 ## Schema notes
 

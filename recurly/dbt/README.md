@@ -4,15 +4,17 @@ Drop-in model files. Not a runnable project: no `dbt_project.yml`, not run in CI
 
 ```
 models/staging/sources.yml                             one source, one Recurly site
-models/staging/stg_recurly__*.sql                      3 thin wrappers over the raw tables
+models/staging/stg_recurly__*.sql                      4 thin wrappers over the raw tables
 models/core/core_recurly__recurring_revenue_lines.sql  recurring lines, normalised to a monthly amount
 models/core/core_recurly__mrr_by_customer_month.sql    MRR and its movement per account
 models/core/core_recurly__mrr_movements.sql            the MRR bridge by month
 models/core/core_recurly__billing_by_month.sql         charge and credit invoices, by month
+models/core/core_recurly__subscription_churn.sql       expired subscriptions, by churn reason
 models/analytics/analytics__recurly_*.sql              thin BI-facing contracts
 tests/assert_mrr_movements_reconcile.sql               beginning + movements = ending, and the bridge sums to accounts
 tests/assert_one_row_per_customer_month.sql            no duplicate account months
 tests/assert_credit_invoices_are_not_positive.sql      credits negative, charges positive
+tests/assert_one_row_per_churned_subscription.sql      no duplicate subscriptions in churn
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics
