@@ -11,6 +11,7 @@ These models target the current HubSpot connector (integration id `hubspot-v2`).
 | [`weld/core/deal_pipeline.sql`](weld/core/deal_pipeline.sql) · [dbt](dbt/models/core/core_hubspot_v2__deal_pipeline.sql) | What is open, won and lost, weighted pipeline, whose it is | deal |
 | [`weld/core/deal_flow_by_month.sql`](weld/core/deal_flow_by_month.sql) · [dbt](dbt/models/core/core_hubspot_v2__deal_flow_by_month.sql) | Created, won, lost, forecast and win rate over time | month × pipeline × owner |
 | [`weld/core/deal_stage_history.sql`](weld/core/deal_stage_history.sql) · [dbt](dbt/models/core/core_hubspot_v2__deal_stage_history.sql) | How long deals sit in each stage, and where they stall | deal × stage entry |
+| [`weld/core/deal_activity.sql`](weld/core/deal_activity.sql) · [dbt](dbt/models/core/core_hubspot_v2__deal_activity.sql) | Calls, emails, meetings, notes and tasks logged against each deal, first and latest | deal |
 | [`weld/core/rep_activity.sql`](weld/core/rep_activity.sql) · [dbt](dbt/models/core/core_hubspot_v2__rep_activity.sql) | Calls, emails, meetings, notes and tasks per rep | day × owner |
 | [`weld/core/company_360.sql`](weld/core/company_360.sql) · [dbt](dbt/models/core/core_hubspot_v2__company_360.sql) | Contacts, pipeline, revenue and last touch per company | company |
 
@@ -64,7 +65,7 @@ the spines. `deal_pipeline` is deal-grain and three of the other models read it.
 
 **Analytics** exists for indirection, not transformation. Bind dashboards and
 reverse-ETL syncs to `analytics.hubspot_v2.deal_pipeline` so core can be renamed or
-re-grained without breaking them. All five are `SELECT *` on purpose.
+re-grained without breaking them. All six are `SELECT *` on purpose.
 
 `dbt/` holds the same models with dbt refs, generated from the Weld versions, so the
 two cannot disagree about the logic. See [dbt/README.md](dbt/README.md).
@@ -78,9 +79,10 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 
 | Model | Raw tables |
 |---|---|
-| deal pipeline | `deal`, `deal_association`, `pipeline`, `pipeline_stage`, `owner`, `company`, `engagement`, `account_details` |
+| deal pipeline | `deal`, `deal_association`, `pipeline`, `pipeline_stage`, `owner`, `company`, `account_details` |
 | deal flow by month | the same |
 | deal stage history | the same, plus `deal_property_history` |
+| deal activity | `engagement`, `deal` |
 | rep activity | `engagement`, `owner`, `account_details` |
 | company 360 | the deal pipeline tables, plus `contact` |
 
@@ -104,17 +106,26 @@ one), `is_overdue` (open and past its expected close date) and
 roll-ups on the deal (`num_activities`, `num_times_contacted`, `last_activity_at`,
 `next_activity_at`) come along.
 
-Activity attributed to the deal: `logged_activities` and `logged_emails`,
-`logged_calls`, `logged_meetings`, `logged_notes`, `logged_tasks` count the
-activities associated with the deal, with `first_logged_activity_at` and
-`last_logged_activity_at` (activities in the past only). An activity associated
-with two deals counts on both, so these columns are right per deal and too high
-when summed over deals. For totals, use `rep_activity`, which counts each activity
-once.
+Counts of the activities logged against each deal are in a separate model,
+`deal_activity`, so `deal_pipeline` and everything built on it run without the
+`engagement` stream. See below.
 
 Each deal gets **one** company: the primary association if there is one, otherwise
 the lowest associated company id. That keeps the model at deal grain and makes
 `company_360` add up to the same totals.
+
+## What deal_activity returns
+
+One row per deal that has at least one activity logged against it; join it to
+`deal_pipeline` on `hubspot_portal` and `deal_id`. `logged_activities` and
+`logged_emails`, `logged_calls`, `logged_connected_calls`, `logged_meetings`,
+`logged_meetings_completed`, `logged_notes`, `logged_tasks` count the activities
+associated with the deal, with `first_logged_activity_at` and
+`last_logged_activity_at` (activities in the past only).
+
+**An activity associated with two deals counts on both**, so these columns are
+right per deal and too high when summed over deals. For totals, use
+`rep_activity`, which counts each activity once.
 
 ## Schema notes
 
