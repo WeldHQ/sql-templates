@@ -53,7 +53,7 @@ service period, so they reproduce any month back to the start of the site.
 
 so `beginning_mrr + new + expansion + contraction + churned + reactivation =
 ending_mrr` on every row, and
-[`assert_mrr_movements_reconcile.sql`](dbt/tests/assert_mrr_movements_reconcile.sql)
+[`assert_recurly__mrr_movements_reconcile.sql`](dbt/tests/assert_recurly__mrr_movements_reconcile.sql)
 checks it.
 
 Movements are counted per **account**, Recurly's customer. An account replacing one
@@ -152,7 +152,7 @@ subscription for another shows up here but not as churn in the bridge.
 - **Billing.** `billing_by_month.charge_total` should match Recurly's invoice
   export for the month, filtered to charge and legacy invoices that are not
   voided.
-- [`assert_credit_invoices_are_not_positive.sql`](dbt/tests/assert_credit_invoices_are_not_positive.sql)
+- [`assert_recurly__credit_invoices_are_not_positive.sql`](dbt/tests/assert_recurly__credit_invoices_are_not_positive.sql)
   checks the sign convention that netting credits against charges depends on.
   Run it first.
 

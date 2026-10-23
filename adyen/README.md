@@ -106,7 +106,7 @@ Nothing here has been run against a live warehouse. Reconcile before relying on 
 
 - **Settlement batches**: pick a paid-out batch and compare `payout` to the
   MerchantPayout line in the Customer Area and to your bank statement.
-  [`tests/assert_batch_entries_tie_to_payout.sql`](dbt/tests/assert_batch_entries_tie_to_payout.sql)
+  [`tests/assert_adyen__batch_entries_tie_to_payout.sql`](dbt/tests/assert_adyen__batch_entries_tie_to_payout.sql)
   checks that every paid-out batch's entries sum to its payout. It is the most
   valuable test in the set, because the payout is a figure Adyen computed
   independently.

@@ -9,7 +9,7 @@
 -- `amount` is quantity x unit price BEFORE discounts and tax. `discount_amount`
 -- is the line's total discount (item-level plus its share of invoice-level
 -- discounts), so `net_amount` = amount - discount_amount is the line's share of
--- the invoice sub_total. tests/assert_lines_tie_to_invoice_sub_total.sql checks
+-- the invoice sub_total. tests/assert_chargebee__lines_tie_to_invoice_sub_total.sql checks
 -- that identity.
 --
 -- Weld does not sync the line's own subscription_id, so a line is tied to a

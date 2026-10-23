@@ -22,7 +22,7 @@
 --   contraction   beginning > 0, MRR lower but above 0      (stored negative)
 --   churn         beginning > 0, MRR 0                      (stored negative)
 -- So beginning_mrr + new + expansion + contraction + churn + reactivation =
--- mrr, on every row. tests/assert_mrr_movements_reconcile.sql checks it.
+-- mrr, on every row. tests/assert_recurly__mrr_movements_reconcile.sql checks it.
 --
 -- Movements are measured per CUSTOMER, which is how most SaaS reporting counts
 -- them: a customer moving from plan A to plan B, or replacing one subscription

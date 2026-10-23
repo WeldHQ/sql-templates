@@ -51,7 +51,7 @@ history table.
 
 so `beginning_mrr + new + expansion + contraction + churned + reactivation =
 ending_mrr` on every row, and
-[`assert_mrr_movements_reconcile.sql`](dbt/tests/assert_mrr_movements_reconcile.sql)
+[`assert_chargebee__mrr_movements_reconcile.sql`](dbt/tests/assert_chargebee__mrr_movements_reconcile.sql)
 checks it.
 
 Movements are counted per **customer**. A customer switching from plan A to plan B
@@ -141,7 +141,7 @@ counts towards MRR.
   metered items count); the rules used here are listed above.
 - **Billing.** `billing_by_month.invoice_total` should match the invoice export
   for the month, filtered to non-voided invoices.
-- [`assert_lines_tie_to_invoice_sub_total.sql`](dbt/tests/assert_lines_tie_to_invoice_sub_total.sql)
+- [`assert_chargebee__lines_tie_to_invoice_sub_total.sql`](dbt/tests/assert_chargebee__lines_tie_to_invoice_sub_total.sql)
   checks that invoice lines net of discounts add up to each invoice's
   `sub_total`. MRR depends on that identity, so run it first.
 

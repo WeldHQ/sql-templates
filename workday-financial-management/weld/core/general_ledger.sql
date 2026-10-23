@@ -15,7 +15,7 @@
 -- When Workday leaves a line's ledger amounts empty, the transaction amounts are
 -- used if the line is in the company's base currency. A foreign-currency line
 -- without ledger amounts is kept at 0 and flagged with is_ledger_amount_missing;
--- assert_no_missing_ledger_amounts lists them.
+-- assert_workday_financial_management__no_missing_ledger_amounts lists them.
 --
 -- Signs:
 --   ledger_debit, ledger_credit   positive, except reversals in a company that

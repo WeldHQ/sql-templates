@@ -8,8 +8,8 @@ models/staging/stg_forex_v2__rates.sql            daily rates against the base, 
 models/core/core_forex_v2__daily_base_rates.sql   gap-filled to today, last rate carried forward
 models/core/core_forex_v2__daily_rates.sql        every pair: identity, direct, inverse, cross
 models/analytics/analytics__forex_v2_*.sql        thin BI-facing contracts
-tests/assert_one_rate_per_pair_per_day.sql        a join on (date, from, to) finds one row
-tests/assert_no_gaps_in_base_rates.sql            every calendar day has a rate
+tests/assert_forex_v2__one_rate_per_pair_per_day.sql        a join on (date, from, to) finds one row
+tests/assert_forex_v2__no_gaps_in_base_rates.sql            every calendar day has a rate
 ```
 
 Generated from [`../weld/`](../weld/); the two differ only in ref syntax.

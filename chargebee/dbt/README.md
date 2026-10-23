@@ -10,9 +10,9 @@ models/core/core_chargebee__mrr_by_customer_month.sql   MRR and its movement per
 models/core/core_chargebee__mrr_movements.sql           the MRR bridge by month
 models/core/core_chargebee__billing_by_month.sql        invoiced, credited, paid, by month
 models/analytics/analytics__chargebee_*.sql             thin BI-facing contracts
-tests/assert_mrr_movements_reconcile.sql                beginning + movements = ending, and the bridge sums to customers
-tests/assert_one_row_per_customer_month.sql             no duplicate customer months
-tests/assert_lines_tie_to_invoice_sub_total.sql         lines net of discounts = invoice sub_total
+tests/assert_chargebee__mrr_movements_reconcile.sql                beginning + movements = ending, and the bridge sums to customers
+tests/assert_chargebee__one_row_per_customer_month.sql             no duplicate customer months
+tests/assert_chargebee__lines_tie_to_invoice_sub_total.sql         lines net of discounts = invoice sub_total
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics
@@ -41,7 +41,7 @@ No vars to set.
 - **`core_chargebee__mrr_by_customer_month` is the expensive one.** It range-joins
   every recurring line to every month it covers. Materialise it and
   `recurring_revenue_lines` as tables.
-- **Run `assert_lines_tie_to_invoice_sub_total` first.** MRR reads each line's
+- **Run `assert_chargebee__lines_tie_to_invoice_sub_total` first.** MRR reads each line's
   amount net of discount as its share of revenue; this test confirms that adds up
   to what Chargebee invoiced.
 - **Not run end to end.** Reconcile a closed month against Chargebee before

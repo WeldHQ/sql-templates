@@ -1,6 +1,6 @@
 -- Each company's trial balance balances in every month, per ledger and book code.
 --
--- If assert_journals_balance passes and this fails, the month spine in
+-- If assert_workday_financial_management__journals_balance passes and this fails, the month spine in
 -- core_workday_financial_management__trial_balance is dropping or repeating rows.
 
 SELECT

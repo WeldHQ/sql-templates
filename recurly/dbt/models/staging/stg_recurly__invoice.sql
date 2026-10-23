@@ -12,7 +12,7 @@
 -- Recurly has three invoice types: `charge` (money owed by the customer),
 -- `credit` (money owed to the customer, carried as negative amounts) and `legacy`
 -- (invoices from before Recurly split the two). The sign convention is checked by
--- tests/assert_credit_invoices_are_not_positive.sql.
+-- tests/assert_recurly__credit_invoices_are_not_positive.sql.
 
 SELECT
     CAST(id AS STRING)                                          AS invoice_id,

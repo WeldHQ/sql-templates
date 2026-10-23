@@ -9,9 +9,9 @@ models/core/core_paypal__transactions.sql               classified transaction l
 models/core/core_paypal__daily_balance_activity.sql     daily settlement summary per currency
 models/core/core_paypal__balance_reconciliation.sql     today's balance against the history
 models/analytics/analytics__paypal_*.sql                thin BI-facing contracts
-tests/assert_daily_columns_sum_to_net.sql               summary columns add up to net change
-tests/assert_daily_ties_to_transactions.sql             summary carries every balance-affecting record
-tests/assert_transaction_grain_is_unique.sql            one row per transaction id and event code
+tests/assert_paypal__daily_columns_sum_to_net.sql               summary columns add up to net change
+tests/assert_paypal__daily_ties_to_transactions.sql             summary carries every balance-affecting record
+tests/assert_paypal__transaction_grain_is_unique.sql            one row per transaction id and event code
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

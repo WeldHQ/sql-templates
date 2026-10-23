@@ -2,7 +2,7 @@
 -- cumulative balances and on the report-style balances that move prior years'
 -- income and expense into retained earnings.
 --
--- If assert_transactions_balance passes and this fails, the spine or the fiscal
+-- If assert_quickbooks__transactions_balance passes and this fails, the spine or the fiscal
 -- year logic in core_quickbooks__trial_balance is wrong rather than the data.
 
 SELECT

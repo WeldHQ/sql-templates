@@ -122,7 +122,7 @@ It is kept in the general ledger and the trial balance and excluded from
 - `general_ledger` for one account and month against Huvudbok in Fortnox, filtered to
   the same account and period.
 - `trial_balance` for a closed year against Saldobalans. The test
-  [`assert_trial_balance_ties_to_fortnox.sql`](dbt/tests/assert_trial_balance_ties_to_fortnox.sql)
+  [`assert_fortnox__trial_balance_ties_to_fortnox.sql`](dbt/tests/assert_fortnox__trial_balance_ties_to_fortnox.sql)
   does this automatically against the closing balance Fortnox stores on each account.
 - `profit_and_loss_by_month` summed over a year against Resultaträkning for that year.
 - The aging models against Kundreskontra and Leverantörsreskontra with the same as-of

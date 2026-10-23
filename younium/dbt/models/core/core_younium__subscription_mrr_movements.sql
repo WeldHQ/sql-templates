@@ -9,7 +9,7 @@
 -- the five columns; NoChange, SplitOrder and anything else go to other_cmrr.
 -- Amounts are the booking's CMRR change in the Younium base currency, signed as
 -- Younium records it (contraction and churn are expected to be negative; see
--- tests/assert_movement_signs_match_classification.sql).
+-- tests/assert_younium__movement_signs_match_classification.sql).
 --
 -- The order-currency CMRR change is kept alongside, for orders billed in another
 -- currency.

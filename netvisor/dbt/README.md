@@ -12,8 +12,8 @@ models/core/core_netvisor__trial_balance_by_month.sql     opening, movement, clo
 models/core/core_netvisor__profit_and_loss_by_month.sql   income statement by month, credit positive
 models/core/core_netvisor__payables_aging.sql             open purchase invoices by days past due
 models/analytics/analytics__netvisor_*.sql                thin BI-facing contracts
-tests/assert_every_voucher_balances.sql                   line sums of every valid voucher net to zero
-tests/assert_trial_balance_movements_tie_to_ledger.sql    the monthly trial balance carries the ledger exactly
+tests/assert_netvisor__every_voucher_balances.sql                   line sums of every valid voucher net to zero
+tests/assert_netvisor__trial_balance_movements_tie_to_ledger.sql    the monthly trial balance carries the ledger exactly
 ```
 
 Same models as [`../weld/`](../weld/), differing only in ref syntax, because they are

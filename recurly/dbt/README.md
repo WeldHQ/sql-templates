@@ -11,10 +11,10 @@ models/core/core_recurly__mrr_movements.sql            the MRR bridge by month
 models/core/core_recurly__billing_by_month.sql         charge and credit invoices, by month
 models/core/core_recurly__subscription_churn.sql       expired subscriptions, by churn reason
 models/analytics/analytics__recurly_*.sql              thin BI-facing contracts
-tests/assert_mrr_movements_reconcile.sql               beginning + movements = ending, and the bridge sums to accounts
-tests/assert_one_row_per_customer_month.sql            no duplicate account months
-tests/assert_credit_invoices_are_not_positive.sql      credits negative, charges positive
-tests/assert_one_row_per_churned_subscription.sql      no duplicate subscriptions in churn
+tests/assert_recurly__mrr_movements_reconcile.sql               beginning + movements = ending, and the bridge sums to accounts
+tests/assert_recurly__one_row_per_customer_month.sql            no duplicate account months
+tests/assert_recurly__credit_invoices_are_not_positive.sql      credits negative, charges positive
+tests/assert_recurly__one_row_per_churned_subscription.sql      no duplicate subscriptions in churn
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics
@@ -43,7 +43,7 @@ No vars to set.
 - **`core_recurly__mrr_by_customer_month` is the expensive one.** It range-joins
   every recurring line to every month it covers. Materialise it and
   `recurring_revenue_lines` as tables.
-- **Run `assert_credit_invoices_are_not_positive` first.** Netting credits
+- **Run `assert_recurly__credit_invoices_are_not_positive` first.** Netting credits
   against charges depends on Recurly's sign convention.
 - **Not run end to end.** Reconcile a closed month against Recurly before relying
   on the output.

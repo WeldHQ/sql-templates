@@ -115,7 +115,7 @@ from the company settings.
   date of the previous run. A transaction dated before that (a backdated entry, or
   an edit to last quarter's invoice) is not re-read until the stream is fully
   resynced. Schedule a periodic full resync of `journal_report` (monthly, before
-  closing the books, is a reasonable rhythm). `assert_transactions_balance` is the
+  closing the books, is a reasonable rhythm). `assert_quickbooks__transactions_balance` is the
   first test to fail when this has happened.
 - **Deleted transactions stay in raw** until that full resync, for the same reason.
   The same applies to deleted invoices and bills in the aging.
@@ -128,7 +128,7 @@ from the company settings.
 - **Account classes.** The API leaves `classification` empty on some accounts.
   Staging fills it in from `account_type`, since each account type belongs to one
   class. Without that, an income or expense account would drop out of the P&L.
-  `assert_every_ledger_line_has_a_class` flags any line still left without one.
+  `assert_quickbooks__every_ledger_line_has_a_class` flags any line still left without one.
 - **Months come from the transaction date.** QuickBooks has no separate posting
   period, so this matches the UI.
 - **Multi-company ready.** Every staging model emits a `quickbooks_company` label
@@ -140,7 +140,7 @@ from the company settings.
 
 ## Reconciling
 
-1. Run `assert_transactions_balance` and `assert_trial_balance_sums_to_zero`. If
+1. Run `assert_quickbooks__transactions_balance` and `assert_quickbooks__trial_balance_sums_to_zero`. If
    either fails, resync `journal_report` before looking at the SQL.
 2. In QuickBooks, run **Reports → Profit and Loss** for a closed month on the
    accrual basis and compare the section totals with `profit_and_loss_by_month`

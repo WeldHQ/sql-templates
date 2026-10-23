@@ -10,10 +10,10 @@ models/core/core_workday_financial_management__trial_balance.sql           month
 models/core/core_workday_financial_management__profit_and_loss_by_month.sql income statement by month
 models/core/core_workday_financial_management__ar_aging.sql                open customer invoices, aged today
 models/analytics/analytics__workday_financial_management_*.sql             thin BI-facing contracts
-tests/assert_journals_balance.sql                                          debits equal credits per journal and company
-tests/assert_trial_balance_sums_to_zero.sql                                every month's trial balance balances
-tests/assert_every_line_has_a_classified_account.sql                       the account type mapping covers every posted account
-tests/assert_no_missing_ledger_amounts.sql                                 no foreign-currency line without ledger amounts
+tests/assert_workday_financial_management__journals_balance.sql                                          debits equal credits per journal and company
+tests/assert_workday_financial_management__trial_balance_sums_to_zero.sql                                every month's trial balance balances
+tests/assert_workday_financial_management__every_line_has_a_classified_account.sql                       the account type mapping covers every posted account
+tests/assert_workday_financial_management__no_missing_ledger_amounts.sql                                 no foreign-currency line without ledger amounts
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref
@@ -27,7 +27,7 @@ the Workday tables.
 **Your account type mapping.** Workday tenants define their own ledger account
 types. `stg_workday_financial_management__ledger_account` maps them to Asset,
 Liability, Equity, Revenue and Expense by keyword; edit the `CASE` until
-`assert_every_line_has_a_classified_account` returns no rows.
+`assert_workday_financial_management__every_line_has_a_classified_account` returns no rows.
 
 ## Notes
 

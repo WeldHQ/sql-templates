@@ -10,9 +10,9 @@ models/core/core_netsuite__trial_balance.sql            month-end balances per a
 models/core/core_netsuite__profit_and_loss_by_month.sql the income statement by month and account
 models/core/core_netsuite__ar_ap_aging.sql              open invoices and bills, aged today
 models/analytics/analytics__netsuite_*.sql              thin BI-facing contracts
-tests/assert_transactions_balance.sql                   debits equal credits per transaction
-tests/assert_trial_balance_sums_to_zero.sql             every subsidiary's trial balance balances
-tests/assert_no_duplicate_ledger_lines.sql              one row per accounting line
+tests/assert_netsuite__transactions_balance.sql                   debits equal credits per transaction
+tests/assert_netsuite__trial_balance_sums_to_zero.sql             every subsidiary's trial balance balances
+tests/assert_netsuite__no_duplicate_ledger_lines.sql              one row per accounting line
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

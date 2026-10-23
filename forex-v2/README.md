@@ -30,7 +30,7 @@ on the next sync.
 **You only need one base.** Every pair can be derived from one base currency, so
 these templates read the USD stream and compute the rest. Do not union several base
 streams into staging; the cross rates would be duplicated, and
-[`tests/assert_one_rate_per_pair_per_day.sql`](dbt/tests/assert_one_rate_per_pair_per_day.sql)
+[`tests/assert_forex_v2__one_rate_per_pair_per_day.sql`](dbt/tests/assert_forex_v2__one_rate_per_pair_per_day.sql)
 will fail.
 
 ## How the rates are made

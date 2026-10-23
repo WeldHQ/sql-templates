@@ -88,7 +88,7 @@ statutory view.
 
 **Debit positive.** `debit` and `credit` are both positive. `net_debit` is
 `debit - credit` and sums to zero per transaction, book and subsidiary, which
-`assert_transactions_balance` checks. The trial balance's `closing_net_debit`
+`assert_netsuite__transactions_balance` checks. The trial balance's `closing_net_debit`
 uses the same convention.
 
 **Natural sign.** `amount_natural` in the ledger, `closing_balance_natural` in the
@@ -117,7 +117,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
   disappears, and an incremental sync cannot see it go. The connector supports
   soft deletes on these tables during full syncs; a periodic full resync of
   `transactionaccountingline` and `transactionline` clears stale lines.
-  `assert_transactions_balance` is the first thing to fail when this has
+  `assert_netsuite__transactions_balance` is the first thing to fail when this has
   happened.
 - **Intercompany eliminations.** `is_elimination` on the ledger is the line's
   eliminate flag. NetSuite offsets those lines with journals posted to an
@@ -135,7 +135,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
 
 ## Reconciling
 
-1. Run the three dbt tests. If `assert_transactions_balance` fails, resync before
+1. Run the three dbt tests. If `assert_netsuite__transactions_balance` fails, resync before
    reading anything else.
 2. In NetSuite, run **Reports → Financial → Income Statement** for a closed month,
    one subsidiary, and compare with `profit_and_loss_by_month` filtered to that

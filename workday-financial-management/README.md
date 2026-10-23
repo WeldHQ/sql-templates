@@ -36,7 +36,7 @@ Workday lets every tenant define its own ledger account types, so there is no
 fixed list to map from. `weld/staging/ledger_account.sql` derives a standard
 classification (Asset, Liability, Equity, Revenue, Expense) from the type's name
 by keyword. **Check it against your tenant's types before using the P&L.**
-`assert_every_line_has_a_classified_account` lists every posted account the
+`assert_workday_financial_management__every_line_has_a_classified_account` lists every posted account the
 mapping does not cover.
 
 ## Layers
@@ -79,7 +79,7 @@ setup). Every balance here uses the ledger amounts. Workday can leave them empty
 when the transaction is already in the base currency, so the ledger falls back to
 the transaction amounts, but only for lines whose currency is the company's base
 currency. A foreign-currency line without ledger amounts is kept at 0 and flagged
-(`is_ledger_amount_missing`), and `assert_no_missing_ledger_amounts` lists them;
+(`is_ledger_amount_missing`), and `assert_workday_financial_management__no_missing_ledger_amounts` lists them;
 converting it with a guessed rate would put the wrong number in the balances. `company_id` is in every grain: do not sum
 across companies with different currencies without translating first. The AR
 aging is in invoice currency; sum it per `currency`.
@@ -90,7 +90,7 @@ reversal and reverses the sign instead books reversals as negative amounts on th
 original side, so negative values are valid there; every net figure below is
 right either way.
 `net_debit` is `ledger_debit - ledger_credit` and sums to zero over every journal
-and company; `assert_journals_balance` checks it. The trial balance's
+and company; `assert_workday_financial_management__journals_balance` checks it. The trial balance's
 `closing_net_debit` uses the same convention.
 
 **Natural sign.** `amount_natural`, `closing_balance_natural` and the P&L's
@@ -119,7 +119,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
 - **Edited journals can leave stale lines.** Journals are synced by last update,
   and lines are keyed by position. A journal edited to have fewer lines can keep
   its old trailing lines in raw until a full resync, and
-  `assert_journals_balance` is the first test to show it.
+  `assert_workday_financial_management__journals_balance` is the first test to show it.
 - **The AR aging is partly by invoice age.** `Get_Customer_Invoices` does not
   return the computed due date, only an override when one was set.
   `aging_basis` says whether a row was aged from its due date or its invoice date.
@@ -138,7 +138,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
 
 ## Reconciling
 
-1. Run `assert_journals_balance` and `assert_every_line_has_a_classified_account`.
+1. Run `assert_workday_financial_management__journals_balance` and `assert_workday_financial_management__every_line_has_a_classified_account`.
    Fix the account type mapping until the second returns no rows.
 2. In Workday, run the Trial Balance report for one company and ledger at a period
    end and compare balance sheet accounts with `closing_balance_natural` for the

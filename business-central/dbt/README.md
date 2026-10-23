@@ -10,9 +10,9 @@ models/core/core_business_central__trial_balance_by_month.sql       opening, mov
 models/core/core_business_central__profit_and_loss_by_month.sql     income statement by month, credit positive
 models/core/core_business_central__receivables_aging.sql            open sales invoices by days past due
 models/analytics/analytics__business_central_*.sql                  thin BI-facing contracts
-tests/assert_ledger_balances_per_month.sql                          debits equal credits per company and month
-tests/assert_general_ledger_grain_is_unique.sql                     no fan-out in the ledger joins
-tests/assert_trial_balance_ties_to_ledger.sql                       trial balance carries every entry
+tests/assert_business_central__ledger_balances_per_month.sql                          debits equal credits per company and month
+tests/assert_business_central__general_ledger_grain_is_unique.sql                     no fan-out in the ledger joins
+tests/assert_business_central__trial_balance_ties_to_ledger.sql                       trial balance carries every entry
 ```
 
 Same models as [`../weld/`](../weld/), differing only in ref syntax, because they are

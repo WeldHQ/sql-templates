@@ -36,7 +36,7 @@ opening_cmrr
 **Sign convention, to verify on your data.** Younium's API documents bookings as
 amounts per booking but does not spell out their sign. The bridge assumes they are
 signed changes: contraction and churn negative, the rest positive.
-`tests/assert_movement_signs_match_classification.sql` checks this on your data; if
+`tests/assert_younium__movement_signs_match_classification.sql` checks this on your data; if
 it returns rows, look at those bookings in Younium before using the bridge.
 
 ## Units and currency

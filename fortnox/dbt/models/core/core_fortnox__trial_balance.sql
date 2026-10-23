@@ -11,7 +11,7 @@
 -- prior year's closing balance for balance sheet accounts once Fortnox has rolled the
 -- year over. `closing_balance` is computed here as opening + movement;
 -- `closing_balance_fortnox` is Fortnox's own figure, and `closing_balance_difference`
--- should be zero (see tests/assert_trial_balance_ties_to_fortnox.sql).
+-- should be zero (see tests/assert_fortnox__trial_balance_ties_to_fortnox.sql).
 --
 -- An account appears if it is in the chart for that year or has postings in it, so
 -- accounts with a balance and no movement are not lost.

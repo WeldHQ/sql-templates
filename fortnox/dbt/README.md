@@ -12,9 +12,9 @@ models/core/core_fortnox__profit_and_loss_by_month.sql  income statement by mont
 models/core/core_fortnox__receivables_aging.sql    open customer invoices by days past due
 models/core/core_fortnox__payables_aging.sql       open supplier invoices by days past due
 models/analytics/analytics__fortnox_*.sql          thin BI-facing contracts
-tests/assert_every_voucher_balances.sql            debits equal credits on every voucher
-tests/assert_trial_balance_ties_to_fortnox.sql     computed closing balance equals Fortnox's own
-tests/assert_general_ledger_grain_is_unique.sql    no fan-out in the ledger joins
+tests/assert_fortnox__every_voucher_balances.sql            debits equal credits on every voucher
+tests/assert_fortnox__trial_balance_ties_to_fortnox.sql     computed closing balance equals Fortnox's own
+tests/assert_fortnox__general_ledger_grain_is_unique.sql    no fan-out in the ledger joins
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. These are the same
@@ -32,7 +32,7 @@ ranges. No vars to set otherwise.
 ## Notes
 
 - **Plain SQL, no macros.**
-- **Run `assert_trial_balance_ties_to_fortnox` first.** It compares against a balance
+- **Run `assert_fortnox__trial_balance_ties_to_fortnox` first.** It compares against a balance
   Fortnox computed itself, so a pass means the ledger is complete.
 - **Not run end to end.** Reconcile a closed year against Saldobalans and
   Resultaträkning in Fortnox before relying on the output.

@@ -9,9 +9,9 @@ models/core/core_chartmogul__mrr_movements.sql          monthly MRR bridge
 models/core/core_chartmogul__customer_mrr_movements.sql the bridge per customer
 models/core/core_chartmogul__plan_metrics.sql           key metrics per plan per day
 models/analytics/analytics__chartmogul_*.sql            thin BI-facing contracts
-tests/assert_customer_movements_sum_to_bridge.sql       drill-down sums to the bridge
-tests/assert_movement_signs_match_type.sql              churn and contraction negative, the rest positive
-tests/assert_bridge_grain_is_unique.sql                 one row per month and currency
+tests/assert_chartmogul__customer_movements_sum_to_bridge.sql       drill-down sums to the bridge
+tests/assert_chartmogul__movement_signs_match_type.sql              churn and contraction negative, the rest positive
+tests/assert_chartmogul__bridge_grain_is_unique.sql                 one row per month and currency
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

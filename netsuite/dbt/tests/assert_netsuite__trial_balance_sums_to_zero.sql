@@ -1,7 +1,7 @@
 -- Each subsidiary's trial balance balances in every month, per accounting book:
 -- cumulative debits equal cumulative credits.
 --
--- If assert_transactions_balance passes and this fails, the month spine in
+-- If assert_netsuite__transactions_balance passes and this fails, the month spine in
 -- core_netsuite__trial_balance is dropping or repeating rows.
 
 SELECT

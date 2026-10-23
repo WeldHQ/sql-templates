@@ -11,9 +11,9 @@ models/core/core_adyen__fees_by_payment_method.sql   volume and fees per payment
 models/core/core_adyen__payment_lifecycle.sql        one row per payment, every step
 models/core/core_adyen__authorisation_rate.sql       authorised / (authorised + refused)
 models/analytics/analytics__adyen_*.sql              thin BI-facing contracts
-tests/assert_batch_entries_tie_to_payout.sql         a paid-out batch sums to its payout
-tests/assert_fees_reconcile_to_batches.sql           fee totals agree across the two settlement models
-tests/assert_one_row_per_payment.sql                 the lifecycle model is unique per payment
+tests/assert_adyen__batch_entries_tie_to_payout.sql         a paid-out batch sums to its payout
+tests/assert_adyen__fees_reconcile_to_batches.sql           fee totals agree across the two settlement models
+tests/assert_adyen__one_row_per_payment.sql                 the lifecycle model is unique per payment
 ```
 
 Four layers, same as the Weld side: raw, staging, core, analytics. The models are
@@ -34,7 +34,7 @@ report lacks optional columns used in staging (`creation_date`, `payout_date`,
 
 - **Amounts are major units.** Adyen's reports use decimals in the currency's major
   unit, unlike its API. Nothing is divided by 100.
-- **Run `assert_batch_entries_tie_to_payout` first.** It checks the model against
+- **Run `assert_adyen__batch_entries_tie_to_payout` first.** It checks the model against
   the payout Adyen sent to your bank.
 - **Not run end to end.** Reconcile a batch against the Customer Area and your bank
   statement before relying on the output.
