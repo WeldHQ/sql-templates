@@ -170,8 +170,6 @@ Nothing here has been run against a live warehouse. Before relying on it:
   replies, so a ticket answered only with private notes is in no touch bucket.
   Compare with Explore's "One-touch tickets" for a closed month before relying
   on the rate.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_zendesk` package; the SQL here is written independently for Weld's schema.
 
 Vendor references:
 [Ticket metrics API](https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_metrics/) ·

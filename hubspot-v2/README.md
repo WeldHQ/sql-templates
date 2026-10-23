@@ -167,10 +167,6 @@ right per deal and too high when summed over deals. For totals, use
   is part of every join key and of the grain in core. To add a portal, `UNION ALL` a
   second block in each staging model pointing at that connector with a different
   label, and change nothing else.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_hubspot` package; the SQL here is written independently for Weld's schema.
-  Weld's HubSpot schema differs from the one that package targets, so the
-  comparison was of definitions, not table shapes.
 - **Nothing here has been run against a warehouse.** Reconcile before relying on it:
   open pipeline and weighted amount against HubSpot's deal board for one pipeline,
   a closed month of wins against the "Deals won" report, and one rep's week of

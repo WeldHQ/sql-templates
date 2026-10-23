@@ -141,9 +141,6 @@ carries no survey id.
 - **Multi-account ready.** Every staging model emits a `qualtrics_account` label and
   it is part of every join key. To add an account, `UNION ALL` a second block in each
   staging model with a different label, and change nothing else.
-- Metric definitions were cross-checked against Fivetran's open-source
-  `dbt_qualtrics` package; the SQL here is written independently for Weld's
-  schema.
 - **Not run against a warehouse.** These models were checked for syntax and against
   the connector's schema, not executed on real data. Reconcile one survey's response
   count and NPS against its Results tab, and one distribution against the
