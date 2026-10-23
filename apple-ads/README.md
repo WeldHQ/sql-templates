@@ -76,6 +76,11 @@ refs.
   late-arriving installs are picked up. Staging keeps the latest row per campaign
   and day.
 - **Campaigns with no delivery on a day have no row** for that day.
+- **Campaign names are the current ones.** The campaigns stream holds one
+  version per campaign, so a renamed campaign shows its new name on every day.
+- **Metric definitions were cross-checked** against Fivetran's open-source
+  `dbt_apple_search_ads` package; the SQL here is written independently for
+  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a week of spend, impressions and taps per campaign
   against the Apple Ads UI before relying on the output.
@@ -88,6 +93,11 @@ install and rate columns (`installs`, `new_downloads`, `redownloads`,
 `lat_on_installs`, `lat_off_installs`, `avg_cpa`, `conversion_rate`) carry the
 pre-v5 names, which Apple's v5 reporting API no longer returns. The rate columns
 are not used here; the template recomputes rates from the base counts.
+
+What cannot be built from this connector: ad group, ad, keyword and search term
+performance (only campaign level reports are synced), organization names (no
+organizations stream), and view-through or total installs (only the tap-through
+columns exist, under their old names).
 
 ## Vendor docs
 

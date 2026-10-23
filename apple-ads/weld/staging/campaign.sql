@@ -1,7 +1,8 @@
 -- staging.apple_ads.campaign
 -- Thin wrapper over raw `campaigns`. Casts, renames, parses the budget objects,
 -- keeps the latest row per campaign.
--- Grain: one row per campaign.
+-- Grain: one row per campaign. Latest means last synced; Apple's own
+-- modification time breaks a tie between rows from the same sync.
 
 SELECT * EXCEPT (row_rank)
 FROM (
@@ -19,7 +20,10 @@ FROM (
         CAST(payment_model AS STRING)      AS payment_model,
         SAFE_CAST(JSON_VALUE(daily_budget_amount, '$.amount') AS NUMERIC) AS daily_budget,
         SAFE_CAST(JSON_VALUE(budget_amount, '$.amount') AS NUMERIC)       AS total_budget,
-        ROW_NUMBER() OVER (PARTITION BY id ORDER BY _weld_synced DESC) AS row_rank
+        ROW_NUMBER() OVER (
+            PARTITION BY id
+            ORDER BY _weld_synced DESC, SAFE_CAST(modification_time AS TIMESTAMP) DESC
+        ) AS row_rank
     FROM {{raw.apple_ads.campaigns}}
 )
 WHERE row_rank = 1
