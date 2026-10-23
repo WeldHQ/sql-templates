@@ -13,6 +13,7 @@ models/analytics/analytics__quickbooks_*.sql            thin BI-facing contracts
 tests/assert_transactions_balance.sql                   debits equal credits per transaction
 tests/assert_trial_balance_sums_to_zero.sql             every month's trial balance balances
 tests/assert_no_duplicate_ledger_lines.sql              one row per journal line
+tests/assert_every_ledger_line_has_a_class.sql          every line's account has a class
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref

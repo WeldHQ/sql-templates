@@ -11,8 +11,8 @@
 -- Currency: open_balance is in the document's own currency (currency column);
 -- open_balance_home is in the company's home currency and is the one to sum.
 --
--- Buckets follow the report's defaults: Current (not yet due), 1 - 30, 31 - 60,
--- 61 - 90, 91 and over, by days past the due date. A document without a due date
+-- Buckets follow the report's defaults: Current (not yet due), 1-30, 31-60,
+-- 61-90, 91 and over, by days past the due date. A document without a due date
 -- is aged from its transaction date.
 --
 -- Differences from QuickBooks' own aging reports: unapplied customer payments,
@@ -70,9 +70,9 @@ SELECT
     CASE
         WHEN days_past_due IS NULL THEN 'Unknown'
         WHEN days_past_due <= 0    THEN 'Current'
-        WHEN days_past_due <= 30   THEN '1 - 30'
-        WHEN days_past_due <= 60   THEN '31 - 60'
-        WHEN days_past_due <= 90   THEN '61 - 90'
+        WHEN days_past_due <= 30   THEN '1-30'
+        WHEN days_past_due <= 60   THEN '31-60'
+        WHEN days_past_due <= 90   THEN '61-90'
         ELSE '91 and over'
     END AS aging_bucket,
     CASE

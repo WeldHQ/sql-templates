@@ -125,11 +125,18 @@ from the company settings.
   snapshot of today and cannot be replayed for a past date.
 - **The P&L is accrual basis**, because the Journal report is. A cash-basis P&L
   needs payment application data and is not attempted.
+- **Account classes.** The API leaves `classification` empty on some accounts.
+  Staging fills it in from `account_type`, since each account type belongs to one
+  class. Without that, an income or expense account would drop out of the P&L.
+  `assert_every_ledger_line_has_a_class` flags any line still left without one.
 - **Months come from the transaction date.** QuickBooks has no separate posting
   period, so this matches the UI.
 - **Multi-company ready.** Every staging model emits a `quickbooks_company` label
   that is part of every join key in core. To add a company, `UNION ALL` a second
   block in each staging model with a different label.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_quickbooks` package; the SQL here is written independently for Weld's
+  schema.
 
 ## Reconciling
 
@@ -155,6 +162,7 @@ from the company settings.
   Type" id; the connector renames it. Lines join to it on transaction id and
   document number, which is also how the connector keys them.
 
-Vendor docs:
-[Account object](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account) ·
-[Invoice object](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice)
+Vendor docs: the "Run the Profit and Loss report" and "Trial Balance" articles
+in QuickBooks Learn & Support (quickbooks.intuit.com), and the Account, Invoice,
+Bill and JournalReport reference in the Accounting API section of Intuit's
+developer site (developer.intuit.com).
