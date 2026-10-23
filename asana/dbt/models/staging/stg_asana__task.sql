@@ -8,6 +8,11 @@
 --
 -- Unassigned tasks are never synced: Asana's task list endpoint is called once per
 -- user, filtered on that user as assignee.
+--
+-- Rows with resource_subtype 'section' are dropped. They are section headers from
+-- Asana's older list layout that the API still returns as tasks; they are never
+-- done or overdue and would inflate every open count. Milestones and approvals
+-- are kept.
 
 SELECT
     CAST(gid AS STRING)                         AS task_id,
@@ -30,6 +35,7 @@ SELECT
     CAST(num_likes AS INT64)                    AS num_likes
 FROM {{ source('asana', 'task') }}
 WHERE gid IS NOT NULL
+  AND COALESCE(LOWER(CAST(resource_subtype AS STRING)), '') != 'section'
 QUALIFY ROW_NUMBER() OVER (
     PARTITION BY CAST(gid AS STRING)
     ORDER BY CAST(modified_at AS TIMESTAMP) DESC, _weld_synced DESC

@@ -6,6 +6,8 @@
 -- Task counts only include assigned tasks, because unassigned tasks are not
 -- synced (see staging.asana.task). `pct_complete` is therefore the share of
 -- assigned tasks that are done, which can differ from Asana's own progress bar.
+-- Overdue uses the due time when one is set and the due date otherwise, as in
+-- open_task_workload.
 
 WITH task_stats AS (
     SELECT
@@ -13,7 +15,9 @@ WITH task_stats AS (
         COUNT(*)                                                    AS tasks,
         COUNTIF(t.is_completed)                                     AS completed_tasks,
         COUNTIF(NOT t.is_completed)                                 AS open_tasks,
-        COUNTIF(NOT t.is_completed AND t.due_on < CURRENT_DATE())   AS overdue_tasks,
+        COUNTIF(NOT t.is_completed
+                AND IF(t.due_at IS NOT NULL, t.due_at < CURRENT_TIMESTAMP(), t.due_on < CURRENT_DATE()))
+                                                                    AS overdue_tasks,
         COUNT(DISTINCT IF(NOT t.is_completed, t.assignee_id, NULL)) AS assignees_with_open_tasks,
         MAX(t.completed_at)                                         AS last_completed_at,
         MAX(t.modified_at)                                          AS last_task_modified_at

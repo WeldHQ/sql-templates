@@ -3,7 +3,9 @@
 -- soon. A snapshot as of the last sync, not a history.
 -- Grain: assignee x project.
 --
--- "Overdue" compares the due date with CURRENT_DATE() in UTC. A task in two
+-- "Overdue" follows Asana: a task with a due time (due_at) is overdue once that
+-- moment has passed, a task with only a due date once that date is over. Both
+-- are compared with the current UTC time. A task in two
 -- projects appears under both; `open_tasks` per assignee summed across projects
 -- double-counts those tasks.
 
@@ -15,7 +17,8 @@ SELECT
     p.project_name,
     COUNT(*)                                                 AS open_tasks,
     COUNTIF(t.parent_task_id IS NOT NULL)                    AS open_subtasks,
-    COUNTIF(t.due_on < CURRENT_DATE())                       AS overdue_tasks,
+    COUNTIF(IF(t.due_at IS NOT NULL, t.due_at < CURRENT_TIMESTAMP(), t.due_on < CURRENT_DATE()))
+                                                             AS overdue_tasks,
     COUNTIF(t.due_on BETWEEN CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 DAY)) AS due_next_7_days,
     COUNTIF(t.due_on IS NULL)                                AS without_due_date,
     MIN(t.due_on)                                            AS earliest_due_on,

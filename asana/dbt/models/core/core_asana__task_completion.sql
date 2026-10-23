@@ -8,6 +8,10 @@
 -- Subtasks are counted like any task; `subtasks_completed` shows how many of the
 -- total they are.
 --
+-- On time means done by the due time when the task has one (due_at), and by the
+-- end of the due date otherwise. The date comparison uses the UTC completion
+-- date, so a task closed late in the evening west of UTC can read one day late.
+--
 -- Asana's task stream has no created_at. `days_to_complete` measures from the
 -- task's earliest story (its "created this task" event in practice) to
 -- completion, and only for tasks whose stories are synced. Average it as
@@ -27,7 +31,10 @@ completed AS (
         t.parent_task_id IS NOT NULL                    AS is_subtask,
         DATE(t.completed_at)                            AS completed_date,
         t.due_on,
-        DATE_DIFF(DATE(t.completed_at), t.due_on, DAY)  AS days_late,
+        CASE
+            WHEN t.due_at IS NOT NULL THEN t.completed_at > t.due_at
+            WHEN t.due_on IS NOT NULL THEN DATE(t.completed_at) > t.due_on
+        END                                             AS is_late,
         TIMESTAMP_DIFF(t.completed_at, f.first_story_at, HOUR) / 24 AS days_to_complete
     FROM {{ ref('stg_asana__task') }} t
     LEFT JOIN first_story f USING (task_id)
@@ -44,9 +51,9 @@ SELECT
     COUNT(*)                                                AS tasks_completed,
     COUNTIF(c.is_subtask)                                   AS subtasks_completed,
     COUNTIF(c.due_on IS NOT NULL)                           AS tasks_with_due_date,
-    COUNTIF(c.days_late <= 0)                               AS completed_on_time,
-    COUNTIF(c.days_late > 0)                                AS completed_late,
-    SAFE_DIVIDE(COUNTIF(c.days_late <= 0), COUNTIF(c.due_on IS NOT NULL)) AS on_time_rate,
+    COUNTIF(NOT c.is_late)                                  AS completed_on_time,
+    COUNTIF(c.is_late)                                      AS completed_late,
+    SAFE_DIVIDE(COUNTIF(NOT c.is_late), COUNTIF(c.due_on IS NOT NULL)) AS on_time_rate,
     COUNTIF(c.days_to_complete IS NOT NULL)                 AS tasks_with_known_start,
     ROUND(SUM(c.days_to_complete), 2)                       AS days_to_complete_total,
     ROUND(SAFE_DIVIDE(SUM(c.days_to_complete), COUNTIF(c.days_to_complete IS NOT NULL)), 2) AS avg_days_to_complete
