@@ -102,17 +102,17 @@ SELECT
     a.account_number,
     a.account_name,
     a.account_type_id,
-    at.account_type_name,
-    COALESCE(NOT at.is_balance_sheet, FALSE) AS is_profit_and_loss,
+    atype.account_type_name,
+    COALESCE(NOT atype.is_balance_sheet, FALSE) AS is_profit_and_loss,
     b.period_debit,
     b.period_credit,
     b.period_net_debit,
     b.closing_net_debit,
-    IF(COALESCE(at.is_debit_normal, TRUE), b.closing_net_debit, -b.closing_net_debit) AS closing_balance_natural
+    IF(COALESCE(atype.is_debit_normal, TRUE), b.closing_net_debit, -b.closing_net_debit) AS closing_balance_natural
 FROM balances b
 LEFT JOIN {{staging.netsuite.account}} a
     ON  a.netsuite_account = b.netsuite_account
     AND a.account_id       = b.account_id
-LEFT JOIN {{staging.netsuite.account_type}} at
-    ON  at.netsuite_account = a.netsuite_account
-    AND at.account_type_id  = a.account_type_id
+LEFT JOIN {{staging.netsuite.account_type}} atype
+    ON  atype.netsuite_account = a.netsuite_account
+    AND atype.account_type_id  = a.account_type_id

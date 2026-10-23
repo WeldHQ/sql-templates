@@ -65,12 +65,12 @@ SELECT
     a.account_number,
     a.account_name,
     a.account_type_id,
-    at.account_type_name,
-    COALESCE(NOT at.is_balance_sheet, FALSE)     AS is_profit_and_loss,
+    atype.account_type_name,
+    COALESCE(NOT atype.is_balance_sheet, FALSE)     AS is_profit_and_loss,
     tal.debit,
     tal.credit,
     tal.debit - tal.credit                       AS net_debit,
-    IF(COALESCE(at.is_debit_normal, TRUE), tal.debit - tal.credit, tal.credit - tal.debit) AS amount_natural
+    IF(COALESCE(atype.is_debit_normal, TRUE), tal.debit - tal.credit, tal.credit - tal.debit) AS amount_natural
 FROM {{staging.netsuite.transaction_accounting_line}} tal
 -- Header: one row per transaction id. Line: one row per transaction and line id.
 -- Account and account type: one row per id. None of the joins can add rows.
@@ -84,9 +84,9 @@ LEFT JOIN {{staging.netsuite.transaction_line}} tl
 LEFT JOIN {{staging.netsuite.account}} a
     ON  a.netsuite_account = tal.netsuite_account
     AND a.account_id       = tal.account_id
-LEFT JOIN {{staging.netsuite.account_type}} at
-    ON  at.netsuite_account = a.netsuite_account
-    AND at.account_type_id  = a.account_type_id
+LEFT JOIN {{staging.netsuite.account_type}} atype
+    ON  atype.netsuite_account = a.netsuite_account
+    AND atype.account_type_id  = a.account_type_id
 WHERE tal.is_posting
   AND tal.account_id IS NOT NULL
   AND COALESCE(a.account_type_id, '') NOT IN ('Stat', 'NonPosting')
