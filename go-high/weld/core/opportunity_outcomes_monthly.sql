@@ -19,10 +19,10 @@ SELECT
     COALESCE(o.source, '(none)')                                AS source,
 
     COUNT(*)                                                    AS opportunities,
-    COUNTIF(o.status = 'open')                                  AS open,
-    COUNTIF(o.status = 'won')                                   AS won,
-    COUNTIF(o.status = 'lost')                                  AS lost,
-    COUNTIF(o.status = 'abandoned')                             AS abandoned,
+    COUNTIF(o.status = 'open')                                  AS open_opportunities,
+    COUNTIF(o.status = 'won')                                   AS won_opportunities,
+    COUNTIF(o.status = 'lost')                                  AS lost_opportunities,
+    COUNTIF(o.status = 'abandoned')                             AS abandoned_opportunities,
     SAFE_DIVIDE(COUNTIF(o.status = 'won'),
                 COUNTIF(o.status IN ('won', 'lost')))           AS win_rate,
 
