@@ -19,6 +19,11 @@ here emit. Select those twelve from each and `UNION ALL` them for a blended spen
 report. The `source` and `currency` columns that follow tell the rows apart; convert
 currencies before summing across accounts.
 
+`conversions` here counts click-through and view-through purchases together. Many
+cross-channel reports count click-through only; if yours does, use
+`purchase_click_conversions` from the same model instead, so Reddit is not
+credited with view-throughs that other channels leave out.
+
 ## Layers
 
 ```
@@ -64,8 +69,10 @@ Extra fields are harmless; missing ones make the staging model fail.
 
 - **Money is in micros.** Reddit returns spend as millionths of the account
   currency; staging divides by 1,000,000. Purchase value is converted the same way.
-  Reddit's API reference does not state the unit for the value fields explicitly, so
-  compare one day's purchase value with Ads Manager before relying on ROAS.
+  Reddit's API reference does not state the unit for the value fields, and other
+  tools that read this field disagree on it (whole currency units, cents or
+  micros). Compare one day's purchase value with Ads Manager before relying on
+  ROAS, and change the divisor in `weld/staging/ad_performance.sql` if it is off.
 - **Every report column arrives as a string.** Staging casts with `SAFE_CAST`, so a
   malformed value becomes 0 rather than failing the run.
 - **Conversions are purchases, click-through plus view-through,** under the
@@ -81,6 +88,12 @@ Extra fields are harmless; missing ones make the staging model fail.
 - **Report history starts at 1 June 2024,** the earliest date the connector requests.
 - **Deleted ads keep their spend.** Entity tables are joined with `LEFT JOIN`, so an
   ad missing from `ad` still counts, with NULL names and a NULL campaign.
+- **Names are the current ones.** The ad, ad group and campaign streams are
+  re-read in full and keep one version per id, so a renamed campaign shows its
+  new name on every past day.
+- **Metric definitions were cross-checked** against Fivetran's open-source
+  `dbt_reddit_ads` package; the SQL here is written independently for Weld's
+  schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a week of spend, impressions and clicks per campaign
   against Ads Manager (same timezone, same attribution windows) before relying on the
@@ -95,5 +108,5 @@ in the ERD; its columns are the snake_cased Reddit API field names plus
 
 ## Vendor docs
 
-- [Reddit Ads API: Get a Report](https://ads-api.reddit.com/docs/v3/operations/Get%20A%20Report)
-- [Reddit Ads API reference](https://ads-api.reddit.com/docs/v3/)
+- Reddit Ads API v3, Get a Report: <https://ads-api.reddit.com/docs/v3/operations/Get%20A%20Report>
+- Reddit Ads API v3 reference: <https://ads-api.reddit.com/docs/v3/>
