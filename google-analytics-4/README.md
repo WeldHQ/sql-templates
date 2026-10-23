@@ -8,14 +8,15 @@ SQL reports over Weld's Google Analytics 4 connector. BigQuery.
 | [`weld/core/campaign_report.sql`](weld/core/campaign_report.sql) · [dbt](dbt/models/core/core_google_analytics_4__campaign_report.sql) | Campaign Report | This SQL template generates a monthly summary report of campaign performance metrics from Google Analytics data. It aggregates data such as total users, sessions, engaged sessions, events per session, engagement rate, event count, conversions, total revenue, and user engagement duration. The results are ordered by period and total users in descending order. |
 | [`weld/core/channel_traffic_overview.sql`](weld/core/channel_traffic_overview.sql) · [dbt](dbt/models/core/core_google_analytics_4__channel_traffic_overview.sql) | Channel Traffic Overview | This SQL template provides a monthly overview of channel traffic from Google Analytics, summarizing metrics such as total users, sessions, engaged sessions, events per session, engagement rate, event count, conversions, total revenue, and user engagement duration, grouped by channel. |
 | [`weld/core/event_performance.sql`](weld/core/event_performance.sql) · [dbt](dbt/models/core/core_google_analytics_4__event_performance.sql) | Event Performance | This SQL template aggregates Google Analytics event data by month, summarizing event counts, user counts, average events per user, and total revenue for each event. It groups the data by period and event name, then orders the results by event count in descending order. |
-| [`weld/core/page_path_analysis.sql`](weld/core/page_path_analysis.sql) · [dbt](dbt/models/core/core_google_analytics_4__page_path_analysis.sql) | Page Path Analysis | This SQL template aggregates Google Analytics data to provide a monthly overview of page paths, including metrics such as screen page views, total users, new users, event count, conversions, total revenue, and user engagement duration, grouped by traffic source. |
+| [`weld/core/page_path_analysis.sql`](weld/core/page_path_analysis.sql) · [dbt](dbt/models/core/core_google_analytics_4__page_path_analysis.sql) | Page Path Analysis | Monthly page path metrics per property: screen page views, users, new users, events, conversions, revenue and engagement time. |
 | [`weld/core/user_activity_overview.sql`](weld/core/user_activity_overview.sql) · [dbt](dbt/models/core/core_google_analytics_4__user_activity_overview.sql) | User Activity Overview | This SQL template aggregates monthly user activity data from Google Analytics, including total users, new users, sessions, average sessions per user, screen page views, and user engagement duration. |
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -25,6 +26,14 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/user_activity_overview` groups by calendar month (`DATE_TRUNC`) and property; the website version's `EXTRACT(MONTH ...)` merged the same month across years. `sessions_per_user` divides the month's totals instead of averaging daily ratios.
+- `core/page_path_analysis` no longer joins the channel report, which repeated every page once per channel and multiplied every sum. The page path report has no channel dimension, so `traffic_source` is gone and `property_id` is added.
+- `core/account_report` joins event stats on property as well as date.
 
 ## Required tables
 
@@ -98,15 +107,10 @@ decisions to optimize their event strategies and improve overall performance.
 
 `weld/core/page_path_analysis.sql`
 
-The Page Path Analysis SQL model is designed to provide comprehensive insights into
-user interactions on your website by leveraging Google Analytics data. This model
-aggregates key metrics such as screen page views, total users, new users, event
-count, conversions, total revenue, and user engagement duration, grouped by page
-path and traffic source. By summarizing these metrics on a monthly basis (with an
-option to switch to daily), businesses can identify the most visited pages,
-understand user behavior, and evaluate the effectiveness of different traffic
-sources. This analysis is particularly useful for optimizing website content,
-improving user engagement, and driving conversions.
+A monthly view of page paths per GA4 property: screen page views, total users,
+new users, event count, conversions, total revenue and user engagement duration.
+Switch the truncation to DAY for a daily view. GA4's page path report has no
+traffic source dimension, so this model does not split pages by channel.
 
 ### User Activity Overview
 
@@ -120,12 +124,3 @@ sessions, average sessions per user, screen page views, and user engagement
 duration. This model is useful for identifying trends in user activity over time,
 understanding user engagement patterns, and making data-driven decisions to enhance
 user experience and optimize marketing strategies.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/user_activity_overview`: `EXTRACT(MONTH FROM date)` merges the same month across years.
-- `core/page_path_analysis`: joining channel traffic on property and date repeats each page row once per channel, multiplying every sum.
-- `core/account_report`: event stats join on date only, so with several properties each one gets every property's events (likely).

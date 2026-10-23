@@ -5,8 +5,12 @@
 -- users, sessions, user engagement, campaign details, and event revenue for each
 -- day. The results are ordered by date in descending order.
 --
--- From the weld.app template library. Not reconciled against Google Analytics 4;
--- check the output against the source before relying on it.
+-- Grain: day x property x campaign. The day's user and event totals repeat on
+-- every campaign row of that day, so sum them from one row per day, not
+-- across campaigns.
+--
+-- From the weld.app template library, corrected. Not reconciled against Google
+-- Analytics 4; check the output against the source before relying on it.
 
 WITH
   user_stats AS (
@@ -41,12 +45,13 @@ WITH
   event_stats AS (
     SELECT
       EXTRACT(DATE FROM date) AS date_day,
+      property_id,
       SUM(event_count) AS event_total_count,
       SUM(total_revenue) AS event_total_revenue
     FROM
       {{raw.google_analytics_4.events_overview}}
     GROUP BY
-      date_day
+      date_day, property_id
   )
 SELECT
   us.date_day,
@@ -67,6 +72,6 @@ SELECT
 FROM
   user_stats us
   LEFT JOIN campaign_stats cs ON us.date_day = cs.date_day AND us.property_id = cs.property_id
-  LEFT JOIN event_stats es ON us.date_day = es.date_day
+  LEFT JOIN event_stats es ON us.date_day = es.date_day AND us.property_id = es.property_id
 ORDER BY
   us.date_day DESC
