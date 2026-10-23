@@ -76,6 +76,9 @@ less than the follower total; `share_of_followers` shows that gap.
 - **Snapshots are replaced.** `total_follower_count` and the demographic tables
   are rewritten on every sync, so they describe the Page now. Schedule a
   snapshot of `follower_demographics` if you want to see it change.
+- **Metric definitions were cross-checked** against Fivetran's open-source
+  `dbt_linkedin_pages` package; the SQL here is written independently for
+  Weld's schema.
 - **Not run against a warehouse.** These models were checked for syntax and
   references only. Reconcile a month of impressions and new followers per Page
   with LinkedIn Page analytics before relying on the output.
@@ -86,6 +89,12 @@ The ERD matches the connector's definitions for every table used here. The
 connector also syncs `share_statistics` and `follower_statistics` (lifetime
 totals without dates) and `organization_lookup` (Page profile details); the
 templates do not need them.
+
+What cannot be built: a post report (one row per post with its text, type,
+publish date, lifecycle state, and impressions, clicks, reactions, comments and
+reposts). That needs the Page's posts and per-post share statistics, and the
+connector syncs neither; its share statistics are Page totals. Use the Page
+level models here, or LinkedIn's post analytics export, for post questions.
 
 ## Vendor docs
 
