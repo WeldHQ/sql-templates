@@ -6,6 +6,7 @@ Drop-in model files. Not a runnable project: no `dbt_project.yml`, not run in CI
 models/staging/sources.yml                        one source, one Twilio account
 models/staging/stg_twilio__message.sql            one row per message, price as positive cost
 models/staging/stg_twilio__call.sql               one row per call leg, price as positive cost
+models/staging/stg_twilio__messaging_service.sql  one row per Messaging Service, for its name
 models/core/core_twilio__messaging_daily.sql      volume, delivery and spend per day
 models/core/core_twilio__message_errors_daily.sql failed and undelivered messages by error code
 models/core/core_twilio__calls_daily.sql          call outcomes, minutes and spend per day

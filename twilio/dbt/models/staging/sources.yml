@@ -8,3 +8,4 @@ sources:
     tables:
       - name: call
       - name: message
+      - name: messaging_service

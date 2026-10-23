@@ -17,7 +17,7 @@ Weld connector: **Twilio** ([docs](https://weld.app/docs/applications/twilio)).
 ```
 raw.twilio.*            ELT output, untouched
   ↓
-weld/staging/*.sql      2 thin wrappers: cast, flip the price sign, de-duplicate
+weld/staging/*.sql      3 thin wrappers: cast, flip the price sign, de-duplicate
   ↓
 weld/core/*.sql         the daily reports
   ↓
@@ -35,7 +35,7 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 
 | Model | Raw tables |
 |---|---|
-| messaging daily, message errors daily | `message` |
+| messaging daily, message errors daily | `message`, `messaging_service` |
 | calls daily | `call` |
 
 ## How the numbers are defined
@@ -70,6 +70,11 @@ folder. Mirror that structure in your synced repo, or adjust the refs.
 - Staging columns were checked against the published ERD and the connector's stream
   definitions; they agree for every table used here.
 
+## Notes
+
+- Metric definitions were cross-checked against Fivetran's open-source `dbt_twilio`
+  package; the SQL here is written independently for Weld's schema.
+
 ## Reconciling
 
 Nothing here has been run against a warehouse. Before relying on it, compare a closed
@@ -78,7 +83,10 @@ cost) with Twilio Console > Monitor > Insights and with the SMS and voice lines 
 month's usage invoice. Expect cost to match the SMS and voice lines, not the invoice
 total.
 
-[Message resource](https://www.twilio.com/docs/messaging/api/message-resource) ·
-[Message status values](https://www.twilio.com/docs/messaging/api/message-resource#message-status-values) ·
-[Call resource](https://www.twilio.com/docs/voice/api/call-resource) ·
-[Error and warning dictionary](https://www.twilio.com/docs/api/errors)
+[Messages API][messages] · [Message status values][statuses] · [Calls API][calls] ·
+[Error and warning dictionary][errors]
+
+[messages]: https://www.twilio.com/docs/messaging/api/message-resource
+[statuses]: https://www.twilio.com/docs/messaging/api/message-resource#message-status-values
+[calls]: https://www.twilio.com/docs/voice/api/call-resource
+[errors]: https://www.twilio.com/docs/api/errors
