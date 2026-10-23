@@ -9,9 +9,10 @@ SQL reports over Weld's e-conomic connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -21,6 +22,12 @@ rather than a layered model set, so:
   as a starting point and check the output before relying on it.
 - `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
   tests ship with these models.
+
+## Changes from the website version
+
+Corrected in review:
+
+- `core/invoice_line_items` and `core/order_items` cast the document and line numbers to strings before joining them into a line ID, with a hyphen between them so invoice 12 line 3 and invoice 1 line 23 stay distinct. BigQuery's CONCAT rejected the numeric IDs.
 
 ## Required tables
 
@@ -52,10 +59,3 @@ items, including the date, order ID, order line ID, customer ID, invoice type,
 currency, line ID, description, unit, quantity, unit net price, discount percentage,
 unit cost price, total net amount, margin in base currency, margin percentage, and
 departmental distribution.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `core/invoice_line_items` and `core/order_items`: `concat()` is applied to numeric IDs, and BigQuery's CONCAT only accepts strings. Cast them first (likely).
