@@ -112,12 +112,11 @@ product `net_sales` sums to order `net_sales` without an allocation of our own.
 
 ## Schema notes
 
-- **Order dates are typed inconsistently.** The connector declares `creation_date`,
-  `place_date` and `last_modified` as millisecond timestamps; the ERD shows them as
-  integers. Staging accepts both.
-- **`customer_info_customer_no` is declared as a timestamp** by the connector, which
-  it is not: it is the customer number, and the ERD shows an integer. It is not used
-  here. `customer_info_customer_id` is used as the customer key instead.
+- **Order dates can be timestamps or integers.** `creation_date`, `place_date` and
+  `last_modified` are millisecond timestamps; the ERD shows them as integers, and
+  depending on the destination they can land either way. Staging accepts both.
+- **`customer_info_customer_no` can arrive typed as a timestamp.** It holds the
+  customer number, and the ERD shows an integer. It is not used here. `customer_info_customer_id` is used as the customer key instead.
 - **Custom attributes** (`c_*` columns) are added per instance from your own
   Commerce Cloud configuration and are not referenced. Add the ones you need to
   `staging/order.sql`.

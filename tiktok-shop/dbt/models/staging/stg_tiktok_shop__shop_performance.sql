@@ -1,6 +1,6 @@
 -- stg_tiktok_shop__shop_performance
 -- Thin wrapper over raw `shop_performance`: TikTok's own shop analytics, one row
--- per shop per day (the connector requests daily intervals).
+-- per shop per day (daily intervals).
 --
 -- These are TikTok's numbers, computed by TikTok, in the shop's local day. They
 -- are only available for shops in the US, UK, Singapore, Vietnam and Thailand;

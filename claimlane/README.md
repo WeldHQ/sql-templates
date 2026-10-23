@@ -82,7 +82,7 @@ The product and refund tables land automatically with their ticket stream: they 
 the nested arrays of each ticket. Sync only the side you use; the B2C and B2B models
 do not depend on each other.
 
-**B2B tickets are read per supplier.** The connector fetches retailer claims for the
+**B2B tickets are synced per supplier.** Retailer claims are synced for the
 supplier organisations selected on the connection (all of them when none is
 selected). A key that sees no supplier organisations syncs no B2B tickets.
 
@@ -111,8 +111,8 @@ claims end in exchanges, store credit, partial refunds or rejection.
 ## Schema notes
 
 - **The product line key is ticket and position.** Some schema listings show an
-  `id` column as the key of `b2c_ticket_product`. The connector keys product lines
-  on `ticket_id` plus `index`, and the refund table points back with `ticket_id`
+  `id` column as the key of `b2c_ticket_product`. In the warehouse, product lines
+  are keyed on `ticket_id` plus `index`, and the refund table points back with `ticket_id`
   plus `product_index`. The models join on those.
 - **Refund currency is not stated.** Claimlane records no currency on a refund. The
   models treat refunds as being in the ticket's `currency`, the shop currency the

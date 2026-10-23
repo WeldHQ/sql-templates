@@ -28,8 +28,8 @@ silently disagree about what a shipment cost.
 **Your schema.** Change `schema:` in `sources.yml` to wherever your loader lands the
 Cargoson tables.
 
-**A complete reference table.** The connector only fetches the bookings whose
-references you list in your own warehouse. These models are only as complete as that
+**A complete reference table.** Only the bookings whose references you list in
+your own warehouse are synced. These models are only as complete as that
 list. See the main [README](../README.md).
 
 No vars to set, no packages required: the tests are plain `SELECT`s.

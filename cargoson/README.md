@@ -12,8 +12,8 @@ connector. BigQuery, in each booking's own freight currency.
 ## Read this first: what this connector can and cannot tell you
 
 **1. You only get the bookings you list.** Cargoson's API has no "list all
-bookings" endpoint, so the connector fetches each booking by reference from a table
-of references you keep in your own warehouse (see the
+bookings" endpoint, so Weld syncs each booking by reference from a table of
+references you keep in your own warehouse (see the
 [connector docs](https://weld.app/docs/applications/cargoson#syncing-bookings)).
 Every number here covers exactly the bookings in that table. If it is fed from your
 order system and misses manual bookings, so do these reports. Compare the shipment
@@ -108,9 +108,8 @@ Carrier comes from the booking, falling back to the carrier on the booked offer.
   the `index` some schema listings show. Nothing here depends on either; rows are
   aggregated by `booking_reference`.
 - **The company alias is not stored on the booking.** On a Cargoson account with
-  several companies, the connector sends each booking's alias when fetching it, but
-  the alias is not a column in `bookings`. If two companies ever reuse a booking
-  reference, the second overwrites the first. Join back to your own reference table
+  several companies, the alias is not a column in `bookings`. If two companies ever
+  reuse a booking reference, only one of the bookings appears. Join back to your own reference table
   if you need to split reports by company.
 - **The connector does not sync carrier invoices, price breakdowns or tracking
   events.** Surcharges, fuel and per-event timelines are not available, which is why

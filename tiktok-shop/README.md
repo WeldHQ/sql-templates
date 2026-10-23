@@ -100,8 +100,8 @@ total_sales = net_sales + shipping + taxes
   of the same SKU arrive as three line items. Units are counted, never summed.
 - **Return lines carry no product id.** It is resolved through
   `order_line_item_id` to the order line.
-- **`statement_transaction` is retired.** The connector replaced it with
-  `statement_transaction_report`, which has the full fee breakdown. Only the
+- **`statement_transaction` is retired.** `statement_transaction_report`
+  replaces it and has the full fee breakdown. Only the
   latter is used here.
 - **`statement.statement_time` is Unix seconds** stored as a number; staging
   converts it.

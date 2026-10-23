@@ -2,8 +2,8 @@
 -- Thin wrapper over raw `b2b_ticket`. One row per business claim: a retailer
 -- claiming against a supplier's brand (used product, new product, return).
 --
--- The connector reads these per supplier and only for the supplier
--- organisations selected on the connection, so a retailer-side key that sees no
+-- These are synced per supplier and only for the supplier organisations
+-- selected on the connection, so a retailer-side key that sees no
 -- suppliers syncs no B2B tickets.
 --
 -- updated_at is when anything on the ticket last changed. It is NOT a decision

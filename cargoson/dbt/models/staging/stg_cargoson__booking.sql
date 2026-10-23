@@ -2,7 +2,7 @@
 -- Thin wrapper over raw `bookings`. One row per Cargoson booking (shipment):
 -- where it goes, who carries it, what was agreed to pay, and its milestones.
 --
--- KEY. The connector merges bookings on `reference`, Cargoson's booking
+-- KEY. Bookings are stored one row per `reference`, Cargoson's booking
 -- reference, and the rows table points back at it through booking_reference.
 -- `id` is carried along but is not the join key.
 --

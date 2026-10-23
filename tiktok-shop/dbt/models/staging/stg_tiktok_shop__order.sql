@@ -35,7 +35,7 @@ SELECT
     COALESCE(is_exchange_order, FALSE)                 AS is_exchange_order,
 
     -- Order-level money, in the order's payment currency. TikTok returns these as
-    -- decimal strings; the connector lands them as numbers.
+    -- decimal strings; they arrive in the warehouse as numbers.
     CAST(payment_original_total_product_price AS NUMERIC) AS original_total_product_price,
     CAST(payment_seller_discount AS NUMERIC)           AS seller_discount,
     CAST(payment_platform_discount AS NUMERIC)         AS platform_discount,

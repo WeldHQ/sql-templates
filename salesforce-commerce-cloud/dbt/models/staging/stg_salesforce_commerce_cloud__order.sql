@@ -3,8 +3,8 @@
 -- renames, blanks to NULL. Status filtering is a reporting decision and lives in
 -- core.
 --
--- TIMESTAMPS, DEFENSIVELY. The connector declares creation_date, place_date and
--- last_modified as millisecond timestamps, but they can land either as TIMESTAMP or
+-- TIMESTAMPS, DEFENSIVELY. creation_date, place_date and last_modified are
+-- millisecond timestamps, but they can land either as TIMESTAMP or
 -- as an integer of epoch milliseconds depending on the destination. The expression
 -- below goes through STRING so it accepts both, and returns UTC.
 --
