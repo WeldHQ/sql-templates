@@ -11,7 +11,7 @@ Weld connector: **HiBob** ([docs](https://weld.app/docs/applications/hibob)).
 | [`weld/core/time_off_daily.sql`](weld/core/time_off_daily.sql) · [dbt](dbt/models/core/core_hibob__time_off_daily.sql) | Who's out, and time off taken by policy | date × employee × policy type × status |
 | [`weld/core/employee_roster.sql`](weld/core/employee_roster.sql) · [dbt](dbt/models/core/core_hibob__employee_roster.sql) | People directory with tenure and recent time off | employee |
 
-Compensation fields are synced by the connector but deliberately left out of
+Compensation fields are synced but deliberately left out of
 these models. Add them in your own model if your warehouse permissions allow it.
 
 ## Layers
@@ -65,13 +65,13 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 - **Missing permissions look like missing data.** HiBob leaves out fields the
   service user cannot read without an error. A column that is NULL for everyone
   usually means the service user lacks access to that field category.
-- **Cancelled time off can linger.** Time off comes from HiBob's "who's out"
-  endpoint, which returns approved and pending requests. On incremental syncs only
-  dates from the last sync onwards are re-read, so a past request that is later
+- **Cancelled time off can linger.** `time_off` holds approved and pending
+  requests. On incremental syncs only dates from the last sync onwards are picked
+  up again, so a past request that is later
   cancelled or declined stays in the raw table with its last status. A periodic
   full refresh of the `time_off` stream clears them.
-- **Per-day hours are what HiBob reports for the request.** The connector stores
-  each request's daily breakdown in `timeoff_durations`. For day-based policies,
+- **Per-day hours are what HiBob reports for the request.** Each request's daily
+  breakdown is in `timeoff_durations`. For day-based policies,
   check that the hours match your working pattern before summing them as days.
 
 ## Reconciling

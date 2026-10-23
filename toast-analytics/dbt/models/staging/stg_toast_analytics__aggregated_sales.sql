@@ -4,8 +4,8 @@
 -- business date.
 --
 -- Business dates arrive as text, as yyyymmdd or yyyy-mm-dd; both are parsed.
--- The connector requests these metrics without a group-by, so revenue center,
--- dining option, order source and business hour are empty.
+-- Revenue center, dining option, order source and business hour are empty, so
+-- the grain is restaurant x day.
 
 SELECT
     CAST(restaurant_guid AS STRING)                     AS restaurant_id,

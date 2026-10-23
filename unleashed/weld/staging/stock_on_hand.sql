@@ -2,10 +2,9 @@
 -- Thin wrapper over raw `stock_on_hand`. One row per product, latest version.
 -- Unleashed's Stock on Hand: quantities and average cost now.
 --
--- The connector calls Unleashed's StockOnHand list without a warehouse filter,
--- which returns each product's stock summed over all warehouses with the
--- warehouse fields left empty. The raw key `guid` is the product guid. Per
--- warehouse stock would need the endpoint called once per warehouse.
+-- Each product's stock is summed over all warehouses, with the warehouse fields
+-- left empty. The raw key `guid` is the product guid. Per-warehouse stock is not
+-- available in this table.
 --
 -- avg_cost and total_cost are in base currency. available_qty is on hand minus
 -- allocated to sales orders.

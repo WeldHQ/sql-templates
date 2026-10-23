@@ -39,18 +39,16 @@ Analytics models are `SELECT *` over core so dashboards can bind to a stable nam
 
 ## Schema notes
 
-- **Unassigned tasks are not synced.** The connector lists tasks once per user,
-  filtered on that user as assignee. Every count here is a count of *assigned*
+- **Unassigned tasks are not synced.** Every count here is a count of *assigned*
   tasks, so project progress can differ from Asana's own progress bar, which
   includes unassigned ones.
 - **A reassigned task leaves a stale row.** The raw `task` table is keyed on task,
   workspace and assignee, so after a reassignment the old assignee's row stays.
   `staging.asana.task` keeps the most recently modified version of each task,
   which holds the current assignee.
-- **Deleted tasks, and tasks taken off someone's plate, stay open.** Tasks are read
-  incrementally, per assignee, by modification date. A deleted task is never
-  returned again, and neither is a task whose assignee was removed, so the last
-  synced version of each stays in the warehouse as it was: usually open, under the
+- **Deleted tasks, and tasks taken off someone's plate, stay open.** A deleted
+  task is not picked up again, and neither is a task whose assignee was removed, so
+  the last synced version of each stays in the warehouse as it was: usually open, under the
   old assignee. Open and overdue counts can therefore run above Asana's; compare
   `open_task_workload` with a person's My Tasks to see how far.
 - **No assignment history.** Stories arrive with their `type` (comment or system)
@@ -58,12 +56,11 @@ Analytics models are `SELECT *` over core so dashboards can bind to a stable nam
   can only be found by parsing display text. Time spent with the current assignee
   and first-assignment dates are therefore not built.
 - **No daily backlog.** A day-by-day count of open tasks needs every task's
-  creation date and its unassigned tasks; the connector syncs neither, so a
+  creation date and its unassigned tasks; neither is synced, so a
   backlog trend would undercount and drift. Throughput per day is in
   `task_completion`.
 - **No tags or followers.** These are not synced.
-- **Tasks have no `created_at`.** The connector does not request it. Time to
-  complete is measured from the task's earliest story (the "created this task"
+- **Tasks have no `created_at`.** Time to complete is measured from the task's earliest story (the "created this task"
   event in practice), which needs the `story` stream.
 - **No sections or custom fields.** Board columns and custom field values are not
   synced, so there is no "tasks by section" or "by priority" report.

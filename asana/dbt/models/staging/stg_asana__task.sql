@@ -1,13 +1,12 @@
 -- stg_asana__task
 -- Thin wrapper over raw `task`. One row per task, latest version.
 --
--- The connector reads tasks per assignee and keys the raw table on task, workspace
--- AND assignee. A reassigned task therefore leaves its old row behind under the
--- previous assignee. The QUALIFY keeps only the most recently modified version of
--- each task, which carries the current assignee.
+-- The raw table has one row per task, workspace AND assignee. A reassigned task
+-- therefore leaves its old row behind under the previous assignee. The QUALIFY
+-- keeps only the most recently modified version of each task, which carries the
+-- current assignee.
 --
--- Unassigned tasks are never synced: Asana's task list endpoint is called once per
--- user, filtered on that user as assignee.
+-- Unassigned tasks are not synced, so every task here has an assignee.
 --
 -- Rows with resource_subtype 'section' are dropped. They are section headers from
 -- Asana's older list layout that the API still returns as tasks; they are never

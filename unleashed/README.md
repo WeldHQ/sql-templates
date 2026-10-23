@@ -51,9 +51,8 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 
 ## Schema notes
 
-- **Stock on hand is synced for all warehouses combined.** The connector reads
-  Unleashed's stock on hand list without a warehouse filter, which returns one row
-  per product with the warehouse fields empty, even though the raw table has
+- **Stock on hand is synced for all warehouses combined.** `stock_on_hand` has one
+  row per product with the warehouse fields empty, even though the raw table has
   warehouse columns. `stock_position` is therefore per product. Warehouse-level
   alert levels exist in `product_inventory_detail`, but warehouse-level quantities
   do not.

@@ -2,8 +2,8 @@
 -- Thin wrapper over raw `page_property`. One row per page x property.
 --
 -- Notion property ids are only unique within one data source (every title
--- property has id "title"), so the key is page_id + property_id. The connector
--- has already flattened each value into typed columns: string_value for title,
+-- property has id "title"), so the key is page_id + property_id. Each value
+-- arrives already flattened into typed columns: string_value for title,
 -- text, select, status, email, url and unique id; number_value, date_value and
 -- boolean_value for their types, including formula results.
 

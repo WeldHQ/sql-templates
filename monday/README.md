@@ -42,7 +42,7 @@ map to folder paths: `{{staging.monday.item}}` expects the model in a
 
 ## Schema notes
 
-What the connector syncs decides what can be built, so it is worth knowing:
+What is synced decides what can be built, so it is worth knowing:
 
 - **Status labels exist only in the activity log.** An item's status column value
   is stored as JSON holding the label *index*, and board column settings (which map
@@ -63,8 +63,7 @@ What the connector syncs decides what can be built, so it is worth knowing:
   items, so staging keys that table on `item_id` + `column_id`.
 - **`activity_logs.created_at` is in units of 100 nanoseconds.** Staging divides
   by 10 and reads it as microseconds since the epoch.
-- `item.account_id` exists on the table but the connector does not request it, so it
-  is always empty and is not used.
+- `item.account_id` exists on the table but is always empty, so it is not used.
 
 ## What it does not do
 

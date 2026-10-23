@@ -65,7 +65,7 @@ Join the result to `core.notion.database_pages` on `page_id`.
   shared with it.
 - **Property ids repeat across databases.** Every title property has the id
   `title`, so `page_property` is keyed on page and property id together.
-- **Values are pre-typed.** The connector fills `string_value` for title, text,
+- **Values are pre-typed.** `string_value` holds title, text,
   select, status, email, URL and unique id properties, `number_value`,
   `date_value` and `boolean_value` for their types and for formula results.
   Multi-select, people and relation values only exist as raw JSON in the `value`

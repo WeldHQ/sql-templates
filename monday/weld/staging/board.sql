@@ -1,6 +1,6 @@
 -- staging.monday.board
 -- Thin wrapper over raw `board`. One row per board, including archived and
--- deleted boards (the connector asks for every state).
+-- deleted boards (boards in every state are synced).
 
 SELECT
     CAST(id AS STRING)              AS board_id,

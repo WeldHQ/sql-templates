@@ -55,10 +55,10 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 
 ## Schema notes
 
-- **Deleted time entries stay in the warehouse.** The stream is incremental on
-  Harvest's `updated_since` filter, which never returns deletions. An entry deleted
+- **Deleted time entries stay in the warehouse.** Time entries are synced
+  incrementally by update time, and deletions are not picked up. An entry deleted
   in Harvest keeps counting here. If totals drift above Harvest's, compare against
-  the `time_projects_report` table, which the connector re-pulls per day for the
+  the `time_projects_report` table, which is re-read per day for the
   last year and therefore reflects deletions, and consider a periodic full
   refresh of `time_entry`.
 - **Capacity history is not kept.** Harvest stores only a person's current weekly

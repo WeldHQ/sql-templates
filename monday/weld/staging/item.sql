@@ -3,7 +3,7 @@
 --
 -- Only items monday returns from a board's items page are synced: archived and
 -- deleted items are not in this table. `account_id` exists on the raw table but
--- the connector does not request it, so it is not used.
+-- is always empty, so it is not used.
 
 SELECT
     CAST(id AS STRING)              AS item_id,

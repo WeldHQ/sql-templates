@@ -4,7 +4,7 @@
 -- Grain: one row per status change event (item x status column x change time).
 --
 -- Status label text is only available here. The item's column value stores the
--- label index, and the connector does not sync board column settings, so the
+-- label index, and board column settings are not synced, so the
 -- activity log is the one place where "Working on it" or "Done" appears as text.
 -- `is_current_label` marks the latest change per item and column, which is the
 -- item's current status as long as the change happened inside the activity log

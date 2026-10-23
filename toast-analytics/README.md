@@ -26,8 +26,8 @@ rebuilds the same reports from order lines.
 | Drill to a single order | yes | no |
 | Card fees and payouts | no | yes |
 
-Toast's reporting API is rate limited per day and hour, which the connector
-respects, so a first sync of long history takes a while.
+Toast's reporting API is rate limited per day and hour, so a first sync of long
+history takes a while.
 
 ## Layers
 
@@ -61,9 +61,8 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 - **Business dates are text.** Staging accepts both `yyyymmdd` and `yyyy-mm-dd`
   and casts them to `DATE`.
 - **Aggregated sales are not broken down.** The raw table has revenue center,
-  dining option, order source and business hour columns, but the connector
-  requests the metrics without a group-by, so they are empty and the grain is
-  restaurant × day.
+  dining option, order source and business hour columns, but they are empty, so
+  the grain is restaurant × day.
 - **Labor in `daily_sales` is hourly jobs only**, as returned by the sales metrics
   endpoint. `labor_by_job` covers every job.
 - **Ratios are recomputed.** Toast's own ratios (average order value, sales per
