@@ -33,6 +33,8 @@ to:
   account, and its normal balance.
 
 Lines on statistical and non-posting accounts carry no money and are dropped.
+Revenue arrangements are dropped too: the revenue they schedule reaches the
+ledger through revenue recognition journals, which are kept.
 
 ## Layers
 
@@ -117,11 +119,19 @@ positive, expenses negative, so a plain `SUM` gives net income.
   `transactionaccountingline` and `transactionline` clears stale lines.
   `assert_transactions_balance` is the first thing to fail when this has
   happened.
+- **Intercompany eliminations.** `is_elimination` on the ledger is the line's
+  eliminate flag. NetSuite offsets those lines with journals posted to an
+  elimination subsidiary, which show up under that subsidiary's id. For a group
+  view, translate every subsidiary (including the elimination subsidiary) to one
+  currency and add them up; do not also drop the flagged lines.
 - **The aging is gross of credits** and is today's snapshot. Credit memos, vendor
   credits and unapplied payments are not netted in.
 - **Multi-account ready.** Every staging model emits a `netsuite_account` label
   that is part of every join key. To add a second NetSuite account, `UNION ALL` a
   second block in each staging model with a different label.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_netsuite` package; the SQL here is written independently for Weld's
+  schema.
 
 ## Reconciling
 
@@ -136,6 +146,19 @@ positive, expenses negative, so a plain `SUM` gives net income.
 
 ## Schema notes
 
+- **Not built: posting periods, fiscal-year roll-forward, consolidation.** A
+  balance sheet in NetSuite's own form needs three things these templates do not
+  have: the accounting period dates (to report by posting period and to split
+  income and expense into current-year net income and prior-year retained
+  earnings), the fiscal calendar each subsidiary uses, and the consolidated
+  exchange rates per period (to translate subsidiaries and derive the
+  cumulative translation adjustment). Of these, the connector's fixed SuiteQL
+  tables only include `accountingperiodfiscalcalendars`, which maps periods to
+  calendars but carries no dates. The `accountingperiod`, `subsidiary` and
+  `consolidatedexchangerate` records may be available from the REST record
+  catalog, depending on your role, but their column names cannot be checked
+  against a fixed schema, so nothing here depends on them.
+
 - **`account` is not in the public ERD.** It is not one of the connector's fixed
   SuiteQL tables; it comes from NetSuite's REST record catalog, which the
   connector reads for every account. Its columns are generated from NetSuite's
@@ -148,6 +171,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
   (`transaction.recordtype` against `deletedrecord.recordtypeid`), lower-cased on
   both sides. Spot-check one deleted transaction after the first sync.
 
-Vendor docs:
-[Account record, REST](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0902085857.html) ·
-[Account record, schema browser](https://www.netsuite.com/help/helpcenter/en_US/srbrowser/Browser2025_1/schema/record/account.html)
+Vendor docs: the Account record in the NetSuite REST API Browser and in the
+SuiteScript Records Browser, and the SuiteQL "Analytics data source" reference for
+the `transaction`, `transactionline` and `transactionaccountingline` tables, all in
+NetSuite's online help (docs.oracle.com).

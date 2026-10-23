@@ -11,7 +11,16 @@
 -- aggregate downstream keeps subsidiary_id in its grain for that reason.
 --
 -- Included: posting lines of posting transactions that have not been deleted.
--- Statistical and non-posting account types carry no money and are left out.
+-- Statistical and non-posting account types carry no money and are left out, and
+-- so are revenue arrangements: they are revenue management bookkeeping, and the
+-- revenue they schedule reaches the ledger through the revenue recognition
+-- journals that are already counted.
+--
+-- Consolidation: is_elimination flags intercompany lines marked for elimination.
+-- NetSuite offsets them with journals posted to an elimination subsidiary, which
+-- appear here under that subsidiary's id. A group view therefore includes the
+-- elimination subsidiary rather than dropping the flagged lines; use the flag to
+-- review intercompany balances that have not been eliminated yet.
 --
 -- Signs:
 --   debit, credit     both positive, as NetSuite stores them
@@ -30,6 +39,8 @@ WITH live_transactions AS (
         AND d.record_id        = t.transaction_id
     WHERE d.record_id IS NULL
       AND t.is_posting
+      AND COALESCE(t.record_type, '') != 'revenuearrangement'
+      AND COALESCE(t.transaction_type, '') != 'RevArrng'
 )
 
 SELECT
@@ -49,6 +60,7 @@ SELECT
     tl.department_id,
     tl.class_id,
     tl.location_id,
+    COALESCE(tl.is_elimination, FALSE)           AS is_elimination,
     tal.account_id,
     a.account_number,
     a.account_name,

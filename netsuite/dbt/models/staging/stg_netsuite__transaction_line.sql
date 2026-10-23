@@ -5,6 +5,11 @@
 -- Grain: transaction x line. mainline is TRUE for the header line of each
 -- transaction (the receivable or payable side on invoices and bills).
 --
+-- is_elimination is the line's eliminate flag: an intercompany line that
+-- NetSuite's period-end elimination process will offset. The offset is posted as
+-- a separate journal in an elimination subsidiary, so the flagged line itself
+-- stays a real posting in its own subsidiary.
+--
 -- Single NetSuite account. To add another, UNION ALL a second block below pointing
 -- at that account's connector with a different netsuite_account label.
 
@@ -19,5 +24,6 @@ SELECT
     CAST(entity AS STRING)                     AS entity_id,
     NULLIF(TRIM(CAST(memo AS STRING)), '')     AS line_memo,
     COALESCE(CAST(mainline AS BOOL), FALSE)    AS is_main_line,
-    COALESCE(CAST(taxline AS BOOL), FALSE)     AS is_tax_line
+    COALESCE(CAST(taxline AS BOOL), FALSE)     AS is_tax_line,
+    COALESCE(CAST(eliminate AS BOOL), FALSE)   AS is_elimination
 FROM {{ source('netsuite', 'transactionline') }}
