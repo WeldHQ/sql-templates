@@ -15,18 +15,18 @@
 -- the USD stream. To use a different base, point the ref at that stream; do not
 -- UNION several bases here, or the cross rates downstream will be duplicated.
 --
--- TABLE NAME. The connector names each stream after its base currency in upper
--- case, and Weld keeps that casing in the table name and the ref, so the ref is
+-- TABLE NAME. Each table is named after its base currency in upper case, and the
+-- table name and the ref keep that casing, so the ref is
 -- {{ source('forex_v2', 'USD_rates') }}. Change the schema part if your connection is named
 -- differently.
 --
--- DATES. Rates are daily (end of day, UTC) from Open Exchange Rates. The connector
--- stores each day at midnight UTC in `timestamp`, so DATE() in UTC is the rate's
+-- DATES. Rates are daily (end of day, UTC) from Open Exchange Rates. Each day
+-- is stored at midnight UTC in `timestamp`, so DATE() in UTC is the rate's
 -- day. Today's row is a provisional intraday rate and is replaced by the closing
 -- rate on the next sync.
 --
--- DE-DUPLICATION. The stream is keyed on timestamp and quote currency and upserts,
--- so a day is normally present once. The QUALIFY keeps the latest synced value in
+-- DE-DUPLICATION. The table has one row per timestamp and quote currency, so a day
+-- is normally present once. The QUALIFY keeps the latest synced value in
 -- case a day was loaded twice.
 
 SELECT

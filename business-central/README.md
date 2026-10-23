@@ -15,7 +15,7 @@ Weld connector: **Business Central**
 | [`weld/core/receivables_aging.sql`](weld/core/receivables_aging.sql) · [dbt](dbt/models/core/core_business_central__receivables_aging.sql) | Aged Accounts Receivable, at invoice level | open sales invoice (snapshot) |
 
 Nothing here has been run against a warehouse. The SQL parses and every column is
-checked against Weld's Business Central stream definitions, but reconcile a closed month
+checked against the schema Weld syncs for Business Central, but reconcile a closed month
 against Business Central's own reports before relying on the output (see
 [Reconciling](#reconciling)).
 
@@ -111,8 +111,8 @@ split as Business Central's Income/Balance field. Accounts without a category co
 
 ## Schema notes
 
-The Weld ERD for Business Central and the connector's stream definitions agree on every
-column used here. Behaviour worth knowing:
+The Weld ERD for Business Central and the schema Weld syncs agree on every column
+used here. Behaviour worth knowing:
 
 - `posting_date`, `invoice_date` and `due_date` arrive as strings (`YYYY-MM-DD`) and are
   parsed in staging.

@@ -3,8 +3,7 @@
 --
 -- Grain: one row per account.
 --
--- This table comes from NetSuite's REST record catalog rather than a fixed
--- SuiteQL query, so its columns are whatever NetSuite's metadata describes for
+-- This table's columns are whatever NetSuite's record metadata describes for
 -- your account. The ones used here (id, acct_number, acct_name, acct_type,
 -- is_inactive) are standard on the account record. Reference fields such as
 -- acct_type arrive as a JSON object ({"id": "Income", "refName": "Income"}); the

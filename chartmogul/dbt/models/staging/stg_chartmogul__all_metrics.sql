@@ -1,5 +1,5 @@
 -- stg_chartmogul__all_metrics
--- ChartMogul's key metrics endpoint, requested per plan at a daily interval.
+-- ChartMogul's key metrics, per plan at a daily interval.
 -- Grain: one row per plan per day. Values are as at the end of that day.
 --
 -- Units: mrr, arr, arpa, asp and ltv arrive as integer cents in the account

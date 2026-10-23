@@ -27,7 +27,7 @@ WITH vouchers AS (
         voucher_line
     FROM {{ source('netvisor', 'accounting_ledger') }}
     WHERE netvisor_key IS NOT NULL
-    -- Incremental stream keyed on the voucher's Netvisor key; keep the latest copy.
+    -- One row per voucher's Netvisor key; keep the latest copy.
     QUALIFY ROW_NUMBER() OVER (PARTITION BY netvisor_key ORDER BY _weld_synced DESC) = 1
 ),
 

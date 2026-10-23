@@ -12,7 +12,7 @@
 -- the invoice sub_total. tests/assert_chargebee__lines_tie_to_invoice_sub_total.sql checks
 -- that identity.
 --
--- Weld does not sync the line's own subscription_id, so a line is tied to a
+-- invoice_line_item carries no subscription_id, so a line is tied to a
 -- subscription only through its invoice, and only when the invoice covers a
 -- single subscription.
 

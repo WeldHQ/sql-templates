@@ -58,7 +58,7 @@ paths, so `{{staging.adyen.settlement_detail}}` expects the model in a
 | payment lifecycle | `payments_accounting_report` |
 | authorisation rate | `payments_accounting_report` |
 
-The connector receives reports as Adyen generates them, so a report only lands in
+Reports arrive as Adyen generates them, so a report only lands in
 your warehouse if it is set to generate automatically in the Customer Area
 (Reports, then the report, then automatic generation). The Settlement details report
 is generated once per batch; the Payment accounting report once a day.
@@ -75,7 +75,7 @@ and the matching `ANY_VALUE` lines in core, or add the columns in the Customer A
 **Amounts are in major units.** Every Adyen report writes amounts as decimals in
 the currency's major unit (EUR 12.34 is `12.34`). The Adyen API uses minor units
 (`1234`), and that is the source of most "our Adyen numbers are 100 times off"
-problems, but this connector reads the reports, so no conversion is applied and
+problems, but these tables come from the reports, so no conversion is applied and
 none should be.
 
 **Currencies.** Settlement amounts are in the net currency, the currency Adyen pays
@@ -118,8 +118,8 @@ Nothing here has been run against a live warehouse. Reconcile before relying on 
 
 ## Schema notes
 
-- **Report columns are discovered, not fixed.** The connector reads each report CSV
-  and names columns after its headers in snake case (`Gross Debit (GC)` becomes
+- **Report columns are discovered, not fixed.** Columns are named after each
+  report CSV's headers in snake case (`Gross Debit (GC)` becomes
   `gross_debit_gc`). Columns therefore depend on how your report is configured in
   the Customer Area, and their types are inferred from a sample, so a column can be
   FLOAT64 in one warehouse and STRING in another. Staging casts every column
@@ -130,7 +130,7 @@ Nothing here has been run against a live warehouse. Reconcile before relying on 
   column list in the public schema yet, so no template is built on them.
 - **No Time Zone column in some exports.** Adyen documents the time zone column of
   the Settlement details report as present in spreadsheet exports only; the
-  connector's schema includes `time_zone`, so it is used. If yours is empty, the
+  synced table includes `time_zone`, so it is used. If yours is empty, the
   timestamps are in your account's Customer Area time zone.
 - **Times are local, not UTC.** `creation_date` and `booking_date` are wall clock
   times in the report's time zone. Weld stores them as timestamps without a zone,

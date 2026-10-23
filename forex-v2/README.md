@@ -122,11 +122,11 @@ the table shrinks accordingly.
 
 ## Schema notes
 
-- **Table names are upper case.** The connector names streams after the base
-  currency as Open Exchange Rates writes it, so the table is `USD_rates` and the ref
+- **Table names are upper case.** Each table is named after its base currency
+  as Open Exchange Rates writes it, so the table is `USD_rates` and the ref
   is `{{raw.forex_v2.USD_rates}}`. BigQuery table names are case sensitive, so keep
   the casing if you copy the ref.
-- **`timestamp` type varies.** The connector writes it as a timestamp, and most
-  warehouses show TIMESTAMP. A few synced schemas show it as an INT64 (epoch
+- **`timestamp` type varies.** Most warehouses show it as TIMESTAMP. A few show
+  it as an INT64 (epoch
   milliseconds). If yours is INT64, replace `CAST(timestamp AS TIMESTAMP)` with
   `TIMESTAMP_MILLIS(timestamp)` in staging.

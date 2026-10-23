@@ -11,8 +11,8 @@
 -- reactivation, negative for contraction and churn. Summing it gives the net MRR
 -- change.
 --
--- The stream is merged on uuid, so duplicates should not occur; the QUALIFY is a
--- guard for loaders that append instead of merge.
+-- Rows are identified by uuid; the QUALIFY keeps one row per uuid in case an
+-- activity arrives twice.
 
 SELECT
     CAST(uuid AS STRING)                                  AS activity_uuid,

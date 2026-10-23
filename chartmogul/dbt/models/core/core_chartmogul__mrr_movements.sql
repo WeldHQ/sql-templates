@@ -5,8 +5,8 @@
 -- month is present, including months without movements.
 --
 -- closing_mrr is the running sum of every movement since the first activity, so
--- it only equals real MRR when the activity history is complete (the connector's
--- first sync pulls all of it). chartmogul_reported_mrr is ChartMogul's own MRR at
+-- it only equals real MRR when the activity history is complete (the first
+-- sync pulls all of it). chartmogul_reported_mrr is ChartMogul's own MRR at
 -- the last synced day of the month, summed over plans, for reconciliation. The
 -- two should agree; a gap usually means ChartMogul restated history after a sync.
 --

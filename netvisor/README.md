@@ -14,7 +14,7 @@ Weld connector: **Netvisor** ([docs](https://weld.app/docs/applications/netvisor
 | [`weld/core/payables_aging.sql`](weld/core/payables_aging.sql) · [dbt](dbt/models/core/core_netvisor__payables_aging.sql) | Ostoreskontra, open invoices | open purchase invoice (snapshot) |
 
 Nothing here has been run against a warehouse. The SQL parses and every column is
-checked against Weld's Netvisor stream definitions, but reconcile a closed month against
+checked against the schema Weld syncs for Netvisor, but reconcile a closed month against
 Netvisor's own reports before relying on the output (see [Reconciling](#reconciling)).
 
 ## Layers
@@ -124,8 +124,8 @@ aging is not.
 
 ## Schema notes
 
-The Weld ERD for Netvisor and the connector's stream definitions agree on every column
-used here. The voucher lines are not separate columns: `accounting_ledger.voucher_line`
+The Weld ERD for Netvisor and the schema Weld syncs agree on every column used
+here. The voucher lines are not separate columns: `accounting_ledger.voucher_line`
 is a JSON array whose element keys are camelCase (`netvisorKey`, `lineSum`,
 `accountNumber`, `description`, `vatPercent`, `vatCode`, `accountDimension`,
 `dimension`). The ERD shows the column as a plain string; staging parses it.

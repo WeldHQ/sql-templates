@@ -3,7 +3,7 @@
 -- this keeps the latest synced version of each order number, so there is one row
 -- per subscription.
 --
--- The connector does not include the subscription's account on this table, so
+-- This table does not include the subscription's account, so
 -- subscriptions cannot be tied to customers from here.
 
 SELECT

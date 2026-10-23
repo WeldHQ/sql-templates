@@ -183,7 +183,7 @@ subscription for another shows up here but not as churn in the bridge.
 
 ## Schema notes
 
-Checked against both the public ERD and Weld's stream definitions; the tables and
+Checked against both the public ERD and the schema Weld syncs; the tables and
 columns used here match in both.
 
 - **Amounts are 32-bit floats** in the stream, as described under Currency.

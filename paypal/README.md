@@ -112,13 +112,12 @@ map to folder paths, so `{{staging.paypal.transaction}}` expects the model in a
   midnight can fall on a different day than in the PayPal UI.
 - **Delay.** PayPal can take up to three hours to make a transaction searchable, so
   today's figures fill in over the day.
-- **Disputes, invoices and subscriptions** are synced by the connector but not
-  modelled here. Disputes that move money already appear as chargebacks and
+- **Disputes, invoices and subscriptions** are synced but not modelled here. Disputes that move money already appear as chargebacks and
   reversals in the summary.
 
 ## Schema notes
 
-The ERD and the connector definition agree on every column used. Timestamp columns
+The ERD and the schema Weld syncs agree on every column used. Timestamp columns
 the ERD lists as `date` are loaded as timestamps; staging casts them explicitly.
 
 ## Reconciling

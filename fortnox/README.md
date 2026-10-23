@@ -15,7 +15,7 @@ Weld connector: **Fortnox** ([docs](https://weld.app/docs/applications/fortnox))
 | [`weld/core/payables_aging.sql`](weld/core/payables_aging.sql) · [dbt](dbt/models/core/core_fortnox__payables_aging.sql) | Leverantörsreskontra, förfallna | open supplier invoice (snapshot) |
 
 Nothing here has been run against a warehouse. The SQL parses and every column is
-checked against Weld's Fortnox stream definitions, but reconcile a closed month against
+checked against the schema Weld syncs for Fortnox, but reconcile a closed month against
 the Fortnox reports before relying on the output (see [Reconciling](#reconciling)).
 
 ## Layers
@@ -130,8 +130,8 @@ It is kept in the general ledger and the trial balance and excluded from
 
 ## Schema notes
 
-The Weld ERD for Fortnox and the connector's stream definitions agree on every table and
-column used here. Two behaviours worth knowing:
+The Weld ERD for Fortnox and the schema Weld syncs agree on every table and column
+used here. Two behaviours worth knowing:
 
 - `vouchers.year`, `voucher_rows.voucher_year` and `accounts.year` hold the Fortnox
   financial year ID, not a calendar year. They join to `financial_years.id`.

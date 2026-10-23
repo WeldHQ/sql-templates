@@ -165,12 +165,12 @@ counts towards MRR.
 
 ## Schema notes
 
-Checked against both the public ERD and Weld's stream definitions; the tables and
+Checked against both the public ERD and the schema Weld syncs; the tables and
 columns used here match in both. Three limits of the synced schema shape the
 models:
 
-- **No `subscription_id` on invoice lines.** Chargebee's API has one, but Weld's
-  `invoice_line_item` table does not carry it. A line is tied to a subscription
+- **No `subscription_id` on invoice lines.** The synced `invoice_line_item` table
+  has no `subscription_id`. A line is tied to a subscription
   only through `invoice.subscription_id`, which is empty on consolidated invoices
   covering several subscriptions. That is one reason MRR movements are at
   customer grain; `recurring_revenue_lines.subscription_id` is filled where known.

@@ -88,11 +88,11 @@ map to folder paths, so `{{staging.younium.booking}}` expects the model in a
 - **Months are calendar months of the booking's effective date**, in UTC. A change
   signed in March that takes effect in April lands in April. Use `created_at` in
   `staging.younium.booking` instead if you report bookings by signing date.
-- **Closing CMRR needs the full booking history.** By default the connector's first
-  sync fetches bookings modified in the last three years (or since the start date
-  set on the connector). Bookings older than that and never touched since are not
+- **Closing CMRR needs the full booking history.** By default the first sync covers
+  bookings modified in the last three years (or since the start date set on the
+  connection). Bookings older than that and never touched since are not
   synced, so the bridge starts short and `closing_cmrr` falls below real CMRR by
-  whatever they added up to. Set an early start date on the connector to avoid this.
+  whatever they added up to. Set an early start date on the connection to avoid this.
   The same modified-date window applies to `account` and `subscription`, so an
   account untouched for longer than the window is missing from `account_cmrr` too.
   Compare `closing_cmrr` with `younium_current_cmrr` (the live total over all
@@ -105,7 +105,7 @@ map to folder paths, so `{{staging.younium.booking}}` expects the model in a
   `orders_churned` and `orders_reactivated` count orders with at least one booking of
   that class in the month. A customer with two orders counts twice.
 - **What was not built, and why.**
-  - The connector also syncs `daily_charge_metric` and `daily_order_metric_per_product`.
+  - Weld also syncs `daily_charge_metric` and `daily_order_metric_per_product`.
     They come from Younium's metrics calculator, which prices a single catalog
     product or charge over a one-day term. They describe the price list, not what
     customers are committed to, so they are not used for MRR.
@@ -117,9 +117,9 @@ map to folder paths, so `{{staging.younium.booking}}` expects the model in a
 
 ## Schema notes
 
-- `subscription`: Younium's API returns the order's account, but the connector's
-  `subscription` table does not include it (neither in the ERD nor in the connector
-  definition). This is why there is no customer-level movement model.
+- `subscription`: the synced table does not include the order's account, and the
+  ERD does not list it either. This is why there is no customer-level movement
+  model.
 - `booking`: the API's `bookingChangeType` object is not on the table; `change_type`
   and the classification columns are.
 - Date columns the ERD lists as `date` are loaded as timestamps; staging casts them

@@ -80,7 +80,7 @@ in a `staging > chartmogul` folder.
 | customer mrr movements | `customer_activities`, `customers` |
 | plan metrics | `all_metrics`, `plans` |
 
-`subscriptions` is synced by the connector but not used: it holds each
+`subscriptions` is synced but not used: it holds each
 subscription's current MRR, which the activity log already covers historically.
 
 ## Notes
@@ -91,7 +91,7 @@ subscription's current MRR, which the activity log already covers historically.
   day of the month, summed across plans from `all_metrics`. If the two drift apart,
   ChartMogul has usually restated history (for example after a billing system
   re-import). Resync `customer_activities` and `all_metrics` from scratch.
-- **`all_metrics` is not refreshed backwards.** Each sync requests from the previous
+- **`all_metrics` is not refreshed backwards.** Each sync picks up from the previous
   sync's date onwards, so older days keep the values they had when first synced.
 - **Months are UTC calendar months** of the activity timestamp. ChartMogul's UI uses
   the account timezone, so activities close to midnight on the last day of a month
@@ -106,9 +106,8 @@ subscription's current MRR, which the activity log already covers historically.
 
 ## Schema notes
 
-- `customer_activities`: the ERD marks `id` as the primary key; the connector merges
-  on `uuid`, which is ChartMogul's stable activity identifier. Staging de-duplicates
-  on `uuid`.
+- `customer_activities`: the ERD marks `id` as the key; rows are identified by
+  `uuid`, ChartMogul's stable activity identifier. Staging de-duplicates on `uuid`.
 - Columns the ERD lists as `date` (`customer_activities.date`, `all_metrics.date`,
   the customer timestamps) are loaded as timestamps; staging casts them explicitly.
 

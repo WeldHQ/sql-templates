@@ -8,12 +8,11 @@
 -- out is negative. fee_amount is the PayPal fee on the record, negative when PayPal
 -- charges you and positive when a fee is returned (for example on a refund).
 --
--- The connector requests all records, not only balance-affecting ones, so this
--- table includes authorizations, pending and denied transactions. Core decides
+-- This table holds all records, not only balance-affecting ones, so it
+-- includes authorizations, pending and denied transactions. Core decides
 -- what counts towards the balance.
 --
--- The stream merges on (id, event_code); the QUALIFY guards against loaders that
--- append.
+-- The QUALIFY keeps one row per (id, event_code) in case a record arrives twice.
 
 SELECT
     CAST(id AS STRING)                                                          AS transaction_id,

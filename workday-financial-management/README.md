@@ -21,8 +21,8 @@ Workday's own Trial Balance and income statement before relying on the output
 
 ## How the ledger is built
 
-Workday's `Get_Journals` returns journal entries with their lines; the connector
-lands the headers in `journal_entry` and the lines in `journal_entry_line`.
+Journal entries arrive with their lines: the headers in `journal_entry` and the
+lines in `journal_entry_line`.
 `general_ledger` keeps journals whose status is Posted and resolves each line's
 ledger account:
 
@@ -113,7 +113,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
   Trial Balance shows them for the fiscal year to date. Compare balance sheet
   accounts there, income and expense accounts through `profit_and_loss_by_month`.
 - **Opening balances need the full history.** Closing balances are cumulative from
-  the first journal in the warehouse. If the connector's start date is later than
+  the first journal in the warehouse. If the connection's start date is later than
   the tenant's first journal, period amounts are right and closing balances are
   missing the opening balance.
 - **Edited journals can leave stale lines.** Journals are synced by last update,
@@ -153,18 +153,18 @@ positive, expenses negative, so a plain `SUM` gives net income.
 - **Not built: fiscal periods and the retained earnings roll-forward.** Workday
   reports by fiscal period and folds prior fiscal years' income and expense into
   retained earnings. The company record names its fiscal schedule, but the
-  connector does not sync the schedule's periods or years, so these models use
+  schedule's periods and years are not synced, so these models use
   calendar months of the accounting date and leave income and expense cumulative.
-- **Not built: translation to one currency.** The connector syncs currency
-  conversion rates, but which rate type and date a consolidation uses is tenant
+- **Not built: translation to one currency.** Currency conversion rates are
+  synced, but which rate type and date a consolidation uses is tenant
   configuration that is not in these tables, so no translated balances are
   produced. Every grain keeps `company_id` instead.
 
 - **The public ERD for this connector only covers the purchasing tables**
   (`purchase_order*`, `receipt*`). Every table used here (`journal_entry`,
   `journal_entry_line`, `account_set`, `ledger_account`, `company`,
-  `customer_invoice`) is defined by the connector, and every column used was
-  checked against those definitions.
+  `customer_invoice`) is part of the schema Weld syncs, and every column used was
+  checked against it.
 - `journal_entry_line.account_set_id` holds the account set's **code** (for
   example "Standard"), not its WID, despite the name; it is joined to
   `account_set.account_set_code` for that reason.

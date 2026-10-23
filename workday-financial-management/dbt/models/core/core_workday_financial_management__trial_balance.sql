@@ -23,7 +23,7 @@
 -- balance sheet accounts here and income and expense accounts through
 -- profit_and_loss_by_month.
 --
--- Only journals synced since the connector's start date are included. If the
+-- Only journals synced since the connection's start date are included. If the
 -- sync does not reach back to the first journal, closing balances are missing the
 -- opening balance and only period amounts can be trusted.
 

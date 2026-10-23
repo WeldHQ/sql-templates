@@ -6,7 +6,7 @@
 -- Grain: one journal entry (merchant account x batch x PSP reference x journal type).
 --
 -- UNITS. Adyen's reports carry amounts in major units with decimals (EUR 12.34 is
--- 12.34). The Adyen API uses minor units (1234), but this connector reads the
+-- 12.34). The Adyen API uses minor units (1234), but this table comes from the
 -- reports, so nothing is divided by 100 here. Do not apply a minor unit conversion.
 --
 -- TYPES. Weld infers each column's type from a sample of the CSV, so a column can

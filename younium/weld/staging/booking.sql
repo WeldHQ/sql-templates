@@ -10,7 +10,7 @@
 -- twice: in the order's currency (`currency`) and converted to the Younium base
 -- currency. Both are kept.
 --
--- The stream merges on id; the QUALIFY guards against loaders that append.
+-- The QUALIFY keeps one row per id in case a booking arrives twice.
 
 SELECT
     CAST(id AS STRING)                                          AS booking_id,

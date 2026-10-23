@@ -114,8 +114,7 @@ positive, expenses negative, so a plain `SUM` gives net income.
   `profit_and_loss_by_month`.
 - **Removed lines are not logged.** NetSuite logs a deleted transaction in
   `deletedrecord`, but a line deleted from a transaction that still exists simply
-  disappears, and an incremental sync cannot see it go. The connector supports
-  soft deletes on these tables during full syncs; a periodic full resync of
+  disappears, and an incremental sync cannot see it go. A periodic full resync of
   `transactionaccountingline` and `transactionline` clears stale lines.
   `assert_netsuite__transactions_balance` is the first thing to fail when this has
   happened.
@@ -152,17 +151,16 @@ positive, expenses negative, so a plain `SUM` gives net income.
   income and expense into current-year net income and prior-year retained
   earnings), the fiscal calendar each subsidiary uses, and the consolidated
   exchange rates per period (to translate subsidiaries and derive the
-  cumulative translation adjustment). Of these, the connector's fixed SuiteQL
-  tables only include `accountingperiodfiscalcalendars`, which maps periods to
-  calendars but carries no dates. The `accountingperiod`, `subsidiary` and
-  `consolidatedexchangerate` records may be available from the REST record
-  catalog, depending on your role, but their column names cannot be checked
-  against a fixed schema, so nothing here depends on them.
+  cumulative translation adjustment). Of these, the standard synced tables
+  only include `accountingperiodfiscalcalendars`, which maps periods to calendars
+  but carries no dates. The `accountingperiod`, `subsidiary` and
+  `consolidatedexchangerate` records may be available, depending on your role, but
+  their columns vary by account and cannot be checked against a fixed schema, so
+  nothing here depends on them.
 
-- **`account` is not in the public ERD.** It is not one of the connector's fixed
-  SuiteQL tables; it comes from NetSuite's REST record catalog, which the
-  connector reads for every account. Its columns are generated from NetSuite's
-  record metadata, so they cannot be checked against the ERD. The ones used here
+- **`account` is not in the public ERD.** Its columns are generated from
+  NetSuite's record metadata for your account, so they cannot be checked against
+  the ERD. The ones used here
   (`id`, `acct_number`, `acct_name`, `acct_type`, `is_inactive`) are standard
   fields of NetSuite's account record, and reference fields such as `acct_type`
   arrive as a JSON object whose `id` is the account type code. Check the column
