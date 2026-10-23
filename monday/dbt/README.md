@@ -7,8 +7,8 @@ models/staging/sources.yml                  one source
 models/staging/stg_monday__*.sql            5 thin wrappers over the raw tables
 models/core/core_monday__*.sql              the reports
 models/analytics/analytics__monday_*.sql    thin BI-facing contracts
-tests/assert_one_current_label_per_item_column.sql
-tests/assert_no_duplicate_assignments.sql
+tests/assert_monday__one_current_label_per_item_column.sql
+tests/assert_monday__no_duplicate_assignments.sql
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

@@ -7,9 +7,9 @@ models/staging/sources.yml                 one source
 models/staging/stg_asana__*.sql            6 thin wrappers over the raw tables
 models/core/core_asana__*.sql              the reports
 models/analytics/analytics__asana_*.sql    thin BI-facing contracts
-tests/assert_task_completion_unique.sql    no duplicate rows at the stated grain
-tests/assert_project_task_counts_add_up.sql completed + open = all tasks
-tests/assert_on_time_split_adds_up.sql     on time + late = tasks with a due date
+tests/assert_asana__task_completion_unique.sql    no duplicate rows at the stated grain
+tests/assert_asana__project_task_counts_add_up.sql completed + open = all tasks
+tests/assert_asana__on_time_split_adds_up.sql     on time + late = tasks with a due date
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

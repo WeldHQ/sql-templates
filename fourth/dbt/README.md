@@ -7,8 +7,8 @@ models/staging/sources.yml                   one source
 models/staging/stg_fourth__*.sql             5 thin wrappers over the raw tables
 models/core/core_fourth__*.sql               the reports and the department-location map
 models/analytics/analytics__fourth_*.sql     thin BI-facing contracts
-tests/assert_labour_cost_reconciles.sql      same labour cost in both labour models
-tests/assert_one_row_per_department_day.sql  no fan-out in labour_vs_sales
+tests/assert_fourth__labour_cost_reconciles.sql      same labour cost in both labour models
+tests/assert_fourth__one_row_per_department_day.sql  no fan-out in labour_vs_sales
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

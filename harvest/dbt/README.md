@@ -7,8 +7,8 @@ models/staging/sources.yml                      one source
 models/staging/stg_harvest__*.sql               8 thin wrappers over the raw tables
 models/core/core_harvest__*.sql                 the reports
 models/analytics/analytics__harvest_*.sql       thin BI-facing contracts
-tests/assert_time_report_reconciles_to_utilization.sql  same hours in both models
-tests/assert_invoice_due_not_above_amount.sql           0 <= due amount <= amount
+tests/assert_harvest__time_report_reconciles_to_utilization.sql  same hours in both models
+tests/assert_harvest__invoice_due_not_above_amount.sql           0 <= due amount <= amount
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

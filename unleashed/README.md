@@ -71,7 +71,7 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 Nothing here has been run against a live warehouse. Run Unleashed's Sales
 Enquiry for completed orders last month and compare revenue and margin with
 `sales_margin` for the same dates; compare `stock_position` value with the Stock on
-Hand report's total. [`tests/assert_margin_reconciles_to_orders.sql`](dbt/tests/assert_margin_reconciles_to_orders.sql)
+Hand report's total. [`tests/assert_unleashed__margin_reconciles_to_orders.sql`](dbt/tests/assert_unleashed__margin_reconciles_to_orders.sql)
 checks that line revenue adds up to the order sub totals.
 
 [Unleashed API](https://apidocs.unleashedsoftware.com/) ·

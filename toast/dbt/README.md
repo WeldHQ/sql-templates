@@ -7,8 +7,8 @@ models/staging/sources.yml                    one source
 models/staging/stg_toast__*.sql               11 thin wrappers over the raw tables
 models/core/core_toast__*.sql                 the reports
 models/analytics/analytics__toast_*.sql       thin BI-facing contracts
-tests/assert_menu_mix_reconciles_to_sales.sql product mix sums to the sales summary
-tests/assert_discounts_not_negative.sql       gross is never below net
+tests/assert_toast__menu_mix_reconciles_to_sales.sql product mix sums to the sales summary
+tests/assert_toast__discounts_not_negative.sql       gross is never below net
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

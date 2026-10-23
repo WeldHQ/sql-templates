@@ -7,8 +7,8 @@ models/staging/sources.yml                       one source
 models/staging/stg_seven_rooms__*.sql            3 thin wrappers over the raw tables
 models/core/core_seven_rooms__*.sql              the reports
 models/analytics/analytics__seven_rooms_*.sql    thin BI-facing contracts
-tests/assert_lead_time_reconciles_to_covers.sql  same reservations in both models
-tests/assert_outcomes_add_up.sql                 canceled + not canceled = all
+tests/assert_seven_rooms__lead_time_reconciles_to_covers.sql  same reservations in both models
+tests/assert_seven_rooms__outcomes_add_up.sql                 canceled + not canceled = all
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

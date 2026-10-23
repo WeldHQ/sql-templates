@@ -52,7 +52,7 @@ weld/analytics/*.sql   BI-facing contracts, deliberately thin
 - **Gross, discounts, net.** `gross_sales` sums each selection's pre-discount
   price and `net_sales` its price after discounts; discounts are the difference.
   Toast documents `price` as including modifiers and quantity.
-  [`assert_discounts_not_negative`](dbt/tests/assert_discounts_not_negative.sql)
+  [`assert_toast__discounts_not_negative`](dbt/tests/assert_toast__discounts_not_negative.sql)
   catches menus where the pre-discount price does not.
 - **Gift cards are deferred revenue.** Selections Toast marks as deferred are kept
   out of sales and shown as `deferred_sales`.

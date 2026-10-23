@@ -7,8 +7,8 @@ models/staging/sources.yml                   one source
 models/staging/stg_linear__issue.sql         thin wrapper over raw issues
 models/core/core_linear__*.sql               the reports
 models/analytics/analytics__linear_*.sql     thin BI-facing contracts
-tests/assert_flow_matches_issue_counts.sql   completions counted exactly once
-tests/assert_cycle_time_not_negative.sql     no completion before creation or start
+tests/assert_linear__flow_matches_issue_counts.sql   completions counted exactly once
+tests/assert_linear__cycle_time_not_negative.sql     no completion before creation or start
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

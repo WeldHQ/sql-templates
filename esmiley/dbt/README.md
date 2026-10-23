@@ -7,8 +7,8 @@ models/staging/sources.yml                    one source
 models/staging/stg_esmiley__*.sql             3 thin wrappers over the raw tables
 models/core/core_esmiley__*.sql               the reports and the registration point tree
 models/analytics/analytics__esmiley_*.sql     thin BI-facing contracts
-tests/assert_monthly_reconciles_to_daily.sql  monthly totals equal daily totals
-tests/assert_no_negative_waste.sql            no negative weight or cost
+tests/assert_esmiley__monthly_reconciles_to_daily.sql  monthly totals equal daily totals
+tests/assert_esmiley__no_negative_waste.sql            no negative weight or cost
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

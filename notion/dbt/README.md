@@ -7,8 +7,8 @@ models/staging/sources.yml                  one source
 models/staging/stg_notion__*.sql            4 thin wrappers over the raw tables
 models/core/core_notion__*.sql              the reports
 models/analytics/analytics__notion_*.sql    thin BI-facing contracts
-tests/assert_one_row_per_page.sql           no fan-out in database_pages
-tests/assert_pages_created_reconciles.sql   daily counts sum to the page count
+tests/assert_notion__one_row_per_page.sql           no fan-out in database_pages
+tests/assert_notion__pages_created_reconciles.sql   daily counts sum to the page count
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

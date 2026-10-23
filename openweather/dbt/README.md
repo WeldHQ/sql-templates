@@ -7,8 +7,8 @@ models/staging/sources.yml                      one source
 models/staging/stg_openweather__*.sql           2 thin wrappers over the raw tables
 models/core/core_openweather__*.sql             daily weather and daily forecast
 models/analytics/analytics__openweather_*.sql   thin BI-facing contracts
-tests/assert_one_row_per_location_day.sql       no duplicate location-days
-tests/assert_forecast_days_not_overfull.sql     at most 8 steps per local day
+tests/assert_openweather__one_row_per_location_day.sql       no duplicate location-days
+tests/assert_openweather__forecast_days_not_overfull.sql     at most 8 steps per local day
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.

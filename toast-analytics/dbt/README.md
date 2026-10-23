@@ -7,8 +7,8 @@ models/staging/sources.yml                            one source
 models/staging/stg_toast_analytics__*.sql             5 thin wrappers over the raw tables
 models/core/core_toast_analytics__*.sql               the reports
 models/analytics/analytics__toast_analytics_*.sql     thin BI-facing contracts
-tests/assert_daily_sales_unique.sql                   one row per restaurant and day
-tests/assert_item_shares_sum_to_one.sql               item shares add up per day
+tests/assert_toast_analytics__daily_sales_unique.sql                   one row per restaurant and day
+tests/assert_toast_analytics__item_shares_sum_to_one.sql               item shares add up per day
 ```
 
 These are the same models as [`../weld/`](../weld/), differing only in ref syntax.
