@@ -10,9 +10,10 @@ SQL reports over Weld's Facebook Ads connector. BigQuery.
 
 ## Where these come from
 
-These are the templates from the weld.app template library, moved here
-unchanged apart from the notes below. Each one was published as a single query
-rather than a layered model set, so:
+These started as the templates in the weld.app template library. Each one was
+published as a single query rather than a layered model set. Every query was
+reviewed when it moved here and corrected where it was wrong; the corrections
+are listed under Changes from the website version. The layout:
 
 - Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
   passthrough in `weld/analytics/` for dashboards to bind to.
@@ -32,6 +33,11 @@ rather than a layered model set, so:
   website version said `staging.pinterest` and `staging.snapchat`, which match no
   folder here. Only the active platform's block is uncommented; uncomment the others
   once their ad reports are deployed.
+
+Corrected in review:
+
+- `staging/ad_report`: action values are summed per ad and day before the join. The website version joined one row per action type, so spend, clicks and impressions repeated once per action type.
+- `core/marketing_report`: the stray `select` before the active block is gone, every commented platform block has its `select` and reads only columns that platform's ad report outputs, and IDs are cast to strings so the blocks union cleanly. LinkedIn campaign groups and creatives fill the campaign and ad columns; Snapchat's report has no campaign columns, so its block leaves them empty.
 
 ## Required tables
 
@@ -76,11 +82,3 @@ cost per thousand impressions (CPM), and conversion rate, providing a comprehens
 view of marketing performance. By using this SQL model, marketers can gain valuable
 insights into the effectiveness of their campaigns, compare performance across
 different platforms, and optimize their advertising strategies for better ROI.
-
-## Known issues
-
-Found while moving the templates here. The SQL is kept as published; fix these
-before running the affected models.
-
-- `staging/ad_report`: the `action_value` CTE is not aggregated per ad and day, so the left join repeats each stats row once per action type and spend, clicks and impressions multiply (likely).
-- `core/marketing_report`: the commented-out union blocks fail if uncommented. LinkedIn's creative report has no `creative_name` or `conversion_value`, and Snapchat's ad report has no `campaign_id`.

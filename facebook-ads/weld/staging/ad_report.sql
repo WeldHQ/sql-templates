@@ -6,8 +6,8 @@
 -- template then joins these tables based on specific conditions and groups the
 -- results by certain columns.
 --
--- From the weld.app template library. Not reconciled against Facebook Ads;
--- check the output against the source before relying on it.
+-- From the weld.app template library, corrected. Not reconciled against
+-- Facebook Ads; check the output against the source before relying on it.
 
 with
     stats as (
@@ -45,16 +45,21 @@ with
             date desc
     )
   , action_value as (
+        -- one row per ad and day: the action values table has a row per action
+        -- type, so it is summed here before the join
         select
              date
           , ad_id
-          , case
-                when action_type = 'purchase' then value
-            end as conversion_value
+          , sum(
+                case
+                    when action_type = 'purchase' then value
+                end
+            ) as conversion_value
         from
             {{raw.facebook_ads.ad_roas_insight_action_values}}
-        order by
-            date desc
+        group by
+            date
+          , ad_id
     )
 select
     cast(stats.date as date) date_day

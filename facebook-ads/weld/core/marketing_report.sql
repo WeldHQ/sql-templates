@@ -6,27 +6,31 @@
 -- CTR, CPC, CPM, and conversion rate. The result is grouped by date, platform,
 -- account, campaign, and ad identifiers for comprehensive marketing insights.
 --
--- From the weld.app template library. Not reconciled against Facebook Ads;
--- check the output against the source before relying on it.
-
--- Facebook staging report can be created using the template: facebook ad reports
--- Google staging report can be created using the template: google ad reports
--- LinkedIn staging report can be created using the template: linkedin ad reports
--- TikTok staging report can be created using the template: tiktok ad reports
--- Snapchat staging report can be created using the template: snapchat ad reports
--- Pinterest staging report can be created using the template: pinterest ad reports
--- Note: If certain platforms are not used, you can remove their respective sections from the UNION ALL queries below.
+-- Grain: day x platform x account x campaign x ad. Spend and conversion value
+-- are in each account's own currency; nothing is converted, so totals across
+-- platforms only add up when the accounts share a currency. ctr and
+-- conversion_rate are percentages; all rates are worked out from totals.
+-- LinkedIn campaign groups fill the campaign columns and LinkedIn creatives the
+-- ad columns. Snapchat rows have no campaign.
+--
+-- Only the Facebook Ads block is active. Each other platform reads that platform's
+-- staging ad report (google-ads/, facebook-ads/, linkedin-ads/, tiktok-ads/,
+-- snapchat-ads/, pinterest-ads/ in this repo). Deploy the ones you use, then
+-- remove the comment markers around their blocks; delete the rest.
+--
+-- From the weld.app template library, corrected. Not reconciled against the ad
+-- platforms; check the output against each source before relying on it.
 
 with
     all_data as (
         select
             date_day,
             'facebook' as platform,
-            account_id,
+            cast(account_id as string) as account_id,
             account_name,
-            campaign_id,
+            cast(campaign_id as string) as campaign_id,
             campaign_name,
-            ad_id,
+            cast(ad_id as string) as ad_id,
             ad_name,
             clicks,
             impressions,
@@ -35,17 +39,18 @@ with
             conversion_value
         from
             {{staging.facebook_ads.ad_report}}
-        
-      /*  union all
+
+        /*
+        union all
 
         select
             date_day,
             'google' as platform,
-            account_id,
+            cast(account_id as string) as account_id,
             account_name,
-            campaign_id,
+            cast(campaign_id as string) as campaign_id,
             campaign_name,
-            ad_id,
+            cast(ad_id as string) as ad_id,
             ad_name,
             clicks,
             impressions,
@@ -54,17 +59,17 @@ with
             conversions_value as conversion_value
         from
             {{staging.google_ads.ad_report}}
-        
+
         union all
 
         select
             date_day,
             'linkedin' as platform,
-            account_id,
+            cast(account_id as string) as account_id,
             account_name,
-            campaign_group_id as campaign_id,
+            cast(campaign_group_id as string) as campaign_id,
             campaign_group_name as campaign_name,
-            creative_id as ad_id,
+            cast(creative_id as string) as ad_id,
             creative_name as ad_name,
             clicks,
             impressions,
@@ -73,17 +78,17 @@ with
             conversion_value
         from
             {{staging.linkedin_ads.creative_report}}
-        
+
         union all
 
         select
             date_day,
             'tiktok' as platform,
-            account_id,
+            cast(account_id as string) as account_id,
             account_name,
-            campaign_id,
+            cast(campaign_id as string) as campaign_id,
             campaign_name,
-            ad_id,
+            cast(ad_id as string) as ad_id,
             ad_name,
             clicks,
             impressions,
@@ -92,17 +97,18 @@ with
             conversion_value
         from
             {{staging.tiktok_ads.ad_report}}
-        
+
         union all
 
         select
             date_day,
             'snapchat' as platform,
-            account_id,
+            cast(account_id as string) as account_id,
             account_name,
-            creative_id as campaign_id,
-            campaign_id as campaign_name,
-            ad_id,
+            -- the Snapchat ad report has no campaign columns
+            cast(null as string) as campaign_id,
+            cast(null as string) as campaign_name,
+            cast(ad_id as string) as ad_id,
             ad_name,
             clicks,
             impressions,
@@ -111,27 +117,26 @@ with
             conversion_value
         from
             {{staging.snapchat_ads.ad_report}}
-        
+
         union all
 
         select
             date_day,
             'pinterest' as platform,
-            account_id,
+            cast(account_id as string) as account_id,
             account_name,
-            campaign_id,
+            cast(campaign_id as string) as campaign_id,
             campaign_name,
-            ad_id,
+            cast(ad_id as string) as ad_id,
             ad_name,
             clicks,
             impressions,
             spend,
             conversions,
-            null as conversion_value
+            cast(null as float64) as conversion_value
         from
             {{staging.pinterest_ads.ad_report}}
-            
-            */
+        */
     )
 select
     date_day,
