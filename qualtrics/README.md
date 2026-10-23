@@ -7,7 +7,7 @@ Weld connector: **Qualtrics** ([docs](https://weld.app/docs/applications/qualtri
 
 | Model | Answers | Grain |
 |---|---|---|
-| [`weld/core/response_volume.sql`](weld/core/response_volume.sql) · [dbt](dbt/models/core/core_qualtrics__response_volume.sql) | How many responses each survey records, finished or not, and how long they take | day × account × survey |
+| [`weld/core/response_volume.sql`](weld/core/response_volume.sql) · [dbt](dbt/models/core/core_qualtrics__response_volume.sql) | How many responses each survey records, finished or not, by channel, how long they take and how far abandoners get | day × account × survey |
 | [`weld/core/answer_detail.sql`](weld/core/answer_detail.sql) · [dbt](dbt/models/core/core_qualtrics__answer_detail.sql) | What people answered, question by question | account × response × question × matrix row × selected value |
 | [`weld/core/nps_by_month.sql`](weld/core/nps_by_month.sql) · [dbt](dbt/models/core/core_qualtrics__nps_by_month.sql) | Net Promoter Score per NPS question | month × account × survey × question |
 | [`weld/core/distribution_performance.sql`](weld/core/distribution_performance.sql) · [dbt](dbt/models/core/core_qualtrics__distribution_performance.sql) | Sent, opened, started, finished per email distribution | account × distribution |
@@ -33,7 +33,20 @@ late trickle of responses to an old invite shows in `response_volume` but not in
 wording against every past answer; a deleted one leaves its answers with a NULL
 `question_text`.
 
-**4. Only email distributions are modelled.** SMS distributions are synced as a
+**4. Some answers are not synced.** The connector keeps an answer when its export
+key is a question id, a question id plus a matrix row, or a text-entry question's
+text. Three kinds of answer have other keys and are not in `question_response`:
+answers inside a Loop & Merge block (prefixed with the loop number), the free
+text typed into an "Other, please specify" choice, and Qualtrics' own computed
+NPS group. The NPS group is recomputed from the score in `nps_by_month`; the
+other two cannot be rebuilt.
+
+**5. No per-recipient distribution history.** Qualtrics keeps a status per
+recipient for each distribution (sent, opened, started, finished, bounced). The
+connector syncs the distribution's totals, not that per-recipient table, so a
+contact-level funnel ("who opened but did not start") cannot be built.
+
+**6. Only email distributions are modelled.** SMS distributions are synced as a
 separate stream, `sms_distribution`, with identical columns. To include them, add a
 staging model over it and `UNION ALL` it into `distribution_performance` with a
 channel label.
@@ -124,16 +137,23 @@ carries no survey id.
   into `answer_detail` with a join on `response_id`.
 - **Deletes are not captured** on the incremental streams. A response deleted in
   Qualtrics stays in your warehouse until the table is fully re-synced.
+- **Test and preview responses are left out of every count** so a survey's
+  numbers describe real respondents; `excluded_test_or_spam` shows how many were
+  dropped. Duration is averaged over finished responses only.
 - **Multi-account ready.** Every staging model emits a `qualtrics_account` label and
   it is part of every join key. To add an account, `UNION ALL` a second block in each
   staging model with a different label, and change nothing else.
+- Metric definitions were cross-checked against Fivetran's open-source
+  `dbt_qualtrics` package; the SQL here is written independently for Weld's
+  schema.
 - **Not run against a warehouse.** These models were checked for syntax and against
   the connector's schema, not executed on real data. Reconcile one survey's response
   count and NPS against its Results tab, and one distribution against the
   Distributions tab, before relying on the output.
 
 [Qualtrics API](https://api.qualtrics.com/) ·
-[Understanding your dataset](https://www.qualtrics.com/support/survey-platform/data-and-analysis-module/data/download-data/understanding-your-dataset/) ·
-[Distribution summary](https://www.qualtrics.com/support/survey-platform/distributions-module/distribution-summary/) ·
-[Qualtrics NPS](https://www.qualtrics.com/support/survey-platform/survey-module/editing-questions/question-types-guide/specialty-questions/net-promoter-score/) ·
+[Net Promoter Score](https://www.qualtrics.com/experience-management/customer/net-promoter-score/) ·
 [Weld Qualtrics connector docs](https://weld.app/docs/applications/qualtrics)
+
+Qualtrics' support article "Understanding your dataset" explains every column in a
+response export, including the response type codes decoded in staging.

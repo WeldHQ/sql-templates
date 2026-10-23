@@ -11,6 +11,17 @@
 --
 -- Built on a day spine so a quiet day returns zeros instead of disappearing.
 --
+-- CHANNEL. Responses are also split by how the respondent arrived, from
+-- Qualtrics' distribution_channel: `email` (an email invite), `smsinvite` (an
+-- SMS invite), `anonymous` (the anonymous survey link) and `gl` (a personal
+-- link). Everything else (QR codes, social, offline app, imports) lands in
+-- responses_other_channel, so the five columns always add up to `responses`.
+--
+-- HOW FAR ABANDONERS GOT. Qualtrics records `progress` (0 to 100) on every
+-- response. For unfinished responses its mean says whether people drop out on
+-- the first page or near the end; the sum and count are returned so it can be
+-- rolled up as a ratio of sums.
+--
 -- FINISH RATE: `finished / responses` is the share of RECORDED responses that were
 -- finished. Responses still in progress are not exported, so this is not the share
 -- of people who started; for that, use distribution_performance (email invites
@@ -23,7 +34,9 @@ WITH responses AS (
         DATE(recorded_at) AS recorded_date,
         is_test_or_spam,
         is_finished,
-        duration_seconds
+        duration_seconds,
+        progress_pct,
+        LOWER(distribution_channel) AS channel
     FROM {{ ref('stg_qualtrics__survey_response') }}
     WHERE recorded_at IS NOT NULL
 ),
@@ -58,6 +71,14 @@ daily AS (
         -- is how long it sat open before Qualtrics closed it, not time to complete.
         SUM(IF(NOT is_test_or_spam AND is_finished, duration_seconds, NULL))   AS total_duration_seconds,
         COUNTIF(NOT is_test_or_spam AND is_finished AND duration_seconds IS NOT NULL) AS finished_with_duration,
+        SUM(IF(NOT is_test_or_spam AND NOT is_finished, progress_pct, NULL))   AS unfinished_progress_pct_total,
+        COUNTIF(NOT is_test_or_spam AND NOT is_finished AND progress_pct IS NOT NULL) AS unfinished_with_progress,
+        COUNTIF(NOT is_test_or_spam AND channel = 'email')     AS responses_email,
+        COUNTIF(NOT is_test_or_spam AND channel = 'smsinvite') AS responses_sms,
+        COUNTIF(NOT is_test_or_spam AND channel = 'anonymous') AS responses_anonymous_link,
+        COUNTIF(NOT is_test_or_spam AND channel = 'gl')        AS responses_personal_link,
+        COUNTIF(NOT is_test_or_spam
+                AND COALESCE(channel, '') NOT IN ('email', 'smsinvite', 'anonymous', 'gl')) AS responses_other_channel,
         COUNTIF(is_test_or_spam)                             AS excluded_test_or_spam
     FROM responses
     GROUP BY 1, 2, 3
@@ -77,6 +98,14 @@ SELECT
     COALESCE(d.total_duration_seconds, 0) AS total_duration_seconds,
     COALESCE(d.finished_with_duration, 0) AS finished_with_duration,
     SAFE_DIVIDE(d.total_duration_seconds, d.finished_with_duration) AS avg_duration_seconds,
+    COALESCE(d.unfinished_progress_pct_total, 0) AS unfinished_progress_pct_total,
+    COALESCE(d.unfinished_with_progress, 0)      AS unfinished_with_progress,
+    SAFE_DIVIDE(d.unfinished_progress_pct_total, d.unfinished_with_progress) AS avg_unfinished_progress_pct,
+    COALESCE(d.responses_email, 0)          AS responses_email,
+    COALESCE(d.responses_sms, 0)            AS responses_sms,
+    COALESCE(d.responses_anonymous_link, 0) AS responses_anonymous_link,
+    COALESCE(d.responses_personal_link, 0)  AS responses_personal_link,
+    COALESCE(d.responses_other_channel, 0)  AS responses_other_channel,
     COALESCE(d.excluded_test_or_spam, 0)  AS excluded_test_or_spam
 FROM day_spine s
 CROSS JOIN surveys v
