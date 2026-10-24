@@ -1,0 +1,11 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: twilio
+    schema: raw_twilio
+    tables:
+      - name: call
+      - name: message
+      - name: messaging_service

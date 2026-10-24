@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: gmail
+    schema: raw_gmail
+    tables:
+      - name: message
+      - name: message_part_header
+      - name: message_label
+      - name: profile
