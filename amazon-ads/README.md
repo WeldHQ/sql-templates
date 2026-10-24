@@ -31,14 +31,28 @@ Corrected in review:
 
 - `core/ad_report` joins ads on `report.ad_id`; the website version's `ad.ad_id = ad.ad_id` matched every ad to every row. `ad_id` is now part of the grain, so rows are per product ad as described.
 
+## Ported to the current schema
+
+All four reports now read the version 3 sponsored products report tables that
+current connections sync. The version 2 report tables they read before are no
+longer synced.
+
+- Each report reads its `_v3` table: `sponsored_product_campaign_report_v3`, `sponsored_product_ad_group_report_v3`, `sponsored_product_keyword_report_v3` and `sponsored_product_product_ad_report_v3`.
+- The ad group report joins `sponsored_product_ad_group_v3` for the ad group name, the current ad group table.
+- The version 3 report rows carry `profile_id`, so the profile is joined from the report row instead of through the entity table. Rows whose campaign, ad group, keyword or ad is missing from the entity table now keep their account details.
+- Entity tables are joined on their id and `profile_id`. When the entity row is missing, the name comes from the report row (`campaign_name`, `ad_group_name`, `keyword`, `advertised_asin`).
+- `date` is returned as a `DATE`; the version 3 tables store it as a string.
+- `core/ad_group_report` adds `ad_group_id` and `core/keyword_report` adds `keyword_id`, so two ad groups or keywords with the same name in one campaign stay apart. `core/ad_report` adds `asin`.
+- The version 3 campaign report can hold more than one row per campaign and day, one per applicable budget rule, and the advertised product report splits an ad by advertised ASIN. The reports sum over these rows, as before.
+
 ## Required tables
 
 | Model | Raw tables |
 |---|---|
-| `core/ad_group_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_ad_group_report`, `amazon_ads.sponsored_product_ad_group` |
-| `core/ad_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_product_ad_report`, `amazon_ads.sponsored_product_product_ad` |
-| `core/campaign_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_campaign_report`, `amazon_ads.sponsored_product_campaign` |
-| `core/keyword_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_keyword_report`, `amazon_ads.sponsored_product_keyword` |
+| `core/ad_group_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_ad_group_report_v3`, `amazon_ads.sponsored_product_ad_group_v3` |
+| `core/ad_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_product_ad_report_v3`, `amazon_ads.sponsored_product_product_ad` |
+| `core/campaign_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_campaign_report_v3`, `amazon_ads.sponsored_product_campaign` |
+| `core/keyword_report` | `amazon_ads.profile`, `amazon_ads.sponsored_product_keyword_report_v3`, `amazon_ads.sponsored_product_keyword` |
 
 ## Models
 
@@ -85,9 +99,3 @@ sponsored product keyword report with additional information from profile and
 keyword tables, this template provides an extensive view of key metrics such as
 cost, clicks, and impressions. Marketers can use this data to fine-tune their
 advertising strategies and make informed decisions.
-
-## Known issues
-
-Still open after the review, with the reason each is left as it is.
-
-- All four reports read the sponsored products report tables of Amazon's retired v2 reporting API (`sponsored_product_campaign_report` and so on). Current connections land the v3 tables instead (`sponsored_product_campaign_report_v3` and siblings), with different columns. Porting them means changing every ref and column, so they are left as published for connections that still have the v2 tables.

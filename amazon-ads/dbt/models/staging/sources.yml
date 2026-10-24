@@ -6,12 +6,12 @@ sources:
   - name: amazon_ads
     schema: raw_amazon_ads
     tables:
-      - name: sponsored_product_campaign_report
+      - name: sponsored_product_ad_group_report_v3
       - name: profile
-      - name: sponsored_product_campaign
-      - name: sponsored_product_ad_group_report
-      - name: sponsored_product_ad_group
-      - name: sponsored_product_keyword_report
-      - name: sponsored_product_keyword
-      - name: sponsored_product_product_ad_report
+      - name: sponsored_product_ad_group_v3
+      - name: sponsored_product_product_ad_report_v3
       - name: sponsored_product_product_ad
+      - name: sponsored_product_campaign_report_v3
+      - name: sponsored_product_campaign
+      - name: sponsored_product_keyword_report_v3
+      - name: sponsored_product_keyword

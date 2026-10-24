@@ -4,35 +4,41 @@
 -- integrates data from the campaign report with the account and campaign tables to
 -- provide metrics such as cost, clicks, and impressions for each campaign.
 --
--- From the weld.app template library. Not reconciled against Amazon Ads;
--- check the output against the source before relying on it.
+-- Grain: day x profile x campaign. Reads the version 3 sponsored products campaign
+-- report, which can hold more than one row per campaign and day (one per
+-- applicable budget rule); the metrics are summed over them.
+--
+-- From the weld.app template library, ported to the current synced schema. Not
+-- reconciled against Amazon Ads; check the output against the source before
+-- relying on it.
 
-with report as (
+with stats as (
 select *
-from {{raw.amazon_ads.sponsored_product_campaign_report}}
+from {{raw.amazon_ads.sponsored_product_campaign_report_v3}}
 ), account_info as (
 select *
 from {{raw.amazon_ads.profile}}
-), campaigns as (
+), campaign as (
 select *
-from{{raw.amazon_ads.sponsored_product_campaign}}
+from {{raw.amazon_ads.sponsored_product_campaign}}
 ), fields as (
 select
-report.date,
+cast(stats.date as date) as date,
 account_info.account_info_name,
 account_info.account_info_id,
 account_info.country_code,
-account_info.profile_id,
-campaigns.name as campaign_name,
-report.campaign_id,
-sum(report.cost) as cost,
-sum(report.clicks) as clicks,
-sum(report.impressions) as impressions
-from report
-left join campaigns
-on campaigns.campaign_id = report.campaign_id
+stats.profile_id,
+coalesce(campaign.name, stats.campaign_name) as campaign_name,
+stats.campaign_id,
+sum(stats.cost) as cost,
+sum(stats.clicks) as clicks,
+sum(stats.impressions) as impressions
+from stats
+left join campaign
+on campaign.campaign_id = stats.campaign_id
+and campaign.profile_id = stats.profile_id
 left join account_info
-on account_info.profile_id = campaigns.profile_id
+on account_info.profile_id = stats.profile_id
 group by 1,2,3,4,5,6,7
 )
 select *
