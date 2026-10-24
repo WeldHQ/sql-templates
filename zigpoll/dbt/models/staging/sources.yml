@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: zigpoll
+    schema: raw_zigpoll
+    tables:
+      - name: poll
+      - name: response
+      - name: response_answer
+      - name: slide
+      - name: slide_answer

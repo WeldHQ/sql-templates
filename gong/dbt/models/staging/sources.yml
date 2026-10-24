@@ -1,0 +1,17 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: gong
+    schema: raw_gong
+    tables:
+      - name: answered_scorecard
+      - name: answered_scorecard_answer
+      - name: call
+      - name: call_context_integration
+      - name: call_interaction
+      - name: call_participant
+      - name: call_speaker
+      - name: scorecard_question
+      - name: user

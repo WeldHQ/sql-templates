@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: zendesk
+    schema: raw_zendesk
+    tables:
+      - name: group
+      - name: ticket
+      - name: ticket_metric
+      - name: user

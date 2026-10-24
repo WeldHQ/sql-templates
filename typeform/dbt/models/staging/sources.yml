@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: typeform
+    schema: raw_typeform
+    tables:
+      - name: form
+      - name: form_field
+      - name: form_field_property
+      - name: response
+      - name: response_answer
+      - name: response_answer_choice
