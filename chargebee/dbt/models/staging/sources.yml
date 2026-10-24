@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: chargebee
+    schema: raw_chargebee
+    tables:
+      - name: credit_note
+      - name: credit_note_line_item
+      - name: customer
+      - name: invoice
+      - name: invoice_line_item
+      - name: item
+      - name: item_price

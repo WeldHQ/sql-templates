@@ -1,0 +1,9 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: forex_v2
+    schema: raw_forex_v2
+    tables:
+      - name: USD_rates

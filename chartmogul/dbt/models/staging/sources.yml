@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: chartmogul
+    schema: raw_chartmogul
+    tables:
+      - name: all_metrics
+      - name: customer_activities
+      - name: customers
+      - name: plans

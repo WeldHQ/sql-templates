@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: recurly
+    schema: raw_recurly
+    tables:
+      - name: account
+      - name: invoice
+      - name: invoice_line_item
+      - name: subscription

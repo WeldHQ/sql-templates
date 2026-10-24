@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: paypal
+    schema: raw_paypal
+    tables:
+      - name: balance
+      - name: transaction

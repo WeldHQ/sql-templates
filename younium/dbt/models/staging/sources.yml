@@ -1,0 +1,11 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: younium
+    schema: raw_younium
+    tables:
+      - name: account
+      - name: booking
+      - name: subscription
