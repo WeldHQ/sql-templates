@@ -6,13 +6,10 @@ sources:
   - name: klaviyo
     schema: raw_klaviyo
     tables:
-      - name: event
       - name: campaign
-      - name: campaign_list
-      - name: list
-      - name: email_template
       - name: flow
-  - name: klaviyo_import
-    schema: raw_klaviyo_import
-    tables:
+      - name: campaign_audiences_included
+      - name: list
+      - name: segment
       - name: event
+      - name: metric

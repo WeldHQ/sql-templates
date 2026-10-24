@@ -3,13 +3,13 @@
 -- generate an Events Flow Campaign Report. It combines information from the events,
 -- campaign, and flow tables to provide details such as event timestamps, event
 -- names, custom properties, Klaviyo properties, metric IDs, campaign IDs, person
--- IDs, flow IDs, attributed event IDs, message IDs, send cohorts, send timestamps,
--- order IDs, flow names, flow statuses, campaign subjects, and campaign sent
--- timestamps. The final result is sorted in descending order based on the event
--- timestamps.
+-- IDs, flow IDs, attributed event IDs, message IDs, send cohorts, order IDs, flow
+-- names, flow statuses, campaign names, and campaign send times. The final result
+-- is sorted in descending order based on the event timestamps.
 --
--- From the weld.app template library, corrected. Not reconciled against
--- Klaviyo; check the output against the source before relying on it.
+-- From the weld.app template library, corrected and ported to the current synced
+-- schema. Not reconciled against Klaviyo; check the output against the source
+-- before relying on it.
 
 with
     events as (
@@ -27,7 +27,6 @@ with
           , attributed_event_id
           , message_id
           , send_cohort
-          , send_ts
           , order_id
         from
             {{staging.klaviyo.email_events}}
@@ -35,11 +34,8 @@ with
   , campaign as (
         select
             id as campaign_id
-          , created
-          , name
-          , status
-          , subject
-          , sent_at as campaign_sent_at
+          , name as campaign_name
+          , send_time as campaign_sent_at
         from
             {{raw.klaviyo.campaign}}
     )
@@ -48,13 +44,6 @@ with
             id flow_id
           , name flow_name
           , status as flow_status
-          , trigger_type
-          , trigger_filter
-          , trigger_list_id
-          , trigger_list_name
-          , customer_filter
-          , created flow_created_at
-          , updated
         from
             {{raw.klaviyo.flow}}
     )
@@ -62,7 +51,7 @@ select
     events.*
   , flow.flow_name
   , flow.flow_status
-  , campaign.subject
+  , campaign.campaign_name
   , campaign.campaign_sent_at
 from
     events
