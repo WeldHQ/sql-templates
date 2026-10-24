@@ -10,7 +10,12 @@
 -- are lifetime totals as of the latest sync. Instagram has renamed some
 -- metrics: reel plays are now views, and story exits and taps are reported as
 -- story_tap_exit, story_tap_back and story_tap_forward; the output keeps the
--- older column names where the meaning is the same.
+-- older column names where the meaning is the same. Instagram reports views
+-- instead of impressions for current posts, so the views columns replace the
+-- impressions and video views columns, and the carousel and feed engagement
+-- rates are per view. Feed engagement is the sum of a feed post's likes,
+-- comments, saves and shares, which is how Instagram defines its total
+-- interactions.
 --
 -- From the weld.app template library, corrected. Not reconciled against
 -- Instagram Business; check the output against the source before relying on it.
@@ -37,11 +42,19 @@ with
         select
             id as media_id
           , -- Carousel Metrics
-            carousel_album_engagement
-          , carousel_album_impressions
+            -- Instagram's total interactions for a post are its likes, comments,
+            -- saves and shares; carousels fall back to that sum when the synced
+            -- total is missing
+            coalesce(
+                carousel_album_engagement
+              , case
+                    when coalesce(carousel_album_likes, carousel_album_comments, carousel_album_saved, carousel_album_shares) is not null
+                        then ifnull(carousel_album_likes, 0) + ifnull(carousel_album_comments, 0) + ifnull(carousel_album_saved, 0) + ifnull(carousel_album_shares, 0)
+                end
+            ) as carousel_album_engagement
+          , carousel_album_views
           , carousel_album_reach
           , carousel_album_saved
-          , carousel_album_video_views
           , -- Reel Metrics
             reel_comments
           , reel_likes
@@ -52,20 +65,31 @@ with
           , reel_total_interactions
           , -- Story Metrics
             story_tap_exit as story_exits
-          , story_impressions
+          , story_views
           , story_reach
           , story_replies
           , story_tap_back as story_taps_back
           , story_tap_forward as story_taps_forward
           , -- Feed Metrics
-            feed_engagement
-          , feed_impressions
+            -- feed posts are synced without Instagram's total, so engagement is
+            -- the sum of likes, comments, saves and shares
+            case
+                when coalesce(feed_likes, feed_comments, feed_saved, feed_shares) is not null
+                    then ifnull(feed_likes, 0) + ifnull(feed_comments, 0) + ifnull(feed_saved, 0) + ifnull(feed_shares, 0)
+                else feed_engagement
+            end as feed_engagement
+          , feed_views
           , feed_reach
           , feed_saved
-          , feed_video_views
+        from
+            {{raw.instagram.media_insights}}
+    )
+  , MediaRates as (
+        select
+            *
           , -- Engagement Rates (Simple calculations as examples; can be expanded as needed)
             case
-                when carousel_album_impressions != 0 then carousel_album_engagement / carousel_album_impressions * 100
+                when carousel_album_views != 0 then carousel_album_engagement / carousel_album_views * 100
                 else null
             end as carousel_engagement_rate
           , case
@@ -73,11 +97,11 @@ with
                 else null
             end as reel_like_rate
           , case
-                when feed_impressions != 0 then feed_engagement / feed_impressions * 100
+                when feed_views != 0 then feed_engagement / feed_views * 100
                 else null
             end as feed_engagement_rate
         from
-            {{raw.instagram.media_insights}}
+            MediaDeepDive
     )
 select
     date_trunc(date(mh.timestamp), month) as month
@@ -88,7 +112,7 @@ select
   , mh.like_count
   , mh.comments_count
 from
-    MediaDeepDive md
+    MediaRates md
     join latest_media mh on md.media_id = mh.id
 order by
     month desc
