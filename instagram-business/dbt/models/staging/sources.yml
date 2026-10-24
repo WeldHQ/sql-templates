@@ -6,7 +6,8 @@ sources:
   - name: instagram
     schema: raw_instagram
     tables:
-      - name: user_history
-      - name: user_insights
       - name: media_history
       - name: media_insights
+      - name: user_history
+      - name: user_insights
+      - name: user_aggregated_insights_per_day
