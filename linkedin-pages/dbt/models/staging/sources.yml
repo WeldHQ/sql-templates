@@ -1,0 +1,18 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: linkedin_pages
+    schema: raw_linkedin_pages
+    tables:
+      - name: follower_statistics_time_bound
+      - name: follower_statistics_by_association_type
+      - name: follower_statistics_by_staff_count_range
+      - name: follower_statistics_by_geo_country
+      - name: follower_statistics_by_function
+      - name: follower_statistics_by_industry
+      - name: follower_statistics_by_geo
+      - name: follower_statistics_by_seniority
+      - name: share_statistics_time_bound
+      - name: total_follower_count

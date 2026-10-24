@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: criteo
+    schema: raw_criteo
+    tables:
+      - name: ad
+      - name: ad_statistics_daily_report
+      - name: adset
+      - name: advertiser
+      - name: campaign

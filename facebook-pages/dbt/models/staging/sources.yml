@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: facebook_pages
+    schema: raw_facebook_pages
+    tables:
+      - name: page
+      - name: page_daily_insights
+      - name: post
+      - name: post_lifetime_insights

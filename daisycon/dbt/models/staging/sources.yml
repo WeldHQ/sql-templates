@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: daisycon
+    schema: raw_daisycon
+    tables:
+      - name: advertiser
+      - name: financial_invoices
+      - name: financial_invoice_line
+      - name: advertiser_statistics_per_media
+      - name: advertiser_statistics_by_publisher

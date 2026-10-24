@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: sprout_social
+    schema: raw_sprout_social
+    tables:
+      - name: cases
+      - name: group
+      - name: message
+      - name: profile

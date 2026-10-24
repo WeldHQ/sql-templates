@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: applovin
+    schema: raw_applovin
+    tables:
+      - name: advertiser_campaign_report
+      - name: advertiser_report

@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: reddit_ads
+    schema: raw_reddit_ads
+    tables:
+      - name: ad
+      - name: ad_account
+      - name: ad_group
+      - name: ad_performance
+      - name: campaign
