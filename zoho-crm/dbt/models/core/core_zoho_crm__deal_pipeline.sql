@@ -25,7 +25,7 @@ WITH deal AS (
         -- and most orgs add their own stages on top.
         --
         -- Won is tested first so a stage that somehow contains both words is
-        -- counted once. tests/assert_deal_stages_are_classified.sql lists every
+        -- counted once. tests/assert_zoho_crm__deal_stages_are_classified.sql lists every
         -- stage falling through to Open - read it before trusting the split.
         CASE
             WHEN LOWER(d.stage) LIKE '%won%'  THEN 'Won'
@@ -90,7 +90,7 @@ SELECT
     u.email     AS owner_email,
     u.role_name AS owner_role,
     -- A deal owned by a deactivated rep is unmanaged pipeline. NULL here means the
-    -- owner_id did not resolve at all - see tests/assert_owner_ids_resolve.sql.
+    -- owner_id did not resolve at all - see tests/assert_zoho_crm__owner_ids_resolve.sql.
     u.is_active AS owner_is_active
 FROM deal d
 LEFT JOIN {{ ref('stg_zoho_crm__account') }} a

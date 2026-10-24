@@ -10,10 +10,10 @@ models/core/core_zoho_crm__deal_flow_by_month.sql created / won / lost per month
 models/core/core_zoho_crm__rep_activity.sql       calls, meetings, tasks per rep per day
 models/core/core_zoho_crm__account_360.sql        account grain: people, pipeline, notes
 models/analytics/analytics__zoho_crm_*.sql        thin BI-facing contracts
-tests/assert_deal_stages_are_classified.sql       closed stages hiding in open pipeline
-tests/assert_owner_ids_resolve.sql                deals whose owner is not in `user`
-tests/assert_call_duration_parses.sql             duration strings the regex rejected
-tests/assert_no_duplicate_deals.sql               one row per deal
+tests/assert_zoho_crm__deal_stages_are_classified.sql       closed stages hiding in open pipeline
+tests/assert_zoho_crm__owner_ids_resolve.sql                deals whose owner is not in `user`
+tests/assert_zoho_crm__call_duration_parses.sql             duration strings the regex rejected
+tests/assert_zoho_crm__no_duplicate_deals.sql               one row per deal
 ```
 
 Four layers, same as the Weld side: raw → staging → core → analytics. The analytics
@@ -34,7 +34,7 @@ the Zoho tables.
 (`LIKE '%won%'` / `'%lost%'`). That covers Zoho's defaults, including
 `Closed-Lost to Competition`. It does not cover a custom stage named
 `Contract Signed`, `Churned` or `Dead`. Run
-`tests/assert_deal_stages_are_classified.sql` and add whatever it surfaces to the
+`tests/assert_zoho_crm__deal_stages_are_classified.sql` and add whatever it surfaces to the
 `CASE` in that model — this is the one edit almost every org has to make.
 
 No vars to set, no packages required — the tests are plain `SELECT`s, so

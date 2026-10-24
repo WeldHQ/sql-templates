@@ -30,7 +30,7 @@ stage *string*. Zoho's own defaults are covered — including `Closed-Lost to
 Competition`, which is why the match is `LIKE '%lost%'` and not an equality list —
 but a custom stage called `Contract Signed` or `Churned` will read as open pipeline
 until you add it. Run
-[`assert_deal_stages_are_classified`](dbt/tests/assert_deal_stages_are_classified.sql);
+[`assert_zoho_crm__deal_stages_are_classified`](dbt/tests/assert_zoho_crm__deal_stages_are_classified.sql);
 this is the one edit almost every org has to make.
 
 **3. There is no history.** Weld's Zoho CRM connector does not support history
@@ -94,7 +94,7 @@ folder — mirror that structure in your synced repo, or adjust the refs.
 
 **Sync the `user` stream even if you do not think you need it.** It is the only
 dimension the other modules can join to, and without it every report groups by a
-NULL rep name. [`assert_owner_ids_resolve`](dbt/tests/assert_owner_ids_resolve.sql)
+NULL rep name. [`assert_zoho_crm__owner_ids_resolve`](dbt/tests/assert_zoho_crm__owner_ids_resolve.sql)
 is there to catch exactly that.
 
 Three synced modules are deliberately not modelled, because nothing in the schema

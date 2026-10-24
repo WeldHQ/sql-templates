@@ -11,7 +11,7 @@
 --
 -- Reconcile call_duration_minutes against one call of known length before
 -- reporting on it. If your org turns out to emit mm:ss, divide by 60.
--- tests/assert_call_duration_parses.sql guards the shape, not the unit.
+-- tests/assert_zoho_crm__call_duration_parses.sql guards the shape, not the unit.
 
 SELECT
     'org_1'                                 AS zoho_org,
