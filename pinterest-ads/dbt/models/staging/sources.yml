@@ -1,0 +1,11 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: pinterest_ads
+    schema: raw_pinterest_ads
+    tables:
+      - name: ad_report
+      - name: ad_account
+      - name: ad

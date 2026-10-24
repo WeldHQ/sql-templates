@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: economic
+    schema: raw_economic
+    tables:
+      - name: booked_invoices
+      - name: products
+      - name: customers
+      - name: orders

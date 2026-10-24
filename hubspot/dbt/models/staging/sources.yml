@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: hubspot
+    schema: raw_hubspot
+    tables:
+      - name: companies
+      - name: deals
+      - name: owners
+      - name: engagements
+      - name: pipeline_stage
+      - name: contacts
+      - name: contact_deal

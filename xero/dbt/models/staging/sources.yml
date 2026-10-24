@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: xero
+    schema: raw_xero
+    tables:
+      - name: journal
+      - name: journal_line
+      - name: invoice
+      - name: invoice_line_item

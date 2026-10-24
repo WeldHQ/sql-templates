@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: linkedin_ads
+    schema: raw_linkedin_ads
+    tables:
+      - name: creative
+      - name: campaign
+      - name: campaign_group
+      - name: account
+      - name: ad_analytics_by_creative

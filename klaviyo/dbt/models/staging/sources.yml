@@ -1,0 +1,18 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: klaviyo
+    schema: raw_klaviyo
+    tables:
+      - name: event
+      - name: campaign
+      - name: campaign_list
+      - name: list
+      - name: email_template
+      - name: flow
+  - name: klaviyo_import
+    schema: raw_klaviyo_import
+    tables:
+      - name: event

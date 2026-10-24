@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: microsoft_ads
+    schema: raw_microsoft_ads
+    tables:
+      - name: ad_performance_daily_report
+      - name: account
+      - name: ad_group
+      - name: campaign
+      - name: campaign_performance_daily_report
+      - name: ad

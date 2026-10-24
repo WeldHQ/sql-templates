@@ -1,0 +1,17 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: amazon_ads
+    schema: raw_amazon_ads
+    tables:
+      - name: sponsored_product_campaign_report
+      - name: profile
+      - name: sponsored_product_campaign
+      - name: sponsored_product_ad_group_report
+      - name: sponsored_product_ad_group
+      - name: sponsored_product_keyword_report
+      - name: sponsored_product_keyword
+      - name: sponsored_product_product_ad_report
+      - name: sponsored_product_product_ad

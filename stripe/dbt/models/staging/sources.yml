@@ -1,0 +1,17 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: stripe
+    schema: raw_stripe
+    tables:
+      - name: subscription
+      - name: subscription_item
+      - name: plan
+      - name: subscription_discount
+      - name: coupon
+  - name: forex_eur
+    schema: raw_forex_eur
+    tables:
+      - name: incremental

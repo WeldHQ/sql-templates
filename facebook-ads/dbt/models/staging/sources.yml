@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: facebook_ads
+    schema: raw_facebook_ads
+    tables:
+      - name: ad_insight
+      - name: ad
+      - name: creative
+      - name: ad_roas_insight_conversion_insights
+      - name: ad_roas_insight_action_values
