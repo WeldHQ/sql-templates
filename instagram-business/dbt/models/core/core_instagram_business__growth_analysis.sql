@@ -8,7 +8,8 @@
 -- Grain: account x month. Followers and follows are the average of the
 -- account snapshots Weld took in that month (the snapshot time is when the
 -- count was read). Engagement is the latest lifetime engagement of the posts
--- published in that month. Growth rates compare each month with the
+-- published in that month; feed engagement is the sum of a feed post's likes,
+-- comments, saves and shares. Growth rates compare each month with the
 -- account's previous month in the data.
 --
 -- From the weld.app template library, corrected. Not reconciled against
@@ -45,6 +46,29 @@ with
                     _weld_synced_at desc
             ) = 1
     )
+  , insights as (
+        -- Instagram's total interactions for a post are its likes, comments,
+        -- saves and shares. Feed posts are synced with those counts but without
+        -- the total, so feed engagement is their sum; carousels use the synced
+        -- total and fall back to the same sum.
+        select
+            id
+          , case
+                when coalesce(feed_likes, feed_comments, feed_saved, feed_shares) is not null
+                    then ifnull(feed_likes, 0) + ifnull(feed_comments, 0) + ifnull(feed_saved, 0) + ifnull(feed_shares, 0)
+                else feed_engagement
+            end as feed_engagement
+          , coalesce(
+                carousel_album_engagement
+              , case
+                    when coalesce(carousel_album_likes, carousel_album_comments, carousel_album_saved, carousel_album_shares) is not null
+                        then ifnull(carousel_album_likes, 0) + ifnull(carousel_album_comments, 0) + ifnull(carousel_album_saved, 0) + ifnull(carousel_album_shares, 0)
+                end
+            ) as carousel_album_engagement
+          , reel_likes
+        from
+            {{ source('instagram', 'media_insights') }}
+    )
   , MonthlyEngagement as (
         select
             mh.user_id
@@ -54,7 +78,7 @@ with
           , sum(mi.reel_likes) as total_reel_likes
         from
             latest_media mh
-            left join {{ source('instagram', 'media_insights') }} mi on mi.id = mh.id
+            left join insights mi on mi.id = mh.id
         group by
             user_id
           , month

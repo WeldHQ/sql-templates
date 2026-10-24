@@ -6,23 +6,30 @@
 -- them by year, month, campaign ID, and campaign name. The final result is ordered
 -- by year, month, and campaign name.
 --
--- From the weld.app template library. Not reconciled against Klaviyo;
--- check the output against the source before relying on it.
+-- The event name comes from the metric table and persons are counted by Klaviyo
+-- profile id. Events are tied to a campaign through Klaviyo's attribution data
+-- (the event's campaign_id).
+--
+-- From the weld.app template library, ported to the current synced schema. Not
+-- reconciled against Klaviyo; check the output against the source before relying
+-- on it.
 
 WITH MonthlyUniquePersonsPerEvent AS (
     SELECT
         EXTRACT(YEAR FROM e.timestamp) AS event_year,
         EXTRACT(MONTH FROM e.timestamp) AS event_month,
         e.campaign_id,
-        e.event_name,
-        COUNT(DISTINCT e.person_id) AS unique_persons
+        m.name AS event_name,
+        COUNT(DISTINCT e.profile_id) AS unique_persons
     FROM
         {{raw.klaviyo.event}} e
+    JOIN
+        {{raw.klaviyo.metric}} m ON m.id = e.metric_id
     WHERE
-        e.event_name IN ('Dropped Email', 'Bounced Email', 'Received Email', 'Unsubscribed', 'Clicked Email', 'Opened Email')
+        m.name IN ('Dropped Email', 'Bounced Email', 'Received Email', 'Unsubscribed', 'Clicked Email', 'Opened Email')
         AND e.campaign_id IS NOT NULL
     GROUP BY
-        event_year, event_month, e.event_name, e.campaign_id
+        event_year, event_month, event_name, e.campaign_id
 )
 
 SELECT

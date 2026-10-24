@@ -4,36 +4,42 @@
 -- data from the sponsored product ad group report with the profile and ad group
 -- tables to deliver metrics like cost, clicks, and impressions for each ad group.
 --
--- From the weld.app template library. Not reconciled against Amazon Ads;
--- check the output against the source before relying on it.
+-- Grain: day x profile x campaign x ad group. Reads the version 3 sponsored
+-- products ad group report.
+--
+-- From the weld.app template library, ported to the current synced schema. Not
+-- reconciled against Amazon Ads; check the output against the source before
+-- relying on it.
 
-with report as (
+with stats as (
 select *
-from {{ source('amazon_ads', 'sponsored_product_ad_group_report') }}
+from {{ source('amazon_ads', 'sponsored_product_ad_group_report_v3') }}
 ), account_info as (
 select *
 from {{ source('amazon_ads', 'profile') }}
 ), ad_group as (
 select *
-from {{ source('amazon_ads', 'sponsored_product_ad_group') }}
+from {{ source('amazon_ads', 'sponsored_product_ad_group_v3') }}
 ), fields as (
 select
-report.date,
+cast(stats.date as date) as date,
 account_info.account_info_name,
 account_info.account_info_id,
 account_info.country_code,
-account_info.profile_id,
-ad_group.name as ad_group_name,
-report.campaign_id,
-sum(report.cost) as cost,
-sum(report.clicks) as clicks,
-sum(report.impressions) as impressions
-from report
+stats.profile_id,
+coalesce(ad_group.name, stats.ad_group_name) as ad_group_name,
+stats.campaign_id,
+stats.ad_group_id,
+sum(stats.cost) as cost,
+sum(stats.clicks) as clicks,
+sum(stats.impressions) as impressions
+from stats
 left join ad_group
-on ad_group.ad_group_id = report.ad_group_id
+on ad_group.ad_group_id = stats.ad_group_id
+and ad_group.profile_id = stats.profile_id
 left join account_info
-on account_info.profile_id = ad_group.profile_id
-group by 1,2,3,4,5,6,7
+on account_info.profile_id = stats.profile_id
+group by 1,2,3,4,5,6,7,8
 )
 select *
 from fields

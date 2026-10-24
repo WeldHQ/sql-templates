@@ -10,7 +10,8 @@
 -- Grain: month the media was posted. Each post counts once, with its latest
 -- lifetime likes, comments and insights, so a month's totals keep growing
 -- while its posts collect engagement. Instagram reports story exits as
--- story_tap_exit.
+-- story_tap_exit. Feed engagement is the sum of a feed post's likes, comments,
+-- saves and shares, which is how Instagram defines its total interactions.
 --
 -- From the weld.app template library, corrected. Not reconciled against
 -- Instagram Business; check the output against the source before relying on it.
@@ -33,6 +34,32 @@ with
                     _weld_synced_at desc
             ) = 1
     )
+  , insights as (
+        -- Instagram's total interactions for a post are its likes, comments,
+        -- saves and shares. Feed posts are synced with those counts but without
+        -- the total, so feed engagement is their sum; carousels use the synced
+        -- total and fall back to the same sum.
+        select
+            id
+          , case
+                when coalesce(feed_likes, feed_comments, feed_saved, feed_shares) is not null
+                    then ifnull(feed_likes, 0) + ifnull(feed_comments, 0) + ifnull(feed_saved, 0) + ifnull(feed_shares, 0)
+                else feed_engagement
+            end as feed_engagement
+          , coalesce(
+                carousel_album_engagement
+              , case
+                    when coalesce(carousel_album_likes, carousel_album_comments, carousel_album_saved, carousel_album_shares) is not null
+                        then ifnull(carousel_album_likes, 0) + ifnull(carousel_album_comments, 0) + ifnull(carousel_album_saved, 0) + ifnull(carousel_album_shares, 0)
+                end
+            ) as carousel_album_engagement
+          , reel_likes
+          , reel_comments
+          , story_replies
+          , story_tap_exit
+        from
+            {{ source('instagram', 'media_insights') }}
+    )
   , MonthlyEngagementData as (
         select
             format_date('%Y-%m', date(mh.timestamp)) as month
@@ -47,7 +74,7 @@ with
           , sum(mi.story_tap_exit) as total_story_exits
         from
             latest_media mh
-            left join {{ source('instagram', 'media_insights') }} mi on mh.id = mi.id
+            left join insights mi on mh.id = mi.id
         group by
             month
     )
