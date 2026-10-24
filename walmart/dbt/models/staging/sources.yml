@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: walmart
+    schema: raw_walmart
+    tables:
+      - name: order
+      - name: order_line
+      - name: order_line_charge
+      - name: order_line_refund_charge
+      - name: order_line_status
+      - name: recon_report

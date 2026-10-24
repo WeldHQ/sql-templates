@@ -4,7 +4,7 @@
 --
 -- Small table, disproportionately useful. `total_amount` is Amazon's own figure for
 -- what it paid out for the period, which makes it the one external number you can
--- check the whole ledger against - see tests/assert_settlement_ties_to_deposits.sql.
+-- check the whole ledger against - see tests/assert_amazon_seller__settlement_ties_to_deposits.sql.
 -- If the classified lines do not sum to this, the ledger is wrong, full stop.
 
 SELECT

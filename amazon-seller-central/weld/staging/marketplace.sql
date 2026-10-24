@@ -17,7 +17,7 @@
 --
 -- These IDs are public and stable. If you sell in a marketplace that is not listed,
 -- add it here and nothing else changes;
--- tests/assert_marketplace_keys_are_consistent.sql fails on any unmapped value rather
+-- tests/assert_amazon_seller__marketplace_keys_are_consistent.sql fails on any unmapped value rather
 -- than letting it through as a broken join key.
 
 SELECT * FROM UNNEST([

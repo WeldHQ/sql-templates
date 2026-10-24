@@ -1,0 +1,10 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: cargoson
+    schema: raw_cargoson
+    tables:
+      - name: bookings
+      - name: booking_rows

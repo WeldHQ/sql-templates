@@ -11,10 +11,10 @@ models/core/core_amazon_vendor__inventory_health.sql         the vendor scorecar
 models/core/core_amazon_vendor__forecast_vs_actuals.sql      Amazon's forecast, scored
 models/core/core_amazon_vendor__sales_over_time.yml          schema tests for the three core models
 models/analytics/analytics__amazon_vendor_*.sql              BI contracts - the view filter lives here
-tests/assert_no_duplicate_report_generations.sql             one row per date x ASIN x view x program
-tests/assert_distributor_views_are_not_summed.sql            measures the MANUFACTURING/SOURCING overlap
-tests/assert_cogs_does_not_exceed_retail.sql                 catches shipped_cogs/shipped_revenue swapped
-tests/assert_traffic_is_not_multiplied_by_views.sql          glance views not inflated by the join
+tests/assert_amazon_vendor__no_duplicate_report_generations.sql             one row per date x ASIN x view x program
+tests/assert_amazon_vendor__distributor_views_are_not_summed.sql            measures the MANUFACTURING/SOURCING overlap
+tests/assert_amazon_vendor__cogs_does_not_exceed_retail.sql                 catches shipped_cogs/shipped_revenue swapped
+tests/assert_amazon_vendor__traffic_is_not_multiplied_by_views.sql          glance views not inflated by the join
 ```
 
 **These are the same models as [`../weld/`](../weld/), differing only in ref
@@ -54,7 +54,7 @@ That's it — no vars to set.
   Amazon retains only the current forecast generation, so forecast accuracy cannot be
   measured retroactively — and cannot be backfilled. The same applies to any
   point-in-time inventory question.
-- **`assert_distributor_views_are_not_summed` is informational.** It cannot inspect a
+- **`assert_amazon_vendor__distributor_views_are_not_summed` is informational.** It cannot inspect a
   dashboard; it measures how much your MANUFACTURING and SOURCING sets overlap, so a
   failure tells you the size of the error you would be making. That is a finding, not
   a defect.

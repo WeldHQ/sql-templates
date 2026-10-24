@@ -1,0 +1,17 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: traede
+    schema: raw_traede
+    tables:
+      - name: customer
+      - name: invoice
+      - name: invoice_line
+      - name: order
+      - name: order_line
+      - name: product
+      - name: production_order
+      - name: production_order_line
+      - name: variant

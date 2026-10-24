@@ -1,0 +1,19 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: shiphero
+    schema: raw_shiphero
+    tables:
+      - name: order
+      - name: order_line_item
+      - name: order_shipping_line
+      - name: pack_per_day
+      - name: pick_per_day
+      - name: product
+      - name: return
+      - name: return_line_item
+      - name: shipment
+      - name: shipment_line_item
+      - name: shipment_shipping_label
