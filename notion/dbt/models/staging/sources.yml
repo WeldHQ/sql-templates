@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: notion
+    schema: raw_notion
+    tables:
+      - name: data_source
+      - name: page
+      - name: page_property
+      - name: user

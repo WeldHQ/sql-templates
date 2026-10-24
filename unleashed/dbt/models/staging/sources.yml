@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: unleashed
+    schema: raw_unleashed
+    tables:
+      - name: product
+      - name: sales_order
+      - name: sales_order_line
+      - name: stock_on_hand

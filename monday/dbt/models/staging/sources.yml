@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: monday
+    schema: raw_monday
+    tables:
+      - name: activity_logs
+      - name: board
+      - name: item
+      - name: item_column_values
+      - name: user

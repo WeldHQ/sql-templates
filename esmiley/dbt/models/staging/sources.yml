@@ -1,0 +1,11 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: esmiley
+    schema: raw_esmiley
+    tables:
+      - name: account
+      - name: registration
+      - name: registration_point

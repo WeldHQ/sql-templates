@@ -1,0 +1,9 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: linear
+    schema: raw_linear
+    tables:
+      - name: issues

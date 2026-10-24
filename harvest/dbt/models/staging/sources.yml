@@ -1,0 +1,16 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: harvest
+    schema: raw_harvest
+    tables:
+      - name: company
+      - name: expense
+      - name: invoice
+      - name: invoice_line_items
+      - name: project
+      - name: project_budget_report
+      - name: time_entry
+      - name: user

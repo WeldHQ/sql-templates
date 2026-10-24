@@ -1,0 +1,13 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: hibob
+    schema: raw_hibob
+    tables:
+      - name: employee
+      - name: entity_names
+      - name: timeoff_durations
+      - name: time_off
+      - name: employee_work_history
