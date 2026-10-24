@@ -1,0 +1,14 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: app_store_connect
+    schema: raw_app_store_connect
+    tables:
+      - name: app_crashes
+      - name: customer_reviews
+      - name: app_installs_deletions
+      - name: sales_report
+      - name: app_sessions
+      - name: app_store_engagement

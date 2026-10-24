@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: auth0
+    schema: raw_auth0
+    tables:
+      - name: logs
+      - name: stats_daily
+      - name: user_identities
+      - name: users

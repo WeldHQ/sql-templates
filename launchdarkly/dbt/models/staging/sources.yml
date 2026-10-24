@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: launchdarkly
+    schema: raw_launchdarkly
+    tables:
+      - name: context
+      - name: feature_flag
+      - name: project
+      - name: project_environment

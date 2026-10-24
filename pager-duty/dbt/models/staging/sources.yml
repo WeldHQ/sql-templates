@@ -1,0 +1,12 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: pager_duty
+    schema: raw_pager_duty
+    tables:
+      - name: raw_incident
+      - name: raw_incident_acknowledged_user_id
+      - name: raw_incident_assigned_user_id
+      - name: user

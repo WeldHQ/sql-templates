@@ -1,0 +1,15 @@
+# Point each `schema` at wherever your loader lands these tables.
+
+version: 2
+
+sources:
+  - name: sona
+    schema: raw_sona
+    tables:
+      - name: absence_days
+      - name: absence_types
+      - name: absences
+      - name: org_units
+      - name: pay_lines
+      - name: shifts
+      - name: users
