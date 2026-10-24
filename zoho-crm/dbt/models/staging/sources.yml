@@ -1,0 +1,31 @@
+# Point `schema` at whatever schema your loader lands the Zoho CRM tables in.
+# One source block per Zoho org. The staging models label rows with zoho_org and
+# core carries that through every join, so adding an org is: add a block here,
+# UNION ALL it in the staging models with a different label, done.
+#
+# No history tables listed. Weld's Zoho CRM connector does not support them
+# (history: false on the connector's feature table), which is why none of these
+# models can reconstruct a past pipeline - see core_zoho_crm__deal_pipeline.
+
+version: 2
+
+sources:
+  - name: zoho_crm
+    schema: raw_zoho_crm
+    tables:
+      - name: account
+      - name: contact
+      - name: deal
+      - name: lead
+      # `user` is not optional: it is the only dimension the other streams can
+      # join to, and without it every report groups by a NULL rep name.
+      - name: user
+      - name: call
+      - name: event
+      - name: task
+      # The only activity stream that keeps its parent record id.
+      - name: note
+
+# Synced by the connector but not modelled here, because nothing in the schema
+# joins to them: campaign (no deal or lead key), product and price_book (no line
+# items, and no key between the two).
