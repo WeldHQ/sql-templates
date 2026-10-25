@@ -26,7 +26,7 @@ FROM (
         COALESCE(CAST(conversions_value AS FLOAT64), 0) AS conversion_value,
         _weld_deleted_at                            AS deleted_at,
         ROW_NUMBER() OVER (
-            PARTITION BY ad_group_id, date, device, ad_network_type, country_criterion_id, location_type
+            PARTITION BY account_id, campaign_id, ad_group_id, date, device, ad_network_type, country_criterion_id, location_type
             ORDER BY _weld_synced DESC
         ) AS row_rank
     FROM {{ source('google_ads', 'ad_group_country_stats') }}

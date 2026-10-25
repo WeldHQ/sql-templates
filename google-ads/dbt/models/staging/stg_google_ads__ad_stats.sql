@@ -2,7 +2,8 @@
 -- Thin wrapper over raw `ad_stats`, the daily ad report. Casts, converts micros,
 -- drops rows the connector has retracted, de-duplicates.
 --
--- Grain: date x ad x device x ad network (the report's own key).
+-- Grain: date x account x campaign x ad group x ad x device x ad network. Google
+-- identifies an ad by its ad group and ad id together, so both are in the key.
 --
 -- MONEY IS IN MICROS. Google returns cost as millionths of the account currency;
 -- spend here is divided by 1,000,000. conversions_value is already in currency.
@@ -35,7 +36,7 @@ FROM (
         COALESCE(CAST(video_views AS INT64), 0)     AS video_views,
         _weld_deleted_at                            AS deleted_at,
         ROW_NUMBER() OVER (
-            PARTITION BY ad_id, campaign_id, date, device, ad_network_type
+            PARTITION BY account_id, campaign_id, ad_group_id, ad_id, date, device, ad_network_type
             ORDER BY _weld_synced DESC
         ) AS row_rank
     FROM {{ source('google_ads', 'ad_stats') }}

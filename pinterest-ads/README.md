@@ -11,8 +11,8 @@ Weld connector: **Pinterest Ads** ([docs](https://weld.app/docs/applications/pin
 | [`weld/core/campaign_performance_daily.sql`](weld/core/campaign_performance_daily.sql) · [dbt](dbt/models/core/core_pinterest_ads__campaign_performance_daily.sql) | Ads Manager, Campaigns tab, by day, with CTR, CPC, CPM, cost per conversion and checkout ROAS | day × ad account × campaign |
 | [`weld/core/campaign_country_performance_daily.sql`](weld/core/campaign_country_performance_daily.sql) · [dbt](dbt/models/core/core_pinterest_ads__campaign_country_performance_daily.sql) | Ads Manager, campaigns broken down by country | day × ad account × campaign × country |
 
-Pinterest's hierarchy is ad account > campaign > ad group > ad, where an ad is a
-promoted Pin. The ad model carries the ad group as its grouping level.
+In Pinterest, an ad account holds campaigns, a campaign holds ad groups and an ad
+group holds ads, where an ad is a promoted Pin. The ad model carries the ad group as its grouping level.
 
 ## Cross-channel contract
 

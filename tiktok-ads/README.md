@@ -11,7 +11,8 @@ Weld connector: **TikTok Ads** ([docs](https://weld.app/docs/applications/tiktok
 | [`weld/core/campaign_performance_daily.sql`](weld/core/campaign_performance_daily.sql) · [dbt](dbt/models/core/core_tiktok_ads__campaign_performance_daily.sql) | Ads Manager, Campaigns tab, by day, with CTR, CPC, CPM, cost per conversion and Complete payment ROAS | day × advertiser × campaign |
 | [`weld/core/ad_group_performance_daily.sql`](weld/core/ad_group_performance_daily.sql) · [dbt](dbt/models/core/core_tiktok_ads__ad_group_performance_daily.sql) | Ads Manager, Ad groups tab, by day, with the optimisation goal that defines each group's conversions | day × advertiser × ad group |
 
-TikTok's hierarchy is advertiser (the ad account) > campaign > ad group > ad. All
+In TikTok, an advertiser (the ad account) holds campaigns, campaigns hold ad groups,
+and ad groups hold ads. All
 three reports are built from the one ad level report, so they add up to each other.
 
 ## Cross-channel contract

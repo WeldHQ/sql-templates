@@ -26,7 +26,7 @@ FROM (
         COALESCE(CAST(video_views AS INT64), 0)     AS video_views,
         _weld_deleted_at                            AS deleted_at,
         ROW_NUMBER() OVER (
-            PARTITION BY campaign_id, date, device, ad_network_type
+            PARTITION BY account_id, campaign_id, date, device, ad_network_type
             ORDER BY _weld_synced DESC
         ) AS row_rank
     FROM {{raw.google_ads.campaign_stats}}

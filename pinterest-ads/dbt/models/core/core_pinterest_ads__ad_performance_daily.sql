@@ -4,7 +4,7 @@
 -- Grain: date_day x account_id x ad_id. Currency: the ad account's.
 -- Depends on: staging.pinterest_ads.ad_report, .ad, .ad_group, .campaign, .ad_account
 --
--- Hierarchy: ad account > campaign > ad group > ad.
+-- An ad account holds campaigns, campaigns hold ad groups, ad groups hold ads.
 --
 -- Conversion definition, under Pinterest's default attribution (30 day click,
 -- 30 day engagement, 1 day view, dated on the ad action):
