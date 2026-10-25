@@ -1,0 +1,5 @@
+# No raw sources: every model here reads the platform folders' core models.
+
+version: 2
+
+sources: []

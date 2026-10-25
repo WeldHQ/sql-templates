@@ -6,8 +6,8 @@ sources:
   - name: tiktok_ads
     schema: raw_tiktok_ads
     tables:
-      - name: ad_daily_report
       - name: ad
+      - name: ad_daily_report
       - name: ad_group
       - name: advertiser
       - name: campaign

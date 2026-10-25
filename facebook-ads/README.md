@@ -1,84 +1,114 @@
 # Facebook Ads templates
 
-SQL reports over Weld's Facebook Ads connector. BigQuery.
+Daily ad, ad set and campaign performance from Meta (Facebook and Instagram) ads,
+with purchases and a breakdown of every conversion event, in the same shape as
+the other paid ads templates in this repo. BigQuery.
 
-| Model | Report | What it returns |
+Weld connector: **Facebook Ads** ([docs](https://weld.app/docs/applications/facebook-ads)).
+
+| Model | Recreates | Grain |
 |---|---|---|
-| [`weld/staging/ad_report.sql`](weld/staging/ad_report.sql) · [dbt](dbt/models/staging/stg_facebook_ads__ad_report.sql) | Ad Report | Integrates with Facebook Ads and retrieves data from various tables such as ad_insight, account, campaign, ad_set, and ad. It selects specific columns from these tables and performs calculations to generate aggregated metrics such as spend, reach, impressions, clicks, CPC, CTR, and CPM. The template then joins these tables based on specific conditions and groups the results by certain columns. |
-| [`weld/core/conversion_insights.sql`](weld/core/conversion_insights.sql) · [dbt](dbt/models/core/core_facebook_ads__conversion_insights.sql) | Conversion Insights | This SQL template retrieves conversion insights data from Facebook Ads, including various metrics such as spend, reach, impressions, clicks, and more. It joins data from different tables like ad_insight, ad, and ad_roas_insight_conversion_insights to provide a comprehensive analysis of ad performance. |
-| [`weld/core/marketing_report.sql`](weld/core/marketing_report.sql) · [dbt](dbt/models/core/core_facebook_ads__marketing_report.sql) | Marketing Insights Dashboard | This SQL template consolidates advertising data from multiple platforms, including Facebook, Google, LinkedIn, TikTok, Snapchat, and Pinterest, into a unified dataset. It aggregates metrics such as clicks, impressions, spend, and conversions, and calculates performance indicators like CTR, CPC, CPM, and conversion rate. The result is grouped by date, platform, account, campaign, and ad identifiers for comprehensive marketing insights. |
+| [`weld/core/ad_performance_daily.sql`](weld/core/ad_performance_daily.sql) · [dbt](dbt/models/core/core_facebook_ads__ad_performance_daily.sql) | Ads Manager, Ads tab, by day, with purchases and purchase value | day × ad account × ad |
+| [`weld/core/campaign_performance_daily.sql`](weld/core/campaign_performance_daily.sql) · [dbt](dbt/models/core/core_facebook_ads__campaign_performance_daily.sql) | Ads Manager, Campaigns tab, by day, with CTR, CPC, CPM, cost per purchase and ROAS | day × ad account × campaign |
+| [`weld/core/ad_set_performance_daily.sql`](weld/core/ad_set_performance_daily.sql) · [dbt](dbt/models/core/core_facebook_ads__ad_set_performance_daily.sql) | Ads Manager, Ad sets tab, by day, with optimisation goal and attribution setting | day × ad account × ad set |
+| [`weld/core/conversions_by_action_type_daily.sql`](weld/core/conversions_by_action_type_daily.sql) · [dbt](dbt/models/core/core_facebook_ads__conversions_by_action_type_daily.sql) | Results columns per conversion event (purchases, leads, add to carts, custom conversions) | day × ad account × ad × action type |
 
-## Where these come from
+## Cross-channel contract
 
-These started as the templates in the weld.app template library. Each one was
-published as a single query rather than a layered model set. Every query was
-reviewed when it moved here and corrected where it was wrong; the corrections
-are listed under Changes from the website version. The layout:
+`ad_performance_daily` and `campaign_performance_daily` both start with
+`date_day, account_id, account_name, currency, campaign_id, campaign_name`, then
+(ad model only) `ad_set_id, ad_set_name, ad_id, ad_name`, then `spend,
+impressions, clicks, conversions, conversion_value, ctr, cpc, cpm,
+cost_per_conversion, roas`. The other paid ads templates here emit the same
+columns, so select them from each and `UNION ALL`. `account_id` is part of every
+join key, so several ad accounts in one schema stay apart. Convert currencies
+before summing across accounts.
 
-- Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
-  passthrough in `weld/analytics/` for dashboards to bind to.
-- Queries that other templates read as a `{{staging...}}` ref sit in
-  `weld/staging/`, so those refs resolve.
-- Most queries read the raw tables directly, so there is no staging layer of
-  cast-and-rename wrappers like the one in [`shopify/`](../shopify/).
-- None of them has been reconciled against the source system. Treat every model
-  as a starting point and check the output before relying on it.
-- `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
-  tests ship with these models.
+Two choices to know before blending: `clicks` is **link clicks**, not "Clicks
+(all)" (that is `clicks_all`), and `conversions` counts click-through and
+view-through purchases together.
 
-## Changes from the website version
+## Layers
 
-- The cross-channel marketing report expects the other platforms' ad reports at
-  `{{staging.pinterest_ads.ad_report}}` and `{{staging.snapchat_ads.ad_report}}`; the
-  website version said `staging.pinterest` and `staging.snapchat`, which match no
-  folder here. Only the active platform's block is uncommented; uncomment the others
-  once their ad reports are deployed.
+```
+raw.facebook_ads.*        ELT output, untouched
+  ↓
+weld/staging/*.sql        8 thin wrappers: cast, strip the act_ prefix, de-duplicate
+  ↓
+weld/core/*.sql           the reports, all the business logic lives here
+  ↓
+weld/analytics/*.sql      BI-facing contracts, deliberately thin
+```
 
-Corrected in review:
+Analytics models are `SELECT *` on purpose: dashboards bind to them, so core can be
+changed without breaking anything downstream. `dbt/` holds the same models with dbt
+refs, generated from the Weld versions; see [dbt/README.md](dbt/README.md).
 
-- `staging/ad_report`: action values are summed per ad and day before the join. The website version joined one row per action type, so spend, clicks and impressions repeated once per action type.
-- `core/marketing_report`: the stray `select` before the active block is gone, every commented platform block has its `select` and reads only columns that platform's ad report outputs, and IDs are cast to strings so the blocks union cleanly. LinkedIn campaign groups and creatives fill the campaign and ad columns; Snapchat's report has no campaign columns, so its block leaves them empty.
+Weld references map to folder paths, so `{{staging.facebook_ads.ad}}` expects the model
+in a `staging > facebook_ads` folder. Mirror that structure or adjust the refs.
 
 ## Required tables
 
 | Model | Raw tables |
 |---|---|
-| `staging/ad_report` | `facebook_ads.ad_insight`, `facebook_ads.ad_roas_insight_action_values`, `facebook_ads.ad_roas_insight_conversion_insights`, `facebook_ads.ad`, `facebook_ads.creative` |
-| `core/conversion_insights` | `facebook_ads.ad_insight`, `facebook_ads.ad_roas_insight_conversion_insights`, `facebook_ads.ad` |
-| `core/marketing_report` | none · reads `staging.facebook_ads.ad_report`, `staging.google_ads.ad_report`, `staging.linkedin_ads.creative_report`, `staging.pinterest_ads.ad_report`, `staging.snapchat_ads.ad_report`, `staging.tiktok_ads.ad_report` |
+| ad performance daily | `ad_roas_insight`, `ad_roas_insight_actions`, `ad_roas_insight_action_values`, `ad`, `ad_set`, `ad_set_attribution`, `campaign`, `account` |
+| campaign performance daily | the same, through `ad_performance_daily` |
+| ad set performance daily | the same, through `ad_performance_daily` |
+| conversions by action type daily | `ad_roas_insight_actions`, `ad_roas_insight_action_values`, plus `ad_performance_daily` for labels |
 
-## Models
+`ad_roas_insight` is one of the streams the connector selects by default; its
+`_actions` and `_action_values` tables are written alongside it.
+`ad_set_attribution` is written with the `ad_set` stream.
 
-### Ad Report
+## Notes
 
-`weld/staging/ad_report.sql`
+- **Spend is in the ad account's currency,** as Meta reports it. No micros or
+  cents conversion is needed.
+- **account_id has no `act_` prefix.** The connector lands the numeric ad account
+  ID; staging strips the prefix anyway, so IDs copied from Ads Manager URLs join.
+- **How action arrays land.** Meta returns conversions as arrays of
+  `{action_type, value}` pairs. The connector writes each array to its own table
+  with one row per action type, keyed by the report row (account, campaign, ad
+  set, ad, date). `_actions` holds counts, `_action_values` holds money.
+- **Purchases are `omni_purchase`,** which is what the Ads Manager "Purchases"
+  column shows: one purchase per event, de-duplicated across website, app and
+  offline. Where an account reports no `omni_purchase`, the plain `purchase` type
+  is used instead. Never both, and never the channel specific types
+  (`offsite_conversion.fb_pixel_purchase`, `onsite_web_purchase`, ...), which are
+  subsets of the same purchases.
+- **Attribution.** Counts and values are Meta's figures under the attribution
+  windows the connector requests: 7-day click and 1-day view unless the connection
+  is set otherwise. The ad set's own attribution setting, which can differ, is
+  in `ad_set_attribution_setting`.
+- **Conversions are dated on the conversion day.** This report asks Meta for
+  conversions by the day they happened, not the day of the ad impression, which
+  is the Ads Manager default. Daily purchase counts will not match Ads Manager
+  day by day for that reason; weekly and monthly totals come close. If you need
+  impression-day dating, the `ad_insight` and `ad_insight_actions` tables carry
+  counts that way, but have no purchase value.
+- **Late conversions.** The connector re-reads the last 7 days once a day.
+  Purchases attributed later than that are not picked up.
+- **Reach is per ad and day.** It counts unique people and cannot be summed;
+  the campaign and ad set models leave it out.
+- **Names are the current ones.** Entity streams are re-read in full; deleted ads
+  fall back to the names on the report row.
+- **Not run against a warehouse.** These models were checked for syntax and
+  references only. Reconcile a week of spend, impressions, link clicks and
+  purchases per campaign against Ads Manager (same attribution setting, same
+  date range) before relying on the output.
 
-Provide insights and analytics on Facebook Ads data. By integrating with the
-Facebook Ads platform, this SQL template retrieves data from various tables such as
-ad_insight, account, campaign, ad_set, and ad.
+## Schema notes
 
-### Conversion Insights
+The ERD and the connector's stream definitions agree on every table and column
+these models read. The action tables can also carry per-window columns
+(`seven_d_click`, `one_d_view`, and others such as `twenty_eight_d_click`), but
+only on connections that request attribution windows explicitly, so the models
+do not read them. If your tables have them, add them to the two action staging
+models and carry them through `conversions_by_action_type_daily` for a
+click-only view.
 
-`weld/core/conversion_insights.sql`
+## Vendor docs
 
-"Conversion Insights" is designed to provide valuable insights from Facebook Ads
-data integration. It retrieves various statistics related to ad performance, such as
-spend, reach, impressions, clicks, and more. By joining different tables, it allows
-for analyzing conversion insights by date, account, campaign, ad set, and ad levels.
-This SQL can be useful for tracking the effectiveness of Facebook ad campaigns,
-optimizing bidding strategies, and understanding user actions leading to
-conversions.
-
-### Marketing Insights Dashboard
-
-`weld/core/marketing_report.sql`
-
-The "Marketing Insights" SQL model aggregates advertising data from multiple
-platforms including Facebook, Google, LinkedIn, TikTok, Snapchat, and Pinterest. It
-consolidates metrics such as clicks, impressions, spend, conversions, and conversion
-value across these platforms into a unified dataset. This model calculates key
-performance indicators (KPIs) like click-through rate (CTR), cost per click (CPC),
-cost per thousand impressions (CPM), and conversion rate, providing a comprehensive
-view of marketing performance. By using this SQL model, marketers can gain valuable
-insights into the effectiveness of their campaigns, compare performance across
-different platforms, and optimize their advertising strategies for better ROI.
+- Marketing API, Insights: <https://developers.facebook.com/docs/marketing-api/insights>
+- Insights parameters (attribution windows, action report time): <https://developers.facebook.com/docs/marketing-api/reference/adgroup/insights/>
+- About attribution settings: <https://www.facebook.com/business/help/458681590974355>

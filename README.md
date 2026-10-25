@@ -11,9 +11,15 @@ Each integration ships both dialects:
 Most integrations are built in layers: `staging/` cleans and de-duplicates the raw
 tables, `core/` holds the business logic, and `analytics/` is the table dashboards and
 agents read. A few directories (`amazon-ads`, `amazon-mws`, `clickup`, `economic`,
-`google-analytics-4`, `hubspot`, `instagram-business`, `intercom`, `microsoft-ads`,
-`salesforce`, `xero`) hold single-query reports instead. Every directory has a README
-that describes its models and what to check before relying on them.
+`google-analytics-4`, `hubspot`, `instagram-business`, `intercom`, `xero`) hold
+single-query reports instead.
+
+The paid ads directories share one set of columns on their daily ad and campaign
+models, and [`cross-channel-ads/`](cross-channel-ads/) stacks them into one paid
+media table.
+
+Every directory has a README that describes its models and what to check before
+relying on them.
 
 ## Integrations
 
@@ -71,15 +77,16 @@ directories).
 | Apple Ads | [`apple-ads/`](apple-ads/) | app performance daily, campaign performance daily |
 | AppLovin | [`applovin/`](applovin/) | ad performance daily, campaign performance daily |
 | Criteo | [`criteo/`](criteo/) | ad performance daily, campaign performance daily |
+| Cross-channel paid media | [`cross-channel-ads/`](cross-channel-ads/) | campaign performance daily, channel performance daily |
 | Daisycon | [`daisycon/`](daisycon/) | invoice costs monthly, invoices, media performance, publisher performance |
-| Facebook Ads | [`facebook-ads/`](facebook-ads/) | conversion insights, marketing report |
-| Google Ads | [`google-ads/`](google-ads/) | ad stats by country monthly, marketing report, URL report |
-| LinkedIn Ads | [`linkedin-ads/`](linkedin-ads/) | creative report |
-| Microsoft Ads | [`microsoft-ads/`](microsoft-ads/) | account report, ad group report, ad report, campaign report |
-| Pinterest Ads | [`pinterest-ads/`](pinterest-ads/) | ad report |
+| Facebook Ads | [`facebook-ads/`](facebook-ads/) | ad performance daily, ad set performance daily, campaign performance daily, conversions by action type daily |
+| Google Ads | [`google-ads/`](google-ads/) | ad performance daily, campaign performance daily, country performance daily, landing page performance daily |
+| LinkedIn Ads | [`linkedin-ads/`](linkedin-ads/) | ad performance daily, campaign group performance daily, campaign performance daily |
+| Microsoft Ads | [`microsoft-ads/`](microsoft-ads/) | account performance daily, ad group performance daily, ad performance daily, campaign performance daily |
+| Pinterest Ads | [`pinterest-ads/`](pinterest-ads/) | ad performance daily, campaign country performance daily, campaign performance daily |
 | Reddit Ads | [`reddit-ads/`](reddit-ads/) | ad performance daily, campaign performance daily |
-| Snapchat Ads | [`snapchat-ads/`](snapchat-ads/) | ad report |
-| TikTok Ads | [`tiktok-ads/`](tiktok-ads/) | ad report |
+| Snapchat Ads | [`snapchat-ads/`](snapchat-ads/) | ad performance daily, ad squad performance daily, campaign performance daily |
+| TikTok Ads | [`tiktok-ads/`](tiktok-ads/) | ad group performance daily, ad performance daily, campaign performance daily |
 
 ### Organic social, search and web analytics
 
@@ -110,7 +117,7 @@ directories).
 | Intercom | [`intercom/`](intercom/) | monthly conversation tags, monthly conversations by team, monthly conversations rating, monthly ticket by state, monthly ticket resolution time, monthly tickets by team |
 | Medallia | [`medallia/`](medallia/) | answer detail, feedback volume, NPS by unit month, topic volume |
 | Qualtrics | [`qualtrics/`](qualtrics/) | answer detail, distribution performance, NPS by month, response volume |
-| Salesforce | [`salesforce/`](salesforce/) | aggregated daily sales report |
+| Salesforce | [`salesforce/`](salesforce/) | lead funnel daily, opportunity pipeline, opportunity stage history, pipeline flow daily, rep activity |
 | Typeform | [`typeform/`](typeform/) | answer detail, response volume, score summary |
 | Zendesk | [`zendesk/`](zendesk/) | agent performance by month, response times by month, ticket lifecycle, ticket volume by day |
 | Zigpoll | [`zigpoll/`](zigpoll/) | answer detail, attribution by answer, response volume, score summary |

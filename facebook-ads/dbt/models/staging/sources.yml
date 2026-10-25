@@ -6,8 +6,11 @@ sources:
   - name: facebook_ads
     schema: raw_facebook_ads
     tables:
-      - name: ad_insight
+      - name: account
       - name: ad
-      - name: creative
-      - name: ad_roas_insight_conversion_insights
+      - name: ad_roas_insight
       - name: ad_roas_insight_action_values
+      - name: ad_roas_insight_actions
+      - name: ad_set
+      - name: ad_set_attribution
+      - name: campaign

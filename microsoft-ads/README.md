@@ -1,78 +1,103 @@
 # Microsoft Ads templates
 
-SQL reports over Weld's Microsoft Ads connector. BigQuery.
+Daily account, campaign, ad group and ad performance from Microsoft Advertising
+(formerly Bing Ads), in the same shape as the other paid ads templates in this
+repo. BigQuery.
 
-| Model | Report | What it returns |
+Weld connector: **Microsoft Ads** ([docs](https://weld.app/docs/applications/bing-microsoft-ads)).
+
+| Model | Recreates | Grain |
 |---|---|---|
-| [`weld/core/account_report.sql`](weld/core/account_report.sql) · [dbt](dbt/models/core/core_microsoft_ads__account_report.sql) | Account Report | Daily delivery per ad account, split by device OS, device type and network: impressions, clicks, spend, conversions and revenue, with the account name and time zone. |
-| [`weld/core/ad_group_report.sql`](weld/core/ad_group_report.sql) · [dbt](dbt/models/core/core_microsoft_ads__ad_group_report.sql) | Ad Group Report | Daily delivery per ad group, split by device OS, device type and network, labelled with campaign and account: impressions, clicks, spend, conversions and revenue. |
-| [`weld/core/ad_report.sql`](weld/core/ad_report.sql) · [dbt](dbt/models/core/core_microsoft_ads__ad_report.sql) | Ad Report | Daily delivery per ad, split by device OS, device type and network, labelled with ad group, campaign and account: impressions, clicks, spend, conversions and revenue. |
-| [`weld/core/campaign_report.sql`](weld/core/campaign_report.sql) · [dbt](dbt/models/core/core_microsoft_ads__campaign_report.sql) | Campaign Report | Daily delivery per campaign, split by device OS, device type and network, with campaign type and status: impressions, clicks, spend, conversions and revenue. |
+| [`weld/core/ad_performance_daily.sql`](weld/core/ad_performance_daily.sql) · [dbt](dbt/models/core/core_microsoft_ads__ad_performance_daily.sql) | Ad performance report, by day | day × account × ad |
+| [`weld/core/campaign_performance_daily.sql`](weld/core/campaign_performance_daily.sql) · [dbt](dbt/models/core/core_microsoft_ads__campaign_performance_daily.sql) | Campaign performance report, by day, with CTR, CPC, CPM, cost per conversion and ROAS | day × account × campaign |
+| [`weld/core/ad_group_performance_daily.sql`](weld/core/ad_group_performance_daily.sql) · [dbt](dbt/models/core/core_microsoft_ads__ad_group_performance_daily.sql) | Ad group performance report, by day | day × account × ad group |
+| [`weld/core/account_performance_daily.sql`](weld/core/account_performance_daily.sql) · [dbt](dbt/models/core/core_microsoft_ads__account_performance_daily.sql) | Account performance report, by day, with the account's time zone | day × account |
 
-## Where these come from
+## Cross-channel contract
 
-These started as the templates in the weld.app template library. Each one was
-published as a single query rather than a layered model set. Every query was
-reviewed when it moved here and corrected where it was wrong; the corrections
-are listed under Changes from the website version. The layout:
+`ad_performance_daily` and `campaign_performance_daily` both start with
+`date_day, account_id, account_name, currency, campaign_id, campaign_name`, then
+(ad model only) `ad_group_id, ad_group_name, ad_id, ad_name`, then `spend,
+impressions, clicks, conversions, conversion_value, ctr, cpc, cpm,
+cost_per_conversion, roas`. The other paid ads templates here emit the same
+columns, so select them from each and `UNION ALL`. `account_id` is part of every
+join key, so several accounts in one schema stay apart. Convert currencies before
+summing across accounts.
 
-- Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
-  passthrough in `weld/analytics/` for dashboards to bind to.
-- Most queries read the raw tables directly, so there is no staging layer of
-  cast-and-rename wrappers like the one in [`shopify/`](../shopify/).
-- None of them has been reconciled against the source system. Treat every model
-  as a starting point and check the output before relying on it.
-- `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
-  tests ship with these models.
+For a cross-channel spend total, stack the campaign models, not the ad models:
+the ad report does not cover Performance Max (see Notes).
 
-## Changes from the website version
+## Layers
 
-Corrected in review:
+```
+raw.microsoft_ads.*       ELT output, untouched
+  ↓
+weld/staging/*.sql        7 thin wrappers: cast, rename, de-duplicate
+  ↓
+weld/core/*.sql           the reports, all the business logic lives here
+  ↓
+weld/analytics/*.sql      BI-facing contracts, deliberately thin
+```
 
-- All four reports were rewritten from the raw tables. Report metrics are summed at the report's grain before account, campaign, ad group and ad names are looked up, and Microsoft's conversions and revenue are included.
-- `core/ad_report` selected `ad_name` twice, which BigQuery rejects; it now appears once.
+Analytics models are `SELECT *` on purpose: dashboards bind to them, so core can be
+changed without breaking anything downstream. `dbt/` holds the same models with dbt
+refs, generated from the Weld versions; see [dbt/README.md](dbt/README.md).
+
+Weld references map to folder paths, so `{{staging.microsoft_ads.ad}}` expects the model
+in a `staging > microsoft_ads` folder. Mirror that structure or adjust the refs.
 
 ## Required tables
 
 | Model | Raw tables |
 |---|---|
-| `core/account_report` | `microsoft_ads.account`, `microsoft_ads.ad_performance_daily_report` |
-| `core/ad_group_report` | `microsoft_ads.account`, `microsoft_ads.ad_group`, `microsoft_ads.ad_performance_daily_report`, `microsoft_ads.campaign` |
-| `core/ad_report` | `microsoft_ads.account`, `microsoft_ads.ad_group`, `microsoft_ads.ad_performance_daily_report`, `microsoft_ads.ad`, `microsoft_ads.campaign` |
-| `core/campaign_report` | `microsoft_ads.account`, `microsoft_ads.campaign_performance_daily_report`, `microsoft_ads.campaign` |
+| ad performance daily | `ad_performance_daily_report`, `ad`, `ad_group`, `campaign`, `account` |
+| campaign performance daily | `campaign_performance_daily_report`, `campaign`, `account` |
+| ad group performance daily | `ad_group_performance_daily_report`, `ad_group`, `campaign`, `account` |
+| account performance daily | the same as campaign performance daily, through that model |
 
-## Models
+## Notes
 
-### Account Report
+- **Money is in the account's currency,** not micros. Each report row carries its
+  `currency_code`; an account has one currency, so it is taken per account.
+- **conversions vs all conversions.** `conversions` counts conversion goals set to
+  "Include in conversions"; `conversion_value` is their revenue. `all_conversions`
+  and `all_revenue` count every goal, as in the "All conv." columns of the UI.
+  Pick one pair for ROAS and stick with it. View-through conversions are carried on
+  their own as well.
+- **Conversions are dated on the day of the ad click,** under each goal's own
+  conversion window (30 days by default). A conversion that happens a week after
+  the click lands on the click's day.
+- **Late conversions.** The connector re-reads the last 3 days of each report once
+  a day. Conversions credited to a click older than that are not picked up, so
+  recent weeks can read low against the UI. Re-sync the reports from an earlier
+  start date to catch up.
+- **Ad level is not account level.** Performance Max asset groups have no ad or
+  ad group rows, so the ad and ad group models sum to less than the campaign
+  model in accounts that run them. The campaign and account models read the
+  campaign report for that reason.
+- **Report splits are collapsed.** Microsoft's reports split each row by device,
+  network, match type, ad distribution and placement; core sums over them.
+- **Dates are in the account's time zone,** as Microsoft reports them
+  (`account_performance_daily.time_zone`).
+- **Names are the current ones.** Entity streams are re-read in full, so a renamed
+  campaign shows its new name on every past day. Deleted entities show NULL names.
+  Microsoft ads have no name; `ad_name` is the ad title, which responsive search
+  ads leave empty.
+- **Not run against a warehouse.** These models were checked for syntax and
+  references only. Reconcile a week of spend, clicks and conversions per campaign
+  against the Microsoft Advertising UI (same time zone, same columns) before
+  relying on the output.
 
-`weld/core/account_report.sql`
+## Schema notes
 
-Generates a report that combines data from two tables:
-`microsoft_ads.ad_performance_daily_report` and `microsoft_ads.account`. This
-template is useful for analyzing and gaining insights into the performance of
-Microsoft Ads accounts.
+The ERD and the connector's stream definitions agree on every table and column
+these models read. Entity names follow Microsoft's bulk file layout: the campaign
+name is in `campaign.campaign`, the ad group name in `ad_group.ad_group`, and
+`parent_id` points one level up (ad to ad group, ad group to campaign).
 
-### Ad Group Report
+## Vendor docs
 
-`weld/core/ad_group_report.sql`
-
-Retrieves data from the Microsoft Ads platform. It combines data from multiple
-tables including ad_performance_daily_report, ad_group, campaign, and account. The
-template uses common table expressions (CTEs) to organize the data retrieval
-process.
-
-### Ad Report
-
-`weld/core/ad_report.sql`
-
-Retrieves data from the Microsoft Ads integration. It combines multiple tables,
-including ad_performance_daily_report, ad, ad_group, campaign, and account, to
-generate a comprehensive report on ad performance.
-
-### Campaign Report
-
-`weld/core/campaign_report.sql`
-
-Generates a report on campaign performance using data from the Microsoft Ads
-integration. This SQL model combines data from three tables:
-campaign_performance_daily_report, campaign, and account.
+- Report columns (Microsoft Advertising API): <https://learn.microsoft.com/en-us/advertising/reporting-service/reporting-service-reference>
+- Ad performance report: <https://learn.microsoft.com/en-us/advertising/reporting-service/adperformancereportrequest>
+- Campaign performance report: <https://learn.microsoft.com/en-us/advertising/reporting-service/campaignperformancereportrequest>
+- Conversions reported on the day of the click: <https://help.ads.microsoft.com/apex/index/3/en/56841>
