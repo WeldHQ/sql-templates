@@ -6,7 +6,11 @@ sources:
   - name: google_ads
     schema: raw_google_ads
     tables:
-      - name: ad_stats
       - name: account
       - name: ad
+      - name: ad_group
       - name: ad_group_country_stats
+      - name: ad_stats
+      - name: campaign
+      - name: campaign_stats
+      - name: geo_target

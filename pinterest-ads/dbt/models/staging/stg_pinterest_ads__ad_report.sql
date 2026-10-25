@@ -1,54 +1,43 @@
 -- stg_pinterest_ads__ad_report
--- Ad Report. Generates an ad report for the Pinterest Ads integration. It retrieves
--- data from multiple tables, including ad reports, ad accounts, campaigns, and ads.
--- The report includes information such as date, account name and ID, campaign name
--- and ID, ad name, status, type, created time, spend, impressions, clicks, CPC,
--- CTR, CPM, and total conversions. The data is grouped by various columns for
--- analysis.
+-- Thin wrapper over raw `ad_report`, Pinterest's daily analytics per ad. Casts,
+-- renames, converts micros, de-duplicates. No other logic.
 --
--- From the weld.app template library, corrected. Not reconciled against
--- Pinterest Ads; check the output against the source before relying on it.
+-- Grain: account_id x ad_id x date_day.
+--
+-- MONEY IS IN MICROS. Columns named *_IN_MICRO_DOLLAR hold millionths of the ad
+-- account's currency, whatever that currency is; the "dollar" in the name is
+-- historical. Staging divides by 1,000,000.
+--
+-- Attribution: the connector requests the report without attribution settings, so
+-- Pinterest's API defaults apply: 30 days after a click, 30 days after an
+-- engagement, 1 day after a view, with conversions dated on the day of the ad
+-- action. Ads Manager uses the same defaults unless someone changed the view.
+--
+-- Delivery: impressions are paid impressions. The report does not carry paid-only
+-- Pin clicks, so clicks are total Pin clicks (paid plus earned); paid outbound
+-- clicks are kept as a separate column.
 
-with
-    report as (
-        select
-            *
-        from
-            {{ source('pinterest_ads', 'ad_report') }} --   to join another pinterest ads account
-            --   union all
-            --   select * from <second_account_table>
-    )
-  , advertisers as (
-        select
-            *
-        from
-            {{ source('pinterest_ads', 'ad_account') }}
-    )
-  , ad as (
-        select
-            *
-        from
-            {{ source('pinterest_ads', 'ad') }}
-    )
-select
-    cast(report.date as date) date_day
-  , advertisers.name account_name
-  , report.ad_account_id as account_id
-  , report.campaign_name
-  , report.campaign_id
-  , ad.name ad_name
-  , report.ad_id
-  , ad.status as ad_status
-  , ad.type as ad_type
-  , ad.created_time
-  , report.spend_in_micro_dollar / 1000000 spend
-  , case
-        when report.impression_1_gross is null then report.impression_2
-        else report.impression_1_gross
-    end as impressions
-  , report.total_clickthrough as clicks -- pin clicks; engagements also count saves and closeups
-  , total_conversions conversions
-from
-    report
-    left join ad on report.ad_id = ad.id
-    left join advertisers on report.ad_account_id = advertisers.id
+SELECT
+    CAST(AD_ACCOUNT_ID AS STRING)                                      AS account_id,
+    CAST(AD_ID AS STRING)                                              AS ad_id,
+    SAFE_CAST(LEFT(CAST(`DATE` AS STRING), 10) AS DATE)                AS date_day,
+    CAST(AD_GROUP_ID AS STRING)                                        AS ad_group_id,
+    CAST(CAMPAIGN_ID AS STRING)                                        AS campaign_id,
+    CAST(CAMPAIGN_NAME AS STRING)                                      AS report_campaign_name,
+    CAST(PIN_ID AS STRING)                                             AS pin_id,
+    COALESCE(CAST(SPEND_IN_MICRO_DOLLAR AS FLOAT64), 0) / 1000000      AS spend,
+    CAST(COALESCE(IMPRESSION_1, CAST(PAID_IMPRESSION AS INT64), 0) AS INT64) AS impressions,
+    COALESCE(CAST(IMPRESSION_2 AS INT64), 0)                           AS earned_impressions,
+    CAST(COALESCE(TOTAL_CLICKTHROUGH, 0) AS INT64)                     AS clicks,
+    CAST(COALESCE(OUTBOUND_CLICK_1, 0) AS INT64)                       AS paid_outbound_clicks,
+    COALESCE(CAST(TOTAL_ENGAGEMENT AS FLOAT64), 0)                     AS engagements,
+    COALESCE(CAST(TOTAL_CONVERSIONS AS FLOAT64), 0)                    AS conversions,
+    CAST(TOTAL_CHECKOUT_VALUE_IN_MICRO_DOLLAR AS FLOAT64) / 1000000    AS checkout_value,
+    CAST(TOTAL_CLICK_CHECKOUT_VALUE_IN_MICRO_DOLLAR AS FLOAT64) / 1000000      AS checkout_value_click,
+    CAST(TOTAL_ENGAGEMENT_CHECKOUT_VALUE_IN_MICRO_DOLLAR AS FLOAT64) / 1000000 AS checkout_value_engagement,
+    CAST(TOTAL_VIEW_CHECKOUT_VALUE_IN_MICRO_DOLLAR AS FLOAT64) / 1000000       AS checkout_value_view,
+    CAST(TOTAL_WEB_CHECKOUT_VALUE_IN_MICRO_DOLLAR AS FLOAT64) / 1000000        AS web_checkout_value,
+    COALESCE(CAST(TOTAL_SIGNUP AS FLOAT64), 0)                         AS signups
+FROM {{ source('pinterest_ads', 'ad_report') }}
+WHERE `DATE` IS NOT NULL
+QUALIFY ROW_NUMBER() OVER (PARTITION BY AD_ACCOUNT_ID, AD_ID, `DATE` ORDER BY _weld_synced DESC) = 1

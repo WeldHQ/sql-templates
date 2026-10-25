@@ -6,6 +6,9 @@ sources:
   - name: pinterest_ads
     schema: raw_pinterest_ads
     tables:
-      - name: ad_report
-      - name: ad_account
       - name: ad
+      - name: ad_account
+      - name: ad_group
+      - name: ad_report
+      - name: campaign
+      - name: campaign_country_report

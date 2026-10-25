@@ -6,7 +6,11 @@ sources:
   - name: salesforce
     schema: raw_salesforce
     tables:
-      - name: task
+      - name: account
       - name: event
       - name: lead
       - name: opportunity
+      - name: opportunity_history
+      - name: opportunity_stage
+      - name: task
+      - name: user

@@ -1,94 +1,106 @@
 # Google Ads templates
 
-SQL reports over Weld's Google Ads connector. BigQuery.
+Daily ad, campaign, country and landing page performance from Google Ads, in the
+same shape as the other paid ads templates in this repo. BigQuery.
 
-| Model | Report | What it returns |
+Weld connector: **Google Ads** ([docs](https://weld.app/docs/applications/google-ads)).
+
+| Model | Recreates | Grain |
 |---|---|---|
-| [`weld/staging/ad_report.sql`](weld/staging/ad_report.sql) · [dbt](dbt/models/staging/stg_google_ads__ad_report.sql) | Ad Report | Generates an ad report by joining data from various tables in the Google Ads integration. It retrieves information such as date, account ID and name, campaign name and ID, ad group name and ID, ad ID and name, ad status and type, display URL, final URLs, spend, impressions, clicks, CPC, CTR, CPM, and conversions. Additional columns can be manually specified if needed. |
-| [`weld/core/ad_stats_by_country_monthly.sql`](weld/core/ad_stats_by_country_monthly.sql) · [dbt](dbt/models/core/core_google_ads__ad_stats_by_country_monthly.sql) | Ad stats by country monthly | Generates monthly ad statistics by country, including spend, clicks, CPC, cost per conversion, CTR, conversions, conversion value, impressions, and interactions, using data from Google Ads. It groups the data by month and country criterion ID. |
-| [`weld/core/marketing_report.sql`](weld/core/marketing_report.sql) · [dbt](dbt/models/core/core_google_ads__marketing_report.sql) | Marketing Insights Dashboard | This SQL template consolidates advertising data from multiple platforms, including Facebook, Google, LinkedIn, TikTok, Snapchat, and Pinterest, into a unified dataset. It aggregates metrics such as clicks, impressions, spend, and conversions, and calculates performance indicators like CTR, CPC, CPM, and conversion rate. The result is grouped by date, platform, account, campaign, and ad identifiers for comprehensive marketing insights. |
-| [`weld/core/url_report.sql`](weld/core/url_report.sql) · [dbt](dbt/models/core/core_google_ads__url_report.sql) | URL Report | Daily delivery per ad with its final URLs, display URL and UTM tags: impressions, clicks, spend, conversions, CTR, CPC and CPM, in the account currency. |
+| [`weld/core/ad_performance_daily.sql`](weld/core/ad_performance_daily.sql) · [dbt](dbt/models/core/core_google_ads__ad_performance_daily.sql) | Ads view, by day, with final URL and effective URL suffix | day × account × ad |
+| [`weld/core/campaign_performance_daily.sql`](weld/core/campaign_performance_daily.sql) · [dbt](dbt/models/core/core_google_ads__campaign_performance_daily.sql) | Campaigns view, by day, with CTR, CPC, CPM, cost per conversion and ROAS | day × account × campaign |
+| [`weld/core/country_performance_daily.sql`](weld/core/country_performance_daily.sql) · [dbt](dbt/models/core/core_google_ads__country_performance_daily.sql) | Locations, user locations report, by day and campaign | day × account × campaign × country × location type |
+| [`weld/core/landing_page_performance_daily.sql`](weld/core/landing_page_performance_daily.sql) · [dbt](dbt/models/core/core_google_ads__landing_page_performance_daily.sql) | Landing pages, by day and campaign | day × account × campaign × landing page |
 
-## Where these come from
+## Cross-channel contract
 
-These started as the templates in the weld.app template library. Each one was
-published as a single query rather than a layered model set. Every query was
-reviewed when it moved here and corrected where it was wrong; the corrections
-are listed under Changes from the website version. The layout:
+`ad_performance_daily` and `campaign_performance_daily` both start with
+`date_day, account_id, account_name, currency, campaign_id, campaign_name`, then
+(ad model only) `ad_group_id, ad_group_name, ad_id, ad_name`, then `spend,
+impressions, clicks, conversions, conversion_value, ctr, cpc, cpm,
+cost_per_conversion, roas`. The other paid ads templates here emit the same
+columns, so select them from each and `UNION ALL`. `account_id` is part of every
+join key, so several Google Ads accounts in one schema stay apart. Convert
+currencies before summing across accounts.
 
-- Queries that hold report logic sit in `weld/core/`, each with a `SELECT *`
-  passthrough in `weld/analytics/` for dashboards to bind to.
-- Queries that other templates read as a `{{staging...}}` ref sit in
-  `weld/staging/`, so those refs resolve.
-- Most queries read the raw tables directly, so there is no staging layer of
-  cast-and-rename wrappers like the one in [`shopify/`](../shopify/).
-- None of them has been reconciled against the source system. Treat every model
-  as a starting point and check the output before relying on it.
-- `dbt/` holds the same SQL with `{{ source() }}` / `{{ ref() }}` refs. No dbt
-  tests ship with these models.
+For a cross-channel spend total, stack the campaign models, not the ad models:
+Google's ad level report does not cover every campaign type (see Notes).
 
-## Changes from the website version
+## Layers
 
-- The cross-channel marketing report expects the other platforms' ad reports at
-  `{{staging.pinterest_ads.ad_report}}` and `{{staging.snapchat_ads.ad_report}}`; the
-  website version said `staging.pinterest` and `staging.snapchat`, which match no
-  folder here. Only the active platform's block is uncommented; uncomment the others
-  once their ad reports are deployed.
+```
+raw.google_ads.*          ELT output, untouched
+  ↓
+weld/staging/*.sql        8 thin wrappers: cast, convert micros, drop retracted rows, de-duplicate
+  ↓
+weld/core/*.sql           the reports, all the business logic lives here
+  ↓
+weld/analytics/*.sql      BI-facing contracts, deliberately thin
+```
 
-Corrected in review:
+Analytics models are `SELECT *` on purpose: dashboards bind to them, so core can be
+changed without breaking anything downstream. `dbt/` holds the same models with dbt
+refs, generated from the Weld versions; see [dbt/README.md](dbt/README.md).
 
-- `core/marketing_report`: the stray `select` before the active block is gone, every commented platform block has its `select` and reads only columns that platform's ad report outputs, and IDs are cast to strings so the blocks union cleanly. LinkedIn campaign groups and creatives fill the campaign and ad columns; Snapchat's report has no campaign columns, so its block leaves them empty.
-- `core/ad_stats_by_country_monthly` groups by month and country only (the website version grouped by `spend`, an aggregate, which BigQuery rejects). CPC, cost per conversion and CTR divide the month's totals.
-- `core/url_report` was rewritten from the raw tables. CPC, CTR and CPM divide each day's totals. Campaign and ad group names come from `ad_stats`, so it no longer reads the campaign and ad group tables, and it adds the account currency. The UTM patterns also match a tag at the very start of the final URL suffix, which has no leading `?` or `&`.
-- `staging/ad_report`: `roas` is conversion value divided by spend; the website version divided spend by conversion value.
+Weld references map to folder paths, so `{{staging.google_ads.ad}}` expects the model
+in a `staging > google_ads` folder. Mirror that structure or adjust the refs.
 
 ## Required tables
 
 | Model | Raw tables |
 |---|---|
-| `staging/ad_report` | `google_ads.ad_stats` |
-| `core/ad_stats_by_country_monthly` | `google_ads.ad_group_country_stats` |
-| `core/marketing_report` | none · reads `staging.facebook_ads.ad_report`, `staging.google_ads.ad_report`, `staging.linkedin_ads.creative_report`, `staging.pinterest_ads.ad_report`, `staging.snapchat_ads.ad_report`, `staging.tiktok_ads.ad_report` |
-| `core/url_report` | `google_ads.account`, `google_ads.ad_stats`, `google_ads.ad` |
+| ad performance daily | `ad_stats`, `ad`, `ad_group`, `campaign`, `account` |
+| campaign performance daily | `campaign_stats`, `campaign`, `account` |
+| country performance daily | `ad_group_country_stats`, `geo_target`, `campaign`, `account` |
+| landing page performance daily | the same as ad performance daily, through that model |
 
-## Models
+All are standard streams of the connector; enable them in the sync settings.
 
-### Ad Report
+## Notes
 
-`weld/staging/ad_report.sql`
+- **Money is in micros.** Google returns cost as millionths of the account
+  currency; staging divides by 1,000,000. Conversion value is already in currency.
+- **account_id is the Google Ads customer ID,** digits only, no dashes. Under a
+  manager account each client account syncs with its own ID.
+- **Conversions are Google's "Conversions" column:** conversion actions marked as
+  primary, each under its own attribution model and click-through window (set per
+  conversion action in Google Ads, data-driven and 30 days by default). They are
+  dated on the day of the click or interaction, not the day of the conversion,
+  and can be fractional. View-through conversions are carried in their own column
+  and are not included.
+- **All conversions are not in the standard streams.** If you report on "All
+  conv.", add `metrics.all_conversions` and `metrics.all_conversions_value` in a
+  custom report and swap them in.
+- **Late conversions and retractions.** The connector re-reads the last 30 days of
+  each report once a day. Rows Google no longer returns for that window (for
+  example after invalid click credits) are marked deleted, and staging drops them.
+  Conversions that arrive more than 30 days after the click are not picked up.
+- **Ad level is not account level.** Performance Max, Smart and some App campaigns
+  report no ad rows, so `ad_performance_daily` and the landing page and country
+  models sum to less than `campaign_performance_daily` in accounts that run them.
+  The campaign model reads the campaign report for that reason.
+- **Country rows are split by location type.** Google reports a user's country as
+  either where they were (`LOCATION_OF_PRESENCE`) or what they searched for
+  (`AREA_OF_INTEREST`). Both stay in the grain; filter to one, or check the total
+  against the campaign model before adding them up.
+- **Dates are in the account's time zone,** as Google reports them.
+- **Names are the current ones.** Entity streams are re-read in full, so a renamed
+  campaign shows its new name on every past day. Removed entities fall back to the
+  name carried on the report row.
+- **Not run against a warehouse.** These models were checked for syntax and
+  references only. Reconcile a week of spend, clicks and conversions per campaign
+  against the Google Ads UI (same date range, same columns) before relying on the
+  output.
 
-Retrieve data from the Google Ads integration. It consists of several common table
-expressions (CTEs) that extract data from different tables within the Google Ads
-database. These CTEs include "stats," "accounts," "campaigns," "ad_groups," and
-"ads."
+## Schema notes
 
-### Ad stats by country monthly
+The ERD and the connector's stream definitions agree on every table and column
+these models read. The ERD does not list `_weld_deleted_at` on the entity tables;
+these models only read it on the report tables, where both list it.
 
-`weld/core/ad_stats_by_country_monthly.sql`
+## Vendor docs
 
-Monthly ad statistics by country from the Google Ads ad group country stats
-table: spend, clicks, impressions, interactions, conversions and conversion
-value, with CPC, cost per conversion and CTR worked out from the month's totals.
-Countries are Google geo target IDs.
-
-### Marketing Insights Dashboard
-
-`weld/core/marketing_report.sql`
-
-The "Marketing Insights" SQL model aggregates advertising data from multiple
-platforms including Facebook, Google, LinkedIn, TikTok, Snapchat, and Pinterest. It
-consolidates metrics such as clicks, impressions, spend, conversions, and conversion
-value across these platforms into a unified dataset. This model calculates key
-performance indicators (KPIs) like click-through rate (CTR), cost per click (CPC),
-cost per thousand impressions (CPM), and conversion rate, providing a comprehensive
-view of marketing performance. By using this SQL model, marketers can gain valuable
-insights into the effectiveness of their campaigns, compare performance across
-different platforms, and optimize their advertising strategies for better ROI.
-
-### URL Report
-
-`weld/core/url_report.sql`
-
-Ties Google Ads delivery to landing pages. Each row is one ad on one day, with
-its final URLs and the UTM tags read from its final URL suffix, falling back to
-google / cpc / campaign name / ad group name where a tag is missing.
+- Google Ads API, metrics: <https://developers.google.com/google-ads/api/fields/latest/metrics>
+- Google Ads API, ad group ad report: <https://developers.google.com/google-ads/api/fields/latest/ad_group_ad>
+- Google Ads API, geographic view: <https://developers.google.com/google-ads/api/fields/latest/geographic_view>
+- About conversion measurement: <https://support.google.com/google-ads/answer/1722022>

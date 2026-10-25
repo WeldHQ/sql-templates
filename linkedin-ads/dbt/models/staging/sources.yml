@@ -6,8 +6,8 @@ sources:
   - name: linkedin_ads
     schema: raw_linkedin_ads
     tables:
-      - name: creative
+      - name: account
       - name: campaign
       - name: campaign_group
-      - name: account
+      - name: creative
       - name: ad_analytics_by_creative

@@ -6,7 +6,8 @@ sources:
   - name: snapchat_ads
     schema: raw_snapchat_ads
     tables:
-      - name: ad_daily_report
-      - name: ad_account
       - name: ad
-      - name: creative
+      - name: ad_account
+      - name: ad_daily_report
+      - name: ad_squad
+      - name: campaign

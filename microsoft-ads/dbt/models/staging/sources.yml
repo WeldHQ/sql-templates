@@ -6,9 +6,10 @@ sources:
   - name: microsoft_ads
     schema: raw_microsoft_ads
     tables:
-      - name: ad_performance_daily_report
       - name: account
+      - name: ad
       - name: ad_group
+      - name: ad_group_performance_daily_report
+      - name: ad_performance_daily_report
       - name: campaign
       - name: campaign_performance_daily_report
-      - name: ad
